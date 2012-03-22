@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="base/|channel/|config/|connection/|parser/|processor/|talker/|tools/|base/|channel/|config/|connection/|parser/commands/|parser/commands/|parser/|processor/|talker/server/|talker/server/|talker/service/|talker/service/|talker/user/|talker/user/|talker/|tools/" kind="src" path="src"/>
+	<classpathentry kind="src" path="src/base"/>
+	<classpathentry kind="src" path="src/channel"/>
+	<classpathentry kind="src" path="src/config"/>
+	<classpathentry kind="src" path="src/connection"/>
+	<classpathentry kind="src" path="src/parser/commands"/>
+	<classpathentry excluding="commands/" kind="src" path="src/parser"/>
+	<classpathentry kind="src" path="src/processor"/>
+	<classpathentry kind="src" path="src/talker/server"/>
+	<classpathentry kind="src" path="src/talker/service"/>
+	<classpathentry kind="src" path="src/talker/user"/>
+	<classpathentry excluding="server/|service/|user/" kind="src" path="src/talker"/>
+	<classpathentry kind="src" path="src/tools"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>
