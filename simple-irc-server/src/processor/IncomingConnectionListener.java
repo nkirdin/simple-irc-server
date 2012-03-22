@@ -69,23 +69,23 @@ public class IncomingConnectionListener implements Runnable {
         
     /** Признак ошибки при выполнении метода. */        
     public AtomicBoolean error = new AtomicBoolean(false);
-	
-	/** IP-адрес интерфейса. */
-	private InetAddress inetAddress;
-	
-	/** Серверный сокет. */
+    
+    /** IP-адрес интерфейса. */
+    private InetAddress inetAddress;
+    
+    /** Серверный сокет. */
     private ServerSocket serverSocket;
     
     /** Номер порта для запросов на сетевое соединение. */
     private int serverPortNumber = Globals.serverPortNumber.get();
-	
+    
     /** Конструктор по умолчанию. */
-	public IncomingConnectionListener() {}
+    public IncomingConnectionListener() {}
 
-	/**
-	 * Получение IP-адреса интерфейса. 
-	 * @return IP-адреса интерфейса. 
-	 */
+    /**
+     * Получение IP-адреса интерфейса. 
+     * @return IP-адреса интерфейса. 
+     */
     public InetAddress getInetAddress() {
         return inetAddress;
     }
@@ -98,10 +98,10 @@ public class IncomingConnectionListener implements Runnable {
         this.inetAddress = inetAddress;
     }
     
-	/**
-	 * Получение номера сетевого порта. 
-	 * @return номер сетевого порта для запросов на сетевое соединение. 
-	 */
+    /**
+     * Получение номера сетевого порта. 
+     * @return номер сетевого порта для запросов на сетевое соединение. 
+     */
     public int getServerPortNumber() {
         return serverPortNumber;
     }
@@ -189,9 +189,9 @@ public class IncomingConnectionListener implements Runnable {
      * true.
      */
     public void run() {
-    	
-    	Logger logger = Globals.logger.get();
-    	
+        
+        Logger logger = Globals.logger.get();
+        
         long waitingTO = limitingTO.get();
         boolean isConnectionAllowed = false;
         boolean isUserAllowed = false;
@@ -243,9 +243,9 @@ public class IncomingConnectionListener implements Runnable {
             try {
                 socket = serverSocket.accept();
                 if (!Globals.ircServerProcessorSet.get().isEmpty()) {
-                	if (socket != null) {
-                		socket.close();
-                	}
+                    if (socket != null) {
+                        socket.close();
+                    }
                     try {
                         Thread.sleep(sleepTO.get());
                     } catch (InterruptedException e) {}
@@ -260,28 +260,28 @@ public class IncomingConnectionListener implements Runnable {
                     connection.charset.set(listenerCharset.get());
 
                     isConnectionAllowed = 
-                    		Globals.db.get().register(connection) ==
-                    		Response.Reply.RPL_OK;
+                            Globals.db.get().register(connection) ==
+                            Response.Reply.RPL_OK;
                 } else {
-                	isConnectionAllowed = false;
+                    isConnectionAllowed = false;
                 }
 
                 if (isConnectionAllowed) {
                     user = User.create();
                     if (user != null) {
-                    	user.setConnection(connection);
-                    	user.setNickname(user.getIdString());
-                    	user.setIrcServer(Globals.thisIrcServer.get());
-                    	connection.ircTalker.set(user);
+                        user.setConnection(connection);
+                        user.setNickname(user.getIdString());
+                        user.setIrcServer(Globals.thisIrcServer.get());
+                        connection.ircTalker.set(user);
 
-                    	isUserAllowed = Globals.db.get().register(user) ==
-                    			Response.Reply.RPL_OK;
+                        isUserAllowed = Globals.db.get().register(user) ==
+                                Response.Reply.RPL_OK;
                         if (!isUserAllowed) {
-                        	user.setConnection(null);
-                        	connection.ircTalker.set(null);
+                            user.setConnection(null);
+                            connection.ircTalker.set(null);
                         }
                     } else {
-                    	isUserAllowed = false;
+                        isUserAllowed = false;
                     }
                 }
 
@@ -301,12 +301,12 @@ public class IncomingConnectionListener implements Runnable {
                     logger.log(Level.INFO, "Connection for " + socket + 
                             " rejected.");
                     if (connection != null) {
-                    	connection.delete();
+                        connection.delete();
                     }
                     waitingTO = sleepTO.get();
                 }
             } catch (SocketTimeoutException e) {
-            	
+                
             } catch (IOException e) {
                 //error.set(true);
                 waitingTO = sleepTO.get();

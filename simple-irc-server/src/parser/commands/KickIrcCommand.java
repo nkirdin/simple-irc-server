@@ -189,7 +189,7 @@ public class KickIrcCommand extends IrcCommandBase {
                 client.send(client, message);
 
                 
-                ch.send(client,	message);
+                ch.send(client,    message);
                 
                 user.remove(ch);
                 ch.remove(user);
@@ -267,8 +267,8 @@ public class KickIrcCommand extends IrcCommandBase {
             String nickname, String channelName) {
         
         String remark = Response.makeText(
-        		Response.Reply.ERR_USERNOTINCHANNEL, 
-        		requestor.getNickname(),
+                Response.Reply.ERR_USERNOTINCHANNEL, 
+                requestor.getNickname(),
                 nickname, channelName);
 
         return new IrcCommandReport(remark, requestor,

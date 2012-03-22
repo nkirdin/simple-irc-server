@@ -58,18 +58,18 @@ public class IrcServer extends IrcTalker {
      * ограничение по доступной памяти.
      */
     public static IrcServer create() {
-    	IrcServer result = null;
-    	long freeMemory = Runtime.getRuntime().freeMemory();
-    	if (freeMemory < Constants.MIN_FREE_MEMORY) {
-    		System.gc();
-    	}
-    	freeMemory = Runtime.getRuntime().freeMemory();
-    	if (freeMemory >= Constants.MIN_FREE_MEMORY) {
-    		result = new IrcServer();
-    	} else {
-    		Globals.logger.get().log(Level.SEVERE, 
-    				"Insufficient free memory (b): " + freeMemory);
-    	}
+        IrcServer result = null;
+        long freeMemory = Runtime.getRuntime().freeMemory();
+        if (freeMemory < Constants.MIN_FREE_MEMORY) {
+            System.gc();
+        }
+        freeMemory = Runtime.getRuntime().freeMemory();
+        if (freeMemory >= Constants.MIN_FREE_MEMORY) {
+            result = new IrcServer();
+        } else {
+            Globals.logger.get().log(Level.SEVERE, 
+                    "Insufficient free memory (b): " + freeMemory);
+        }
         return result;
     }
     
@@ -84,12 +84,12 @@ public class IrcServer extends IrcTalker {
     public static IrcServer create(IrcTalker ircTalker) {
         IrcServer ircServer = IrcServer.create();
         if (ircServer != null) {
-        	ircServer.setNickname(ircTalker.getNickname());
-        	ircServer.setNetworkId(ircTalker.getNetworkId());
-        	ircServer.setHostname(ircTalker.getHostname());
-        	ircServer.setHopcount(ircTalker.getHopcount());        
-        	ircServer.setRegistered(ircTalker.isRegistered());
-        	ircServer.setConnection(ircTalker.getConnection());
+            ircServer.setNickname(ircTalker.getNickname());
+            ircServer.setNetworkId(ircTalker.getNetworkId());
+            ircServer.setHostname(ircTalker.getHostname());
+            ircServer.setHopcount(ircTalker.getHopcount());        
+            ircServer.setRegistered(ircTalker.isRegistered());
+            ircServer.setConnection(ircTalker.getConnection());
         }
         return ircServer;
     }
@@ -102,12 +102,12 @@ public class IrcServer extends IrcTalker {
      * ограничение по доступной памяти.
      */
     public static IrcServer create(InetAddress networkId, 
-    		String hostname, String info) {
+            String hostname, String info) {
         IrcServer ircServer = IrcServer.create();
         if (ircServer != null) {
-        	ircServer.setNetworkId(networkId);
-        	ircServer.setHostname(hostname);
-        	ircServer.setInfo(info);
+            ircServer.setNetworkId(networkId);
+            ircServer.setHostname(hostname);
+            ircServer.setInfo(info);
         }
         return ircServer;
     }

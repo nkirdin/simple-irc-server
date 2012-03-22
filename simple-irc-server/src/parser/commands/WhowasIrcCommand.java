@@ -173,17 +173,17 @@ public class WhowasIrcCommand extends IrcCommandBase {
             int historyCount = 0;
             if ( historyList != null && !historyList.isEmpty()) {
                 for (ListIterator<DriedUser> 
-                	idu = historyList.listIterator(historyList.size());
-                		idu.hasPrevious();) {
+                    idu = historyList.listIterator(historyList.size());
+                        idu.hasPrevious();) {
                     if (++historyCount > maxCount) {
                         break;
                     }
                     DriedUser formerUser = idu.previous();
                     client.send(rplWhoWasUser(client, formerUser));
                     client.send(rplWhoIsServer(client,
-                    		formerUser.nickname,
-                    		formerUser.serverHostname,
-                    		""));
+                            formerUser.nickname,
+                            formerUser.serverHostname,
+                            ""));
                 }
             }
             if (historyCount == 0 ) {

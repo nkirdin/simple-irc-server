@@ -148,13 +148,13 @@ public class NoticeIrcCommand extends IrcCommandBase {
                 IrcChannel ch = db.getChannel(target);
 
                 if (ch != null && ch.isVisible(client) && 
-                		ch.canReceive(client)) {
-                	ch.send(client, 
-                			commandName + " " + target + " " + message);
+                        ch.canReceive(client)) {
+                    ch.send(client, 
+                            commandName + " " + target + " " + message);
                 }
                 
             } else if (isIt(target, nickNamePattern)) {
-            	
+                
                 User user = db.getUser(target);
                 if (user == null || !user.isVisible(requestor) 
                         || !user.isRegistered()) {

@@ -34,10 +34,10 @@ import java.nio.charset.*;
  */
 
 public class Server implements Runnable {
-	
-	/** Код завершения в случае успешного завершения. */
-	public static final int  SERV_OK = 0;
-	
+    
+    /** Код завершения в случае успешного завершения. */
+    public static final int  SERV_OK = 0;
+    
     /** Код завершения для ситуации "неизвестный ключ командной строки". */
     public static final int SERV_WRONG_KEY = 1;
     
@@ -124,7 +124,8 @@ public class Server implements Runnable {
      * ошибки в конфигурационном файле или возникновении ошибки при 
      * запуске компонентов сервера {@link #exitStatus} присваивается 
      * значение {@link #SERV_START_ERR}, при успешном запуске и 
-     * завершении работы этой переменной присваивается значение 0. 
+     * завершении работы этой переменной присваивается значение 
+     * {@link #SERV_OK}. 
      * <P>
      * Выполнение метода завершается с помощью {@link System#exit}, 
      * который передает операционной системе код завершения 
@@ -145,11 +146,11 @@ public class Server implements Runnable {
                 "General Public License Version 3. " +
                 "http://www.gnu.org/licenses/.\n\n" + 
                 "Usage: Server.server [-c <config file>] [-h]" +
-                " [-l <logging file>] [-v] \n" +
+                " [-l <logging file>] [-V] \n" +
                 " By default: configuration file " +
                 "is \"IrcServerConfig.xml\",\n" +
                 " logging file is \"IrcServerLog.xml\" in a current " +
-                "directory.\n" + "-v print version of program/n";
+                "directory.\n" + "-V print version of program/n";
 
         int index = 0;
         
@@ -209,18 +210,18 @@ public class Server implements Runnable {
      * <P>Переменной {@link #exitStatus} могут присваиваться следующие
      * коды завершения:
      * <UL>
-     * <LI> {@link #SERV_OK} - метод успешно завершен; 
+     * <LI> {@link #SERV_OK} - метод успешно завершен;</LI>
      * <LI> {@link #SERV_START_ERR} - во время выполнения метода были 
-     * обнаружены ошибки. 
+     * обнаружены ошибки.</LI>
      * </UL>
      *
      * <P> Поведение метода (старт, останов, перезапуск, повторное 
      * чтение файла конфигурации) определяется следующими переменными: 
      * <UL>
      * <LI> {@link #error}; 
-     * <LI> {@link Globals#serverDown}; 
-     * <LI> {@link Globals#serverRestart};
-     * <LI> {@link Globals#serverReconfigure}. 
+     * <LI> {@link Globals#serverDown};</LI>
+     * <LI> {@link Globals#serverRestart};</LI>
+     * <LI> {@link Globals#serverReconfigure}.</LI>
      * </UL>
      * <P> Нормальным значением для этих переменных является значение 
      * false. В том случае, если им будет присвоено значение true, то 
@@ -262,18 +263,18 @@ public class Server implements Runnable {
 
         while (!Globals.serverDown.get() && !error) {
             
-        	Globals.serverRestart.set(false);
+            Globals.serverRestart.set(false);
             
             ParameterInitialization.configSetup();
 
             ircConfigParser = new IrcConfigParser(
-            		Globals.configFilename.get(),
-            		Globals.db.get(), 
-            		Globals.logger.get());
+                    Globals.configFilename.get(),
+                    Globals.db.get(), 
+                    Globals.logger.get());
             error = ircConfigParser.useIrcConfigFile();
 
             TimeZone.setDefault(
-            		Globals.db.get().getIrcServerConfig().getTimeZone());
+                    Globals.db.get().getIrcServerConfig().getTimeZone());
             
             if (!error) {
                 ParameterInitialization.loggerLevelSetup();
@@ -302,21 +303,21 @@ public class Server implements Runnable {
             }
             
             while (!Globals.serverDown.get() && 
-            		!Globals.serverRestart.get() && !error) {
+                    !Globals.serverRestart.get() && !error) {
                 boolean confError = false;
                 if (Globals.serverReconfigure.get()) {
-                	Globals.serverReconfigure.set(false);
+                    Globals.serverReconfigure.set(false);
                     ircConfigParser = new IrcConfigParser(
-                    		Globals.configFilename.get(), 
-                    		Globals.db.get(), 
-                    		Globals.logger.get());
+                            Globals.configFilename.get(), 
+                            Globals.db.get(), 
+                            Globals.logger.get());
                     confError = ircConfigParser.useIrcConfigFile();
                     if (!confError) {
                         TimeZone.setDefault(
-                        		Globals.db.get().getIrcServerConfig(
+                                Globals.db.get().getIrcServerConfig(
                                 ).getTimeZone());
                         transcriptFileProcessor.setIrcTranscriptConfig(
-                        		Globals.ircTranscriptConfig.get());
+                                Globals.ircTranscriptConfig.get());
                         ParameterInitialization.loggerLevelSetup();
                         incomingConnectionListenerStop();
                         error = incomingConnectionListenerStart();
@@ -377,20 +378,20 @@ public class Server implements Runnable {
         boolean error = false;
         transcriptFileProcessor = new TranscriptFileProcessor();
         transcriptFileProcessor.setIrcTranscriptConfig(
-        		Globals.ircTranscriptConfig.get());
+                Globals.ircTranscriptConfig.get());
         transcriptFileProcessor.thread.set(new 
-        		Thread(transcriptFileProcessor));        
+                Thread(transcriptFileProcessor));        
         transcriptFileProcessor.running.set(true);
         transcriptFileProcessor.thread.get().start();
         Globals.logger.get().log(Level.INFO, "TranscriptFileProcessor:" + 
-        		transcriptFileProcessor.thread.get());
+                transcriptFileProcessor.thread.get());
         
         try {
             Thread.sleep(Globals.sleepTO.get());
         } catch (InterruptedException e) {}
         
         error = transcriptFileProcessor.thread.get().getState() == 
-        		Thread.State.NEW
+                Thread.State.NEW
                 || transcriptFileProcessor.thread.get().getState() ==
                 Thread.State.TERMINATED;
                 
@@ -401,7 +402,7 @@ public class Server implements Runnable {
     private void transcriptFileProcessorStop() {
         if (transcriptFileProcessor != null
             && transcriptFileProcessor.thread.get() != null) {
-        	transcriptFileProcessor.down.set(true);
+            transcriptFileProcessor.down.set(true);
             stopProcess(transcriptFileProcessor.thread.get());
         }
     }
@@ -425,7 +426,7 @@ public class Server implements Runnable {
         } catch (InterruptedException e) {}
         
         error = ircTalkerProcessor.thread.get().getState() == 
-        		Thread.State.NEW
+                Thread.State.NEW
                 || ircTalkerProcessor.thread.get().getState() ==
                 Thread.State.TERMINATED;
                 
@@ -452,7 +453,7 @@ public class Server implements Runnable {
         boolean error = false;
         networkConnectionProcessor = new NetworkConnectionProcessor();
         networkConnectionProcessor.thread.set(new 
-        		Thread(networkConnectionProcessor));        
+                Thread(networkConnectionProcessor));        
         networkConnectionProcessor.running.set(true);
         networkConnectionProcessor.thread.get().start();
         Globals.logger.get().log(Level.INFO, "NetworkConnectionProcessor:" + 
@@ -538,7 +539,7 @@ public class Server implements Runnable {
         } catch (InterruptedException e) {}
         
         error = inputQueueProcessor.thread.get().getState() == 
-        		Thread.State.NEW
+                Thread.State.NEW
                 || inputQueueProcessor.thread.get().getState() ==
                 Thread.State.TERMINATED;
                 
@@ -574,7 +575,7 @@ public class Server implements Runnable {
         } catch (InterruptedException e) {}
         
         error = inputStreamProcessor.thread.get().getState() == 
-        		Thread.State.NEW
+                Thread.State.NEW
                 || inputStreamProcessor.thread.get().getState() ==
                 Thread.State.TERMINATED;
                 
@@ -601,17 +602,17 @@ public class Server implements Runnable {
     private boolean incomingConnectionListenerStart() {
         boolean error = false;
         int serverPortNumber = 
-        		Globals.db.get().getIrcInterfaceConfig().getPort();
+                Globals.db.get().getIrcInterfaceConfig().getPort();
         Charset listenerCharset = 
-        		Globals.db.get().getIrcInterfaceConfig().getCharset();
+                Globals.db.get().getIrcInterfaceConfig().getCharset();
         InetAddress inetAddress = 
-        		Globals.db.get().getIrcInterfaceConfig().getInetAddress(); 
+                Globals.db.get().getIrcInterfaceConfig().getInetAddress(); 
         incomingConnectionListener = new IncomingConnectionListener();
         incomingConnectionListener.setInetAddress(inetAddress);
         incomingConnectionListener.setServerPortNumber(serverPortNumber);
         incomingConnectionListener.listenerCharset.set(listenerCharset);
         incomingConnectionListener.thread.set(new 
-        		Thread(incomingConnectionListener));        
+                Thread(incomingConnectionListener));        
         incomingConnectionListener.running.set(true);
         incomingConnectionListener.thread.get().start();
         Globals.logger.get().log(Level.INFO, "IncomingConnectionListener:" + 

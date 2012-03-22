@@ -59,18 +59,18 @@ public class NetworkConnection extends Connection implements Runnable {
      * @return новый объект класса IrcServer.
      */
     public static NetworkConnection create(Socket socket) {
-    	NetworkConnection result = null;
-    	long freeMemory = Runtime.getRuntime().freeMemory();
-    	if (freeMemory < Constants.MIN_FREE_MEMORY) {
-    		System.gc();
-    	}
-    	freeMemory = Runtime.getRuntime().freeMemory();
-    	if (freeMemory >= Constants.MIN_FREE_MEMORY) {
-    		result = new NetworkConnection(socket);
-    	} else {
-    		Globals.logger.get().log(Level.SEVERE, 
-    				"Insufficient free memory (b): " + freeMemory);
-    	}
+        NetworkConnection result = null;
+        long freeMemory = Runtime.getRuntime().freeMemory();
+        if (freeMemory < Constants.MIN_FREE_MEMORY) {
+            System.gc();
+        }
+        freeMemory = Runtime.getRuntime().freeMemory();
+        if (freeMemory >= Constants.MIN_FREE_MEMORY) {
+            result = new NetworkConnection(socket);
+        } else {
+            Globals.logger.get().log(Level.SEVERE, 
+                    "Insufficient free memory (b): " + freeMemory);
+        }
         return result;
     }
     
@@ -91,7 +91,7 @@ public class NetworkConnection extends Connection implements Runnable {
      */
     public String toString() {
         return String.format("Connection-%09d: %s", getId(), 
-        		socket.toString());
+                socket.toString());
     }
 
     /** Завершающие действия при разрыве связи. Закрытие сокета. */
@@ -106,9 +106,9 @@ public class NetworkConnection extends Connection implements Runnable {
             Globals.logger.get().log(Level.FINEST, "NetworkConnection:" +
                     NetworkConnection.this + " socket closed");
         } catch (IOException e) {
-        	Globals.logger.get().log(Level.INFO, "NetworkConnection:" +
+            Globals.logger.get().log(Level.INFO, "NetworkConnection:" +
                     NetworkConnection.this + " socket closing error:" + 
-            		" " + e);
+                    " " + e);
         }
     }
 
@@ -120,16 +120,16 @@ public class NetworkConnection extends Connection implements Runnable {
     public void run() {
         
         ircTalker.get().setHostname(
-        		socket.getInetAddress().getHostAddress());
+                socket.getInetAddress().getHostAddress());
 
         Thread bufferedReaderThread = new Thread(new Runnable() {
                     public void run() {
                         if (getConnectionState() == ConnectionState.NEW) {
                             try {
-                            	InputStream is = 
-                            			getSocket().getInputStream();
+                                InputStream is = 
+                                        getSocket().getInputStream();
                                 br.set(new BufferedReader(
-                                		new InputStreamReader(is, 
+                                        new InputStreamReader(is, 
                                         charset.get())));
                                 isBufferedReaderOK.set(true);
                             } catch (IOException e) {}
@@ -142,15 +142,15 @@ public class NetworkConnection extends Connection implements Runnable {
                     public void run() {
                         if (getConnectionState() == ConnectionState.NEW) {
                             try {
-                            	OutputStream os = 
-                            			getSocket().getOutputStream();
+                                OutputStream os = 
+                                        getSocket().getOutputStream();
                                 bw.set(new BufferedWriter(
-                                		new OutputStreamWriter(os, 
+                                        new OutputStreamWriter(os, 
                                         charset.get())));
                                 synchronized (bw.get()) {
                                     bw.get().write(":" +
                                             Globals.thisIrcServer.get(
-                                            		).getHostname() +
+                                                    ).getHostname() +
                                             " " + "020" + " " + "*" + 
                                             " " + ":Please wait while " +
                                             "we process your connection.");
@@ -169,13 +169,13 @@ public class NetworkConnection extends Connection implements Runnable {
                     public void run() {
                         
                         String hostname = socket.getInetAddress(
-                        		).getCanonicalHostName();
+                                ).getCanonicalHostName();
                         if (hostname != null && hostname.length() <= 
-                        		Constants.MAX_HOSTNAME_LENGTH) {
+                                Constants.MAX_HOSTNAME_LENGTH) {
                              ircTalker.get().setHostname(hostname);
                         }
                         Globals.logger.get().log(Level.FINEST,
-                        		"NetworkConnection:" +
+                                "NetworkConnection:" +
                                 NetworkConnection.this +
                                 " Host:" + ircTalker.get().getHostname());
 
@@ -212,7 +212,7 @@ public class NetworkConnection extends Connection implements Runnable {
             setConnectionState(ConnectionState.BROKEN);
             Globals.logger.get().log(Level.INFO, "NetworkConnection:" +
                     NetworkConnection.this + " Socket streams opening" + 
-            		" " + e);
+                    " " + e);
         }
     }
 }

@@ -107,7 +107,7 @@ public class UsersIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport errUsersDisabled(IrcTalker ircTalker) {
         String remark = Response.makeText(
-        		Response.Reply.ERR_USERSDISABLED,
+                Response.Reply.ERR_USERSDISABLED,
                 ircTalker.getNickname());
         return new IrcCommandReport(remark, ircTalker,
                 Globals.thisIrcServer.get());

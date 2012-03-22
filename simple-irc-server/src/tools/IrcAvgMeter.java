@@ -85,8 +85,8 @@ import java.util.concurrent.atomic.*;
  * @author  Nikolay Kirdin
  */
 public class IrcAvgMeter {
-	
-	/**
+    
+    /**
      * Минимально необходимое количество измерений для вычисления
      * среднего значения.
      */
@@ -128,12 +128,12 @@ public class IrcAvgMeter {
       * меньше {@link #MIN_SIZE}.
       */
     public IrcAvgMeter(int size) throws IllegalArgumentException {
-    	  if (size < MIN_SIZE) {
-    		   throw new IllegalArgumentException(
-    				   "IrcAvgMeter. size out of range: " + size);
-    	   }
-    	   this.size = size;
-    	   lapValue = new long[size];
+          if (size < MIN_SIZE) {
+               throw new IllegalArgumentException(
+                       "IrcAvgMeter. size out of range: " + size);
+           }
+           this.size = size;
+           lapValue = new long[size];
        }
     /**
      * Инициализация объекта.
@@ -142,7 +142,7 @@ public class IrcAvgMeter {
      * значение false.
      */
     public void reset() {
-  	   index = 0;
+         index = 0;
        complete = false;
        Arrays.fill(lapValue, 0L);
     }
@@ -151,8 +151,8 @@ public class IrcAvgMeter {
      * @param value - значение.
      */
     public void setValue(long value) {
-    	if (!complete && index == lapValue.length - 1) {
-    		complete = true;
+        if (!complete && index == lapValue.length - 1) {
+            complete = true;
          }
          lapValue[index] = value;
          index = (index + 1) % lapValue.length;
@@ -197,9 +197,9 @@ public class IrcAvgMeter {
              result += lapValue[i];
          }
          if (number != 0) {
-        	 result = result / number;
+             result = result / number;
          } else {
-        	 result = 0;
+             result = 0;
          }
          return  result;
      }
@@ -229,9 +229,9 @@ public class IrcAvgMeter {
              result += (lapValue[ptrLap] - lapValue[ptrLapPrev]);
          }
          if (number == 0) {
-        	 result = 0;
+             result = 0;
          } else {
-        	 result = result / (number - 1);
+             result = result / (number - 1);
          }
          return  result;
      }
@@ -265,11 +265,11 @@ public class IrcAvgMeter {
              result += (lapValue[ptrLap] - lapValue[ptrLapPrev]);
          }
          if (number == 0) {
-        	 result = 0;
+             result = 0;
          } else {
-        	 result = (result + (value - 
-        			 lapValue[(base + number -1) % 
-        	         lapValue.length] )) / number;
+             result = (result + (value - 
+                     lapValue[(base + number -1) % 
+                     lapValue.length] )) / number;
          }
          return  result;
      }
@@ -309,9 +309,9 @@ public class IrcAvgMeter {
      public long getCounter() {
          long result = 0;
          if (complete) {
-        	 result = size;
+             result = size;
          } else {
-        	 result = (index < 1) ? 0 : index - 1;
+             result = (index < 1) ? 0 : index - 1;
          }
          return  result;
      }

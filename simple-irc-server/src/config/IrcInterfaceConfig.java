@@ -88,20 +88,20 @@ public class IrcInterfaceConfig {
         this.port = port;
     }
     
-	/**
-	 * Получение кодировки.
-	 * @return кодировка.
-	 */
-	public Charset getCharset() {
-		return charset;
-	}
+    /**
+     * Получение кодировки.
+     * @return кодировка.
+     */
+    public Charset getCharset() {
+        return charset;
+    }
 
-	/**
-	 * Задание кодировки.
-	 * @param charset кодировка.
-	 */
-	public void setCharset(Charset charset)	{
-		this.charset = charset;
-	}
+    /**
+     * Задание кодировки.
+     * @param charset кодировка.
+     */
+    public void setCharset(Charset charset)    {
+        this.charset = charset;
+    }
     
 }

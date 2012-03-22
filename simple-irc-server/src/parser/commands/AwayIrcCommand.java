@@ -123,7 +123,7 @@ public class AwayIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplAnAway(IrcTalker ircTalker) {
         String remark = Response.makeText(Response.Reply.RPL_UNAWAY, 
-        		client.getNickname());
+                client.getNickname());
         return new IrcCommandReport(remark, ircTalker, 
                 Globals.thisIrcServer.get());
     }

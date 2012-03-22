@@ -81,15 +81,15 @@ public class Connection implements Runnable, Comparable {
     
     /** ReadWrite Lock для ConnectionState*/
     private final ReentrantReadWriteLock connectionStateRWLock = 
-    		new ReentrantReadWriteLock();
+            new ReentrantReadWriteLock();
     
     /** ReadLock для connectionState. */
     private final Lock connectionStateRLock = 
-    		connectionStateRWLock.readLock();
+            connectionStateRWLock.readLock();
     
     /** WriteLock для connectionState. */
     private final Lock connectionStateWLock = 
-    		connectionStateRWLock.writeLock();
+            connectionStateRWLock.writeLock();
 
     /** 
      * Управление исполнением процессов, связанных с этим соединением.  
@@ -106,7 +106,7 @@ public class Connection implements Runnable, Comparable {
     public AtomicLong readCountDelta = new AtomicLong();
     
     /** 
-     * Средний период между операциями чтения . 
+     * Средний период между операциями чтения. 
      */    
     public AtomicLong avgInputPeriod = new AtomicLong();
     
@@ -119,7 +119,7 @@ public class Connection implements Runnable, Comparable {
      */
     public AtomicLong writeCountDelta = new AtomicLong();
     
-    /** Максимально допустимая сокорость вывода сообщений. */
+    /** Максимально допустимая скорость вывода сообщений. */
     public AtomicInteger maxOutputRate = new AtomicInteger(10);
     
     /** Средняя скорость вывода сообщений. */
@@ -129,7 +129,7 @@ public class Connection implements Runnable, Comparable {
      * для соединения  ({@link Connection}).
      */       
     public AtomicLong minAvgInputPeriod = 
-    		new AtomicLong(Globals.minAvgReadPeriod.get());
+            new AtomicLong(Globals.minAvgReadPeriod.get());
     
     /** Средняя скорость ввода сообщений. */
     public IrcAvgMeter avgInputPeriodMeter = new IrcAvgMeter(300);
@@ -199,7 +199,7 @@ public class Connection implements Runnable, Comparable {
         avgInputPeriodMeter.setValue(currentTime - 10000);
         inputQueue = new AtomicReference<IrcIncomingMessage>();
         outputQueue = new ArrayBlockingQueue<IrcCommandReport>(
-        		maxOutputQueueSize);
+                maxOutputQueueSize);
     }
 
     /**
@@ -210,18 +210,18 @@ public class Connection implements Runnable, Comparable {
      * @return новый объект класса IrcServer.
      */
     public static Connection create() {
-    	Connection result = null;
-    	long freeMemory = Runtime.getRuntime().freeMemory();
-    	if (freeMemory < Constants.MIN_FREE_MEMORY) {
-    		System.gc();
-    	}
-    	freeMemory = Runtime.getRuntime().freeMemory();
-    	if (freeMemory >= Constants.MIN_FREE_MEMORY) {
-    		result = new Connection();
-    	} else {
-    		Globals.logger.get().log(Level.SEVERE, 
-    				"Insufficient free memory (b): " + freeMemory);
-    	}
+        Connection result = null;
+        long freeMemory = Runtime.getRuntime().freeMemory();
+        if (freeMemory < Constants.MIN_FREE_MEMORY) {
+            System.gc();
+        }
+        freeMemory = Runtime.getRuntime().freeMemory();
+        if (freeMemory >= Constants.MIN_FREE_MEMORY) {
+            result = new Connection();
+        } else {
+            Globals.logger.get().log(Level.SEVERE, 
+                    "Insufficient free memory (b): " + freeMemory);
+        }
         return result;
     }
     
@@ -258,7 +258,7 @@ public class Connection implements Runnable, Comparable {
                 br.get().close();
             }
         } catch (IOException e) {
-        	Globals.logger.get().log(Level.INFO, "Closing:" + br.get() + " " + e);
+            Globals.logger.get().log(Level.INFO, "Closing:" + br.get() + " " + e);
         }
     }
 
@@ -267,12 +267,12 @@ public class Connection implements Runnable, Comparable {
      * @param connectionState
      */
     public void setConnectionState(ConnectionState connectionState) {
-    	connectionStateWLock.lock();
-    	try {
-    		this.connectionState = connectionState;
-    	} finally {
-    		connectionStateWLock.unlock();
-    	}
+        connectionStateWLock.lock();
+        try {
+            this.connectionState = connectionState;
+        } finally {
+            connectionStateWLock.unlock();
+        }
     }
     
     /**
@@ -280,14 +280,14 @@ public class Connection implements Runnable, Comparable {
      * @return connectionState.
      */
     public ConnectionState getConnectionState() {
-    	ConnectionState result = null;
-    	connectionStateRLock.lock();
-    	try {
-    		result = connectionState;
-    	} finally {
-    		connectionStateRLock.unlock();
-    	}
-    	return result;
+        ConnectionState result = null;
+        connectionStateRLock.lock();
+        try {
+            result = connectionState;
+        } finally {
+            connectionStateRLock.unlock();
+        }
+        return result;
     }
     
     /**
@@ -295,21 +295,21 @@ public class Connection implements Runnable, Comparable {
      * {@link ConnectionState#CLOSE}.  
      */
     public void close() {
-    	connectionStateWLock.lock();
-    	try {
-    		if (getConnectionState() != ConnectionState.CLOSE &&
-    				getConnectionState() != ConnectionState.CLOSING &&
-    				getConnectionState() !=	ConnectionState.CLOSED &&
-    				getConnectionState() !=	ConnectionState.BROKEN) {
+        connectionStateWLock.lock();
+        try {
+            if (getConnectionState() != ConnectionState.CLOSE &&
+                    getConnectionState() != ConnectionState.CLOSING &&
+                    getConnectionState() !=    ConnectionState.CLOSED &&
+                    getConnectionState() !=    ConnectionState.BROKEN) {
                 setConnectionState(ConnectionState.CLOSE);
                 connectionStateTime.set(System.currentTimeMillis());
                 Globals.logger.get().log(Level.FINER, "connection:" + 
-                		Connection.this + " ircTalker:" + ircTalker.get() 
+                        Connection.this + " ircTalker:" + ircTalker.get() 
                         + " connection set CLOSE");
-    		}    		
-    	} finally {
-    		connectionStateWLock.unlock();
-    	}
+            }            
+        } finally {
+            connectionStateWLock.unlock();
+        }
      }
 
     /**
@@ -317,21 +317,21 @@ public class Connection implements Runnable, Comparable {
      * {@link ConnectionState#BROKEN}.  
      */
     public void setBroken() {
-    	connectionStateWLock.lock();
-    	try {
-    		if (getConnectionState() != ConnectionState.CLOSE &&
-    				getConnectionState() != ConnectionState.CLOSING &&
-    				getConnectionState() != ConnectionState.CLOSED &&
-    				getConnectionState() !=	ConnectionState.BROKEN) {
+        connectionStateWLock.lock();
+        try {
+            if (getConnectionState() != ConnectionState.CLOSE &&
+                    getConnectionState() != ConnectionState.CLOSING &&
+                    getConnectionState() != ConnectionState.CLOSED &&
+                    getConnectionState() !=    ConnectionState.BROKEN) {
                 setConnectionState(ConnectionState.BROKEN);
                 connectionStateTime.set(System.currentTimeMillis());
                 Globals.logger.get().log(Level.FINER, "connection:" + 
-                		Connection.this + " ircTalker:" + ircTalker.get() 
+                        Connection.this + " ircTalker:" + ircTalker.get() 
                         + " connection set BROKEN");
-    		}    		
-    	} finally {
-    		connectionStateWLock.unlock();
-    	}
+            }            
+        } finally {
+            connectionStateWLock.unlock();
+        }
     }
 
     /**
@@ -381,7 +381,7 @@ public class Connection implements Runnable, Comparable {
             Globals.logger.get().log(Level.FINEST, "Buffered Writer closed:" + 
                     bw.get());
         } catch (IOException e) {
-        	Globals.logger.get().log(Level.INFO, "Closing error:" + bw.get() + 
+            Globals.logger.get().log(Level.INFO, "Closing error:" + bw.get() + 
                     " " + e);
         }
 
@@ -391,7 +391,7 @@ public class Connection implements Runnable, Comparable {
             Globals.logger.get().log(Level.FINEST, "Buffered Reader closed:" + 
                     br.get());
         } catch (IOException e) {
-        	Globals.logger.get().log(Level.INFO, "Closing error:" + br.get() + 
+            Globals.logger.get().log(Level.INFO, "Closing error:" + br.get() + 
                     " " + e);
         }
 
@@ -417,7 +417,7 @@ public class Connection implements Runnable, Comparable {
      * false поместить сообщение в очередь не удалось. 
      */
     public boolean offerToInputQueue(
-    		IrcIncomingMessage ircIncomingMessage) {
+            IrcIncomingMessage ircIncomingMessage) {
         return inputQueue.compareAndSet(null, ircIncomingMessage);
     }
     
@@ -428,15 +428,6 @@ public class Connection implements Runnable, Comparable {
         inputQueue.set(null);
     }
 
-    /**
-     * Метод используется для получения доступа к входной очереди 
-     * клиента IRC.
-     * @return  входная очередь клиента IRC.
-     
-    public BlockingQueue<IrcIncomingMessage> getInputQueue() {
-        return inputQueue;
-    }
-	*/
     /**
      * Метод используется для получения количества элементов во входной 
      * очереди.
@@ -470,7 +461,7 @@ public class Connection implements Runnable, Comparable {
     /**
      * Метод используется для получения доступа к выходной очереди 
      * клиента IRC.
-     * @return LinkedList< IrcCommandReport > выходная очередь 
+     * @return BlockingQueue<IrcCommandReport> выходная очередь 
      * клиента IRC.
      */
     public BlockingQueue<IrcCommandReport> getOutputQueue() {
@@ -480,7 +471,7 @@ public class Connection implements Runnable, Comparable {
     /**
      * Метод используется для получения количества элементов в выходной 
      * очереди.
-     * @return LinkedList<IrcCommandReport> - выходная очередь 
+     * @return BlockingQueue<IrcCommandReport> - выходная очередь 
      * клиента IRC.
      */
     public int getOutputQueueSize() {

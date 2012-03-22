@@ -31,7 +31,7 @@ import javax.xml.stream.*;
  * Класс, который служит для чтения и извлечения параметров конфигурации
  * из конфигурационного файла.
  *
- * <p>Для файла конфигурации используется следующая DTD.						
+ * <p>Для файла конфигурации используется следующая DTD.                        
  * <pre>
  * 
  *   &lt;?xml version="1.0" encoding="UTF-8"?&gt;
@@ -78,9 +78,9 @@ import javax.xml.stream.*;
  * чтобы в файле конфигурации был полностью определен элемент "ADMIN".
  * <p> Ниже приведены описания элементов и атрибутов: 
  * <ol>
- * 		<li> Все атрибуты должны быть строками в кодировке US-ASCII.</li>
- *    	<li> Атрибуты элемента "ADMIN":
- *		<ul>
+ *         <li> Все атрибуты должны быть строками в кодировке US-ASCII.</li>
+ *        <li> Атрибуты элемента "ADMIN":
+ *        <ul>
  *          <li>"name", с помощью этого атрибута указываются имя и 
  *          фамилия администратора сервера;</li>
  *          <li>"location", с помощью этого атрибута указывается адрес 
@@ -96,81 +96,81 @@ import javax.xml.stream.*;
  *      Значения атрибутов этого элемента можно получить выполнив 
  *      команду IRC ADMIN. </li>
  *      <li> Атрибуты элемента "SERVER":
- *      	<ul>
- *          	<li>"debuglevel", с помощью этого атрибута  
- *          	указывается уровень журналируемых сообщений. Эти уровни 
- *          	определены в классе {@link java.util.logging.Level}.
- *          	Допустимо использовать следующие уровни:
- *          	<ul>
- *              	<li> SEVERE (высший уровень);</li>
- *              	<li> WARNING;</li>
- *              	<li> INFO;</li>
- *              	<li> CONFIG;</li>
- *              	<li> FINE;</li>
- *              	<li> FINER;</li>
- *              	<li> FINEST (низший уровень);</li>
- *              	<li> OFF - отключение журналирования;</li>
- *              	<li> ALL - регистрация всех сообщений;</li>
- *          	</ul>
- *          	с уменьшением уровня увеличивается количество и 
- *          	разнообразие журналируемых сообщений. По умолчанию, 
- *          	используется значение,хранящееся в переменной 
- *          	{@link Globals#fileLogLevel};</li>
- *          	<li>"timezone", с помощью этого атрибута задается 
- *          	часовой пояс сервера. Допустимые значения определены в 
- *          	классе {@link java.util.TimeZone}. По умолчанию 
- *          	используется значение "GMT".</li> 
+ *          <ul>
+ *              <li>"debuglevel", с помощью этого атрибута  
+ *              указывается уровень журналируемых сообщений. Эти уровни 
+ *              определены в классе {@link java.util.logging.Level}.
+ *              Допустимо использовать следующие уровни:
+ *              <ul>
+ *                  <li> SEVERE (высший уровень);</li>
+ *                  <li> WARNING;</li>
+ *                  <li> INFO;</li>
+ *                  <li> CONFIG;</li>
+ *                  <li> FINE;</li>
+ *                  <li> FINER;</li>
+ *                  <li> FINEST (низший уровень);</li>
+ *                  <li> OFF - отключение журналирования;</li>
+ *                  <li> ALL - регистрация всех сообщений;</li>
+ *              </ul>
+ *              с уменьшением уровня увеличивается количество и 
+ *              разнообразие журналируемых сообщений. По умолчанию, 
+ *              используется значение,хранящееся в переменной 
+ *              {@link Globals#fileLogLevel};</li>
+ *              <li>"timezone", с помощью этого атрибута задается 
+ *              часовой пояс сервера. Допустимые значения определены в 
+ *              классе {@link java.util.TimeZone}. По умолчанию 
+ *              используется значение "GMT".</li> 
  *          </ul>
  *      <li> Атрибуты элемента "INTERFACE":
- *      	<ul> 
- *          	<li>"iface", с помощью этого атрибута, в нотации IPv4, 
- *          	задается IP-адрес интерфейса, который будет использован 
- *          	для входящих сетевых подключения. В случае указания 
- *          	пустой строки, сервер будет использовать все доступные 
- *          	сетевые интерфейсы. По умолчанию значение атрибута равно 
- *          	пустой строке; </li>
- *         	<li>"port", с помощью этого атрибута задается номер порта 
- *         	интерфейса, который будет использован для входящих сетевых 
- *         	подключений. Атрибут должен быть целым десятичным числом 
- *          	в диапазоне {@link Constants#MIN_PORT_NUMBER} - 
- *          	{@link Constants#MAX_PORT_NUMBER}. По умолчанию в 
- *          	качестве номера порта используется величина, хранящаяся 
- *          	в {@link Globals#serverPortNumber};</li> 
- *          	<li> "charset", с помощью этого атрибута задается 
- *          	кодировка входящих сообщений. Значения этого атрибута 
- *          	определяется в классе {@link java.nio.charset.Charset}. 
- *          	Допустимо использовать следующие кодировки:
- *          	<ul>
- *              	<li> US-ASCII;</li>
- *              	<li> ISO-8859-1;</li>
- *              	<li> UTF-8;</li>
- *              	<li> UTF-16BE;</li>
- *              	<li> UTF-16LE;</li>
- *              	<li> UTF-16.</li>
- *          	</ul> 
- *          	по умолчанию в качестве кодировки интерфейса 
- *          	используется кодировка {@link Globals#listenerCharset}.
- *          	</li>
+ *          <ul> 
+ *              <li>"iface", с помощью этого атрибута, в нотации IPv4, 
+ *              задается IP-адрес интерфейса, который будет использован 
+ *              для входящих сетевых подключения. В случае указания 
+ *              пустой строки, сервер будет использовать все доступные 
+ *              сетевые интерфейсы. По умолчанию значение атрибута равно 
+ *              пустой строке; </li>
+ *             <li>"port", с помощью этого атрибута задается номер порта 
+ *             интерфейса, который будет использован для входящих сетевых 
+ *             подключений. Атрибут должен быть целым десятичным числом 
+ *              в диапазоне {@link Constants#MIN_PORT_NUMBER} - 
+ *              {@link Constants#MAX_PORT_NUMBER}. По умолчанию в 
+ *              качестве номера порта используется величина, хранящаяся 
+ *              в {@link Globals#serverPortNumber};</li> 
+ *              <li> "charset", с помощью этого атрибута задается 
+ *              кодировка входящих сообщений. Значения этого атрибута 
+ *              определяется в классе {@link java.nio.charset.Charset}. 
+ *              Допустимо использовать следующие кодировки:
+ *              <ul>
+ *                  <li> US-ASCII;</li>
+ *                  <li> ISO-8859-1;</li>
+ *                  <li> UTF-8;</li>
+ *                  <li> UTF-16BE;</li>
+ *                  <li> UTF-16LE;</li>
+ *                  <li> UTF-16.</li>
+ *              </ul> 
+ *              по умолчанию в качестве кодировки интерфейса 
+ *              используется кодировка {@link Globals#listenerCharset}.
+ *              </li>
  *          </ul>
  *      <li>Атрибуты элемента "TRANSCRIPT":
- *      	<ul>
- *          	<li>"transcript", с помощью этого атрибута указывается 
- *          	путь к файлу с протоколом клиентских сообщений. По 
- *          	умолчанию будет использован файл "IrcTranscript.txt" в 
- *          	текущем каталоге;</li>
- *          	<li>"rotate", с помощью этого атрибута указывается 
- *          	количество сохраняемых экземпляров файлов-протоколов 
- *          	клиентских сообщений. По умолчанию это количество равно 
- *          	5;</li> 
- *          	<li>"length", с помощью этого атрибута указывается 
- *          	максимальная длина в байтах файлов-протоколов клиентских 
- *          	сообщений. К числу может быть добавлен суффикс - 
- *          	одна из латинских букв "K" или "M", для задания 
- *          	множителей 1024 и 1048576 соответственно. По умолчанию
- *          	эта	длина ограничена 100K байт.</li>
+ *          <ul>
+ *              <li>"transcript", с помощью этого атрибута указывается 
+ *              путь к файлу с протоколом клиентских сообщений. По 
+ *              умолчанию будет использован файл "IrcTranscript.txt" в 
+ *              текущем каталоге;</li>
+ *              <li>"rotate", с помощью этого атрибута указывается 
+ *              количество сохраняемых экземпляров файлов-протоколов 
+ *              клиентских сообщений. По умолчанию это количество равно 
+ *              5;</li> 
+ *              <li>"length", с помощью этого атрибута указывается 
+ *              максимальная длина в байтах файлов-протоколов клиентских 
+ *              сообщений. К числу может быть добавлен суффикс - 
+ *              одна из латинских букв "K" или "M", для задания 
+ *              множителей 1024 и 1048576 соответственно. По умолчанию
+ *              эта    длина ограничена 100K байт.</li>
  *          </ul>
  *         </li>
- * 		<li>Атрибуты элемента "OPERATOR": "username" и "password". 
+ *         <li>Атрибуты элемента "OPERATOR": "username" и "password". 
  *      Значениеми этих атрибутов должны быть значения, которые будут 
  *      использоваться как параметры &lt;username&gt; и &lt;password&gt; 
  *      команды IRC "OPER". Максимальное количество этих элементов 
@@ -203,31 +203,31 @@ import javax.xml.stream.*;
  * &lt;?xml version="1.0" encoding="UTF-8"?&gt;
  * &lt;!-- File Name: IrcServerConfig.xml --&gt;
  * &lt;CONFIG&gt;
- * 		&lt;ADMIN name="Adminname Adminsurename" 
- * 			location="25, Serverstreet, Servercity, Servercountry" 
- * 			location2="Organizationname, 25, Organizationstreet, Organizationcity, Organizationcountry"  
- * 			email="ircAdmin@dom.ain" 
- * 			info="Experimental IRC server."&gt;
- * 		&lt;/ADMIN&gt;
- * 		&lt;SERVER 
- * 			timezone="GMT+0400" 
- * 			debuglevel="WARNING"&gt;
- * 		&lt;/SERVER&gt;
- * 		&lt;INTERFACE  
- * 			port="6667" 
- * 			charset="UTF-8"&gt;
- * 		&lt;/INTERFACE&gt;
- * 		&lt;TRANSCRIPT 
- * 			transcript="IrcServerTranscript.txt" 
- * 			length="1M" 
- * 			rotate="10"&gt;
- * 			&lt;/TRANSCRIPT&gt;
- * 		&lt;OPERATOR 
- * 			username="operatorname1" password="operatorpassword1"&gt;
- * 		&lt;/OPERATOR&gt;
- * 		&lt;OPERATOR 
- * 			username="operatorname2" password="operatorpassword2"&gt;
- * 		&lt;/OPERATOR&gt;
+ *         &lt;ADMIN name="Adminname Adminsurname" 
+ *             location="25, Serverstreet, Servercity, Servercountry" 
+ *             location2="Organizationname, 25, Organizationstreet, Organizationcity, Organizationcountry"  
+ *             email="ircAdmin@dom.ain" 
+ *             info="Experimental IRC server."&gt;
+ *         &lt;/ADMIN&gt;
+ *         &lt;SERVER 
+ *             timezone="GMT+0400" 
+ *             debuglevel="WARNING"&gt;
+ *         &lt;/SERVER&gt;
+ *         &lt;INTERFACE  
+ *             port="6667" 
+ *             charset="UTF-8"&gt;
+ *         &lt;/INTERFACE&gt;
+ *         &lt;TRANSCRIPT 
+ *             transcript="IrcServerTranscript.txt" 
+ *             length="1M" 
+ *             rotate="10"&gt;
+ *             &lt;/TRANSCRIPT&gt;
+ *         &lt;OPERATOR 
+ *             username="operatorname1" password="operatorpassword1"&gt;
+ *         &lt;/OPERATOR&gt;
+ *         &lt;OPERATOR 
+ *             username="operatorname2" password="operatorpassword2"&gt;
+ *         &lt;/OPERATOR&gt;
  * &lt;/CONFIG&gt;
  * </pre>
  *
@@ -322,7 +322,7 @@ public class IrcConfigParser {
     public boolean useIrcConfigFile() {
 
         logger.log(Level.WARNING, "Reading config File:" + 
-        		configFilename);
+                configFilename);
 
         try {
 
@@ -385,39 +385,39 @@ public class IrcConfigParser {
                 }
             }
             if (!error) {
-            	logger.log(Level.WARNING, "Configuration parameters " +
-            			"for admin. Name: " + ircAdminConfig.getName() 
-            			+","
-            			+ " Location: " + ircAdminConfig.getLocation()
-            			+","
-            			+ " Location2: " + ircAdminConfig.getLocation2()
-            			+","
-            			+ " Email: " + ircAdminConfig.getEmail() + ","
-            			+ " Info: " + ircAdminConfig.getInfo());
+                logger.log(Level.WARNING, "Configuration parameters " +
+                        "for admin. Name: " + ircAdminConfig.getName() 
+                        +","
+                        + " Location: " + ircAdminConfig.getLocation()
+                        +","
+                        + " Location2: " + ircAdminConfig.getLocation2()
+                        +","
+                        + " Email: " + ircAdminConfig.getEmail() + ","
+                        + " Info: " + ircAdminConfig.getInfo());
 
-            	logger.log(Level.WARNING, "Configuration parameters " +
-            			"for server." + " TimeZone: " + 
-            			ircServerConfig.getTimeZone().getID() +","
-            			+ " DebugLevel: " + 
-            			ircServerConfig.getDebugLevel());
+                logger.log(Level.WARNING, "Configuration parameters " +
+                        "for server." + " TimeZone: " + 
+                        ircServerConfig.getTimeZone().getID() +","
+                        + " DebugLevel: " + 
+                        ircServerConfig.getDebugLevel());
 
-            	logger.log(Level.WARNING, "Configuration parameters " +
-            			"for interface."
-            			+ " IP: " + ircInterfaceConfig.getInetAddress()
-            			+ ","
-            			+ " Port: " + ircInterfaceConfig.getPort() + ","
-            			+ " Charset: " + ircInterfaceConfig.getCharset());
+                logger.log(Level.WARNING, "Configuration parameters " +
+                        "for interface."
+                        + " IP: " + ircInterfaceConfig.getInetAddress()
+                        + ","
+                        + " Port: " + ircInterfaceConfig.getPort() + ","
+                        + " Charset: " + ircInterfaceConfig.getCharset());
 
-            	logger.log(Level.WARNING, "Configuration parameters " +
-            			"for users transcript. Filename: " + 
-            			ircTranscriptConfig.getTranscript() +","
-            			+ " Rotate: " + 
-            			ircTranscriptConfig.getRotate()
-            			+ " Length: " + 
-            			ircTranscriptConfig.getLength());
+                logger.log(Level.WARNING, "Configuration parameters " +
+                        "for users transcript. Filename: " + 
+                        ircTranscriptConfig.getTranscript() +","
+                        + " Rotate: " + 
+                        ircTranscriptConfig.getRotate()
+                        + " Length: " + 
+                        ircTranscriptConfig.getLength());
             } else {
-            	logger.log(Level.SEVERE, "Error in config File:" + 
-            			configFilename);
+                logger.log(Level.SEVERE, "Error in config File:" + 
+                        configFilename);
             }
 
         } catch (IOException e) {
@@ -461,14 +461,14 @@ public class IrcConfigParser {
      * качестве аргумента.  
      */
     private boolean isStartElement(String elementName) {
-    	boolean result = (event == XMLStreamConstants.START_ELEMENT)
+        boolean result = (event == XMLStreamConstants.START_ELEMENT)
                 && (xsr.getLocalName().equals(elementName));
         return result;
     }
 
     /** Определение начала XML-документа. */
     private void startIrcConfigFile() throws XMLStreamException, 
-    		IOException {
+            IOException {
 
         boolean locError = false;
         boolean done = false;
@@ -511,7 +511,7 @@ public class IrcConfigParser {
                 locError = true;
                 done = true;
                 errorDescription = " Line: " + line + " Column: " + 
-                		column + " Unexpected XML event: " + event;
+                        column + " Unexpected XML event: " + event;
                 break;
 
             }
@@ -528,7 +528,7 @@ public class IrcConfigParser {
 
     /** Определение начала элемента "CONFIG".*/
     private void startConfigElement() throws XMLStreamException, 
-    		IOException {
+            IOException {
 
         boolean locError = false;
         boolean done = false;
@@ -565,7 +565,7 @@ public class IrcConfigParser {
                 locError = true;
                 done = true;
                 errorDescription = " Line: " + line + " Column: " + 
-                		column + " Unexpected XML event: " + event;
+                        column + " Unexpected XML event: " + event;
                 break;
             }
         }
@@ -581,7 +581,7 @@ public class IrcConfigParser {
 
     /** Разбор и получение данных из элемента "ADMIN". */
     private void readAdminElement() throws XMLStreamException, 
-    		IOException {
+            IOException {
 
         boolean locError = false;
         boolean done = false;
@@ -701,7 +701,7 @@ public class IrcConfigParser {
 
     /** Разбор и получение данных из элемента "SERVER". */
     private void readServerElement() throws XMLStreamException, 
-    		IOException {
+            IOException {
 
         boolean locError = false;
         boolean done = false;
@@ -745,23 +745,23 @@ public class IrcConfigParser {
                 if (timezoneAttString != null) {
                     try {
                         timezoneAtt = IrcCommandBase.check(
-                        		timezoneAttString, 
-                        		IrcParamRegex.wordRegex);
+                                timezoneAttString, 
+                                IrcParamRegex.wordRegex);
                         timeZone = TimeZone.getTimeZone(timezoneAtt);
                         
                     } catch (IrcSyntaxException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s). " + e;
+                                " Column: " + column + 
+                                " Syntax error near attribute(s). " + e;
                     }
                     catch (IndexOutOfBoundsException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Need more attribute(s).";
+                                " Column: " + column + 
+                                " Need more attribute(s).";
                     }
                 } 
 
@@ -776,23 +776,23 @@ public class IrcConfigParser {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s). " 
+                                " Column: " + column + 
+                                " Syntax error near attribute(s). " 
                                 + e;
                     }
                     catch (IndexOutOfBoundsException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Need more attribute(s).";
+                                " Column: " + column + 
+                                " Need more attribute(s).";
                     }
                     catch (IllegalArgumentException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s).";
+                                " Column: " + column + 
+                                " Syntax error near attribute(s).";
                     }                    
                 } 
                 
@@ -823,7 +823,7 @@ public class IrcConfigParser {
                 locError = true;
                 done = true;
                 errorDescription = " Line: " + line + " Column: " + 
-                		column + " Unexpected XML event: " + event;
+                        column + " Unexpected XML event: " + event;
                 break;
             }
         }
@@ -839,7 +839,7 @@ public class IrcConfigParser {
     
     /** Разбор и получение данных из элемента "INTERFACE". */
     private void readInterfaceElement() throws XMLStreamException, 
-    		IOException {
+            IOException {
 
         boolean locError = false;
         boolean done = false;
@@ -908,16 +908,16 @@ public class IrcConfigParser {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s). " 
+                                " Column: " + column + 
+                                " Syntax error near attribute(s). " 
                                 + e;
                     }
                     catch (IndexOutOfBoundsException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Need more attribute(s).";
+                                " Column: " + column + 
+                                " Need more attribute(s).";
                     }
                     catch (NumberFormatException e) {
                         locError = true;
@@ -930,31 +930,31 @@ public class IrcConfigParser {
                 if (charsetAttString != null) {
                     try {
                         charsetAtt = IrcCommandBase.check(
-                        		charsetAttString, 
-                        		IrcParamRegex.wordRegex);
+                                charsetAttString, 
+                                IrcParamRegex.wordRegex);
                         charset = Charset.forName(charsetAtt);
                     } catch (IrcSyntaxException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s).";
+                                " Column: " + column + 
+                                " Syntax error near attribute(s).";
                         break;
                     }
                     catch (IndexOutOfBoundsException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Need more attribute(s).";
+                                " Column: " + column + 
+                                " Need more attribute(s).";
                         break;
                     }
                     catch (IllegalCharsetNameException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s). " 
+                                " Column: " + column + 
+                                " Syntax error near attribute(s). " 
                                 + e;
                         break;
                     }
@@ -962,8 +962,8 @@ public class IrcConfigParser {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s). " 
+                                " Column: " + column + 
+                                " Syntax error near attribute(s). " 
                                 + e;
                         
                     }
@@ -971,8 +971,8 @@ public class IrcConfigParser {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s). " 
+                                " Column: " + column + 
+                                " Syntax error near attribute(s). " 
                                 + e;
                         
                     }
@@ -994,12 +994,12 @@ public class IrcConfigParser {
                            ifaceAddress = InetAddress.getByAddress(
                                 Ip4Byte);
                         } else {
-                        	locError = true;
+                            locError = true;
                             done = true;
                             errorDescription = " Line: " + line + 
-                            		" Column: " + column + 
-                            		" Syntax error near attribute(s): "
-                            		+ ifaceAttString;                            
+                                    " Column: " + column + 
+                                    " Syntax error near attribute(s): "
+                                    + ifaceAttString;                            
                         } 
 
                     /*    
@@ -1014,22 +1014,22 @@ public class IrcConfigParser {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s): " + 
+                                " Column: " + column + 
+                                " Syntax error near attribute(s): " + 
                                 ifaceAttString + " " + e;
                     } catch (NumberFormatException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s): " + 
+                                " Column: " + column + 
+                                " Syntax error near attribute(s): " + 
                                 ifaceAttString + " " + e;
                     } catch (UnknownHostException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s): " + 
+                                " Column: " + column + 
+                                " Syntax error near attribute(s): " + 
                                 ifaceAttString + " " + e;
                     }
                 } 
@@ -1064,7 +1064,7 @@ public class IrcConfigParser {
                 locError = true;
                 done = true;
                 errorDescription = " Line: " + line + " Column: " + 
-                		column + " Unexpected XML event: " + event;
+                        column + " Unexpected XML event: " + event;
                 break;
             }
         }
@@ -1080,7 +1080,7 @@ public class IrcConfigParser {
     
     /** Разбор и получение данных из элемента "TRANSCRIPT". */
     private void readTranscriptElement() throws XMLStreamException, 
-    		IOException {
+            IOException {
 
         boolean locError = false;
         boolean done = false;
@@ -1125,35 +1125,35 @@ public class IrcConfigParser {
                 }
 
                 transcriptAttString = xsr.getAttributeValue(null, 
-                		transcriptAttribute);
+                        transcriptAttribute);
                 
                 rotateAttString = xsr.getAttributeValue(null, 
-                		rotateAttribute);
+                        rotateAttribute);
                 
                 lengthAttString = xsr.getAttributeValue(null, 
-                		lengthAttribute);
+                        lengthAttribute);
 
                 if (transcriptAttString != null) {
                     try {
-                    	transcriptAtt = IrcCommandBase.check(
-                    			transcriptAttString, 
-                    			"(" + IrcParamRegex.nospcrlfclRegex + 
-                    			"){1,255}");
+                        transcriptAtt = IrcCommandBase.check(
+                                transcriptAttString, 
+                                "(" + IrcParamRegex.nospcrlfclRegex + 
+                                "){1,255}");
                         
                     } catch (IrcSyntaxException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line +
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s) " 
+                                " Column: " + column + 
+                                " Syntax error near attribute(s) " 
                                 + e;
                     }
                     catch (IndexOutOfBoundsException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Need more attribute(s) " + e;
+                                " Column: " + column + 
+                                " Need more attribute(s) " + e;
                     }
                 } 
 
@@ -1172,50 +1172,50 @@ public class IrcConfigParser {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s) " 
+                                " Column: " + column + 
+                                " Syntax error near attribute(s) " 
                                 + e;
                     }
                     catch (IndexOutOfBoundsException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Need more attribute(s)" + e;
+                                " Column: " + column + 
+                                " Need more attribute(s)" + e;
                     }
                     catch (NumberFormatException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s)" 
-                        		+ e;
+                                " Column: " + column + 
+                                " Syntax error near attribute(s)" 
+                                + e;
                     }
                 } 
 
                 if (lengthAttString != null) {
                     try {
-                    	IrcCommandBase.check(lengthAttString,
-                    			"\\d+(K|M)?");
-                    	int multiplier = 1;
-                    	if (lengthAttString.endsWith("K")) {
-                    		multiplier = 1024;
-                    		lengthAttString = lengthAttString.substring(
-                    				0, lengthAttString.length() - 1);
-                    	} else if (lengthAttString.endsWith("M")) {
-                    		multiplier = 1048576;
-                    		lengthAttString = lengthAttString.substring(
-                    				0, lengthAttString.length() - 1);
-                    	}
-                    	lengthAtt = Integer.parseInt(lengthAttString)
-                    			* multiplier;
-                    	if (lengthAtt < 1) {
+                        IrcCommandBase.check(lengthAttString,
+                                "\\d+(K|M)?");
+                        int multiplier = 1;
+                        if (lengthAttString.endsWith("K")) {
+                            multiplier = 1024;
+                            lengthAttString = lengthAttString.substring(
+                                    0, lengthAttString.length() - 1);
+                        } else if (lengthAttString.endsWith("M")) {
+                            multiplier = 1048576;
+                            lengthAttString = lengthAttString.substring(
+                                    0, lengthAttString.length() - 1);
+                        }
+                        lengthAtt = Integer.parseInt(lengthAttString)
+                                * multiplier;
+                        if (lengthAtt < 1) {
                             throw new IrcSyntaxException(
                                     "transcript length out of bounds:" + 
                                     lengthAtt);
-                    		
-                    	}
-                    	
+                            
+                        }
+                        
                         
                     } catch (IrcSyntaxException e) {
                         locError = true;
@@ -1228,40 +1228,40 @@ public class IrcConfigParser {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Need more attribute(s) " + e;
+                                " Column: " + column + 
+                                " Need more attribute(s) " + e;
                     }
                     catch (NumberFormatException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s) "
-                        		+ e;
+                                " Column: " + column + 
+                                " Syntax error near attribute(s) "
+                                + e;
                     }
                     catch (ArithmeticException e) {
                         locError = true;
                         done = true;
                         errorDescription = " Line: " + line + 
-                        		" Column: " + column + 
-                        		" Syntax error near attribute(s)"
-                        		+ e;
+                                " Column: " + column + 
+                                " Syntax error near attribute(s)"
+                                + e;
                     }
                 } 
                 
                 if (!locError && ! error) {
                     if (transcriptAtt == null) {
-                    	transcriptAtt = Globals.transcriptFileName.get();
+                        transcriptAtt = Globals.transcriptFileName.get();
                     }
                     if (rotateAtt < 1) {
-                    	rotateAtt = Globals.transcriptRotate.get();
+                        rotateAtt = Globals.transcriptRotate.get();
                     }
                     if (lengthAtt < 1024) {
-                    	lengthAtt = Globals.transcriptLength.get();
+                        lengthAtt = Globals.transcriptLength.get();
                     }
-                	
-                	ircTranscriptConfig = 
-                			Globals.ircTranscriptConfig.get();
+                    
+                    ircTranscriptConfig = 
+                            Globals.ircTranscriptConfig.get();
                     synchronized (ircTranscriptConfig) {
                         ircTranscriptConfig.setTranscript(transcriptAtt);
                         ircTranscriptConfig.setRotate(rotateAtt);
@@ -1281,7 +1281,7 @@ public class IrcConfigParser {
                 locError = true;
                 done = true;
                 errorDescription = " Line: " + line + " Column: " + 
-                		column + " Unexpected XML event: " + event;
+                        column + " Unexpected XML event: " + event;
                 break;
             }
         }
@@ -1297,7 +1297,7 @@ public class IrcConfigParser {
 
     /** Разбор и получение данных из элемента "OPERATOR". */
     private void readOperatorElement() throws XMLStreamException, 
-    		IOException {
+            IOException {
 
         boolean locError = false;
         boolean done = false;
@@ -1394,7 +1394,7 @@ public class IrcConfigParser {
                 locError = true;
                 done = true;
                 errorDescription = " Line: " + line + " Column: " + 
-                		column + " Unexpected XML event: " + event;
+                        column + " Unexpected XML event: " + event;
                 break;
             }
         }
@@ -1437,7 +1437,7 @@ public class IrcConfigParser {
                 locError = true;
                 done = true;
                 errorDescription = " Line: " + line + " Column: " + 
-                		column + " Unexpected XML event: " + event;
+                        column + " Unexpected XML event: " + event;
                 break;
             }
         }
@@ -1453,7 +1453,7 @@ public class IrcConfigParser {
 
     /** Определение завершения XML-документа. */
     private void endIrcConfigFile() throws XMLStreamException, 
-    		IOException {
+            IOException {
 
         boolean locError = false;
         boolean done = false;
@@ -1484,7 +1484,7 @@ public class IrcConfigParser {
                 locError = true;
                 done = true;
                 errorDescription = " Line: " + line + " Column: " + 
-                		column + " Unexpected XML event: " + event;
+                        column + " Unexpected XML event: " + event;
                 break;
             }
         }

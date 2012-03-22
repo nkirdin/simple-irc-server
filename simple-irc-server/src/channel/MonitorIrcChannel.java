@@ -51,8 +51,8 @@ public class MonitorIrcChannel extends IrcChannel {
         super(nickname, topic, db);
         modeSet = EnumSet.of(ChannelMode.t, ChannelMode.q);
         if (Globals.anonymousUser.get() != null) {
-        	memberMap.put(Globals.anonymousUser.get(),
-        			EnumSet.of(ChannelMode.o));
+            memberMap.put(Globals.anonymousUser.get(),
+                    EnumSet.of(ChannelMode.o));
         }
     }
     

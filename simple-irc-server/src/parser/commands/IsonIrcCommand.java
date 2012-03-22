@@ -92,7 +92,7 @@ public class IsonIrcCommand extends IrcCommandBase {
             return;
         } 
         if (((User) requestor).getIrcServer() != 
-        		Globals.thisIrcServer.get()) {
+                Globals.thisIrcServer.get()) {
             return;
         } 
          
@@ -128,7 +128,7 @@ public class IsonIrcCommand extends IrcCommandBase {
         for (String userNickname : nicknameList) {
             User user = db.getUser(userNickname);
             if (user != null && user.isRegistered() && 
-            		user.isVisible(client)) {
+                    user.isVisible(client)) {
                 outputString = outputString + user.getNickname() + " ";
             }
         }
@@ -150,7 +150,7 @@ public class IsonIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplIson(IrcTalker ircTalker,
             String outputString) {
         String remark = Response.makeText(Response.Reply.RPL_ISON,  
-        		ircTalker.getNickname(), outputString);
+                ircTalker.getNickname(), outputString);
         return new IrcCommandReport(remark, ircTalker,
                 Globals.thisIrcServer.get());
     }

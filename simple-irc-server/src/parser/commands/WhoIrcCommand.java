@@ -148,7 +148,7 @@ public class WhoIrcCommand extends IrcCommandBase {
             }
         }
         maskPattern = Pattern.compile(
-        		javaMask.toLowerCase(Locale.ENGLISH));
+                javaMask.toLowerCase(Locale.ENGLISH));
         setExecutable(true);
     }
 
@@ -281,7 +281,7 @@ public class WhoIrcCommand extends IrcCommandBase {
             String userNickname, String status, int userHopcount, 
             String userRealname) {
                     String remark = Response.makeText(
-                    		Response.Reply.RPL_WHOREPLY,
+                            Response.Reply.RPL_WHOREPLY,
                             ircTalker.getNickname(),
                             channelNickname,
                             userUsername,

@@ -120,10 +120,10 @@ public class MotdIrcCommand extends IrcCommandBase {
                 client.getNickname());
 
         List<String> stringList = IrcFileFormat.getFormattedText(
-        		Globals.motdFilename.get(),
-        		remark.length(),
-        		Constants.MAX_OUTPUT_LINE_NUMBER,
-        		Constants.MAX_OUTPUT_LINE_CHARS);
+                Globals.motdFilename.get(),
+                remark.length(),
+                Constants.MAX_OUTPUT_LINE_NUMBER,
+                Constants.MAX_OUTPUT_LINE_CHARS);
 
         if (stringList == null) {
             client.send(errNoMotd(client));

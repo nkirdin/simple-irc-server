@@ -60,15 +60,15 @@ public class IrcIncomingMessage {
     }
     
     public String getSource() {
-    	String source = null;
-    	if (sender.getConnection() instanceof NetworkConnection) {
-    		NetworkConnection nc = ((NetworkConnection) 
-    				sender.getConnection());
-    		source = nc.getSocket().getRemoteSocketAddress().toString();
-    	} else {
-    		source = sender.getConnection().toString();
-    	}
-    	return source;
+        String source = null;
+        if (sender.getConnection() instanceof NetworkConnection) {
+            NetworkConnection nc = ((NetworkConnection) 
+                    sender.getConnection());
+            source = nc.getSocket().getRemoteSocketAddress().toString();
+        } else {
+            source = sender.getConnection().toString();
+        }
+        return source;
     }
     
     /** 

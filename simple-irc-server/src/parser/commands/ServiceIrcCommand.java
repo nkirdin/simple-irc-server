@@ -154,7 +154,7 @@ public class ServiceIrcCommand extends IrcCommandBase {
     /** Исполнитель команды. */
     public void run() {
 
-    	Response.Reply responseReply = null;
+        Response.Reply responseReply = null;
         if (!isExecutable()) {
             return;
         }
@@ -184,8 +184,8 @@ public class ServiceIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplYoureService(IrcTalker requestor,
                 String nickname) {
         
-    	String remark = Response.makeText(
-         		Response.Reply.RPL_YOURESERVICE,
+        String remark = Response.makeText(
+                 Response.Reply.RPL_YOURESERVICE,
                 requestor.getNickname(),
                 nickname);
 

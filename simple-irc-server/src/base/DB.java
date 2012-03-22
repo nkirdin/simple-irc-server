@@ -39,42 +39,42 @@ public class DB {
      * обычных клиентах IRC.
      */
     public AtomicInteger maxUserMapSize = 
-    		new AtomicInteger(Constants.MAX_SERVER_CLIENTS);
+            new AtomicInteger(Constants.MAX_SERVER_CLIENTS);
     
     /** 
      * Максимальный размер ассоциативного массива, хранящего данные обо 
      * всех каналах IRC.
      */
     public AtomicInteger maxChannelMapSize = 
-    		new AtomicInteger(Constants.MAX_CHANNEL_NUMBER);
+            new AtomicInteger(Constants.MAX_CHANNEL_NUMBER);
     
     /** 
      * Максимальный размер ассоциативного массива, хранящего данные об 
      * всех клиентах - сервисах IRC.
      */
     public AtomicInteger maxServiceMapSize = 
-    		new AtomicInteger(Constants.MAX_SERVER_CLIENTS);
+            new AtomicInteger(Constants.MAX_SERVER_CLIENTS);
     
     /** 
      * Максимальный размер ассоциативного массива, хранящего данные об 
      * всех клиентах - серверах IRC.
      */
     public AtomicInteger maxIrcServerMapSize = 
-    		new AtomicInteger(Constants.MAX_SERVER_CLIENTS);
+            new AtomicInteger(Constants.MAX_SERVER_CLIENTS);
     
     /** 
      * Максимальный размер ассоциативного массива, хранящего данные обо 
      * всех подключениях IRC.
      */
     public AtomicInteger maxConnectionListSize = 
-    		new AtomicInteger(Constants.MAX_SERVER_CLIENTS);
+            new AtomicInteger(Constants.MAX_SERVER_CLIENTS);
     
     /** 
      * Максимальный размер ассоциативного массива, хранящий 
      * истории никнэймов. 
      */
     public AtomicInteger maxNickHistoryMapSize = 
-    		new AtomicInteger(2 * Constants.MAX_SERVER_CLIENTS);
+            new AtomicInteger(2 * Constants.MAX_SERVER_CLIENTS);
 
     /** 
      * Максимальный размер списка истории конкретного никнэйма.
@@ -86,7 +86,7 @@ public class DB {
      * учетную информацию операторов. 
      */
     public AtomicInteger maxIrcOperatorConfigMapSize = 
-    		new AtomicInteger(Constants.MAX_OPERATOR_NUMBER);
+            new AtomicInteger(Constants.MAX_OPERATOR_NUMBER);
 
     /** 
      * Ассоциативный массив, хранящий данные об обычных клиентах IRC.
@@ -127,17 +127,18 @@ public class DB {
      * Ассоциативный массив, хранящий истории никнэймов. 
      * Ключем является никнэйм.
      */
+    @SuppressWarnings("serial")
     protected LinkedHashMap<String, ArrayList<DriedUser>> 
-    	nicknameHistoryMap =
-    		new LinkedHashMap <String, ArrayList<DriedUser>> () {
-    	protected boolean removeEldestEntry(Map.Entry
-    			<String, ArrayList<DriedUser>> eldest) {
-    		return size() > Math.min(Math.max(Constants.MIN_LIMIT,
-    				maxNickHistoryMapSize.get()),
-    				Constants.HARD_LIMIT) - 1;
-    	}
+        nicknameHistoryMap =
+            new LinkedHashMap <String, ArrayList<DriedUser>> () {
+        protected boolean removeEldestEntry(Map.Entry
+                <String, ArrayList<DriedUser>> eldest) {
+            return size() > Math.min(Math.max(Constants.MIN_LIMIT,
+                    maxNickHistoryMapSize.get()),
+                    Constants.HARD_LIMIT) - 1;
+        }
     };
-	
+    
     /** 
      * Список, хранящий данные данные о соединении. 
      */
@@ -149,7 +150,7 @@ public class DB {
      * Ключем является {@code <username>} оператора.
      */            
     protected LinkedHashMap<String, IrcOperatorConfig> 
-    		ircOperatorConfigMap =
+            ircOperatorConfigMap =
             new LinkedHashMap<String, IrcOperatorConfig>();
 
     /** 
@@ -219,24 +220,24 @@ public class DB {
      * @param driedUser информация об обычном клиенте.
      */            
     public void register(DriedUser driedUser) {
-    	String key = driedUser.nickname.toLowerCase(Locale.ENGLISH);
-    	synchronized(nicknameHistoryMap) {
-    		ArrayList<DriedUser> value = nicknameHistoryMap.get(key);
-    		if (value == null) {
-    			value = new ArrayList<DriedUser>();
-    		}
-    		synchronized (value) {
-    			while (value.size() >= maxNickHistorySize.get()) {
-    				value.remove(0);
-    			}	
-    			value.add(driedUser);
-    			nicknameHistoryMap.put(key, value);
-    		}
-    	}
+        String key = driedUser.nickname.toLowerCase(Locale.ENGLISH);
+        synchronized(nicknameHistoryMap) {
+            ArrayList<DriedUser> value = nicknameHistoryMap.get(key);
+            if (value == null) {
+                value = new ArrayList<DriedUser>();
+            }
+            synchronized (value) {
+                while (value.size() >= maxNickHistorySize.get()) {
+                    value.remove(0);
+                }    
+                value.add(driedUser);
+                nicknameHistoryMap.put(key, value);
+            }
+        }
     }
     
     /** 
-     * Метод помещающий информацию об канале IRC в ассоциативный 
+     * Метод, помещающий информацию об канале IRC в ассоциативный 
      * массив. Помещение будет успешным, если размер массива меньше 
      * максимального размера массива {@link #maxChannelMapSize} и в 
      * массиве нет объекта с таким-же именем канала. Ключами служат 
@@ -269,11 +270,12 @@ public class DB {
     }
 
     /** 
-     * Метод помещающий информацию об клиенте-сервисе IRC в ассоциативный 
-     * массив. Помещение будет успешным, если размер массива меньше 
-     * максимального размера массива {@link #maxServiceMapSize} и в 
-     * массиве нет объекта с таким-же никнэймом. Ключами служат 
-     * никнэймы, символы которых, приведены к нижниму регистру.
+     * Метод, помещающий информацию об клиенте-сервисе IRC в 
+     * ассоциативный массив. Помещение будет успешным, если размер 
+     * массива меньше максимального размера массива 
+     * {@link #maxServiceMapSize} и в массиве нет объекта с таким-же 
+     * никнэймом. Ключами служат никнэймы, символы которых, приведены к 
+     * нижниму регистру.
      * @param service информация о сервисе.
      * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
      * метода, {@link Response.Reply#ERR_FILEERROR} поместить объект в 
@@ -281,31 +283,32 @@ public class DB {
      * объект уже находится в массиве. 
      */            
     public Response.Reply register(Service service) {
-    	Response.Reply responseReply = null;
-    	String key = service.getNickname().toLowerCase(Locale.ENGLISH);
+        Response.Reply responseReply = null;
+        String key = service.getNickname().toLowerCase(Locale.ENGLISH);
         synchronized (service) {
             synchronized (serviceMap) {
-            	if (serviceMap.size() >= Math.min(Math.max(
-            			Constants.MIN_LIMIT, maxServiceMapSize.get()), 
-            			Constants.HARD_LIMIT)) {
-            		responseReply = Response.Reply.ERR_FILEERROR;
-            	} else if (serviceMap.containsKey(key)) {
-            		responseReply = Response.Reply.ERR_NICKNAMEINUSE;
-            	} else {
-            		serviceMap.put(key, service);
-            		responseReply = Response.Reply.RPL_OK;
-            	}
+                if (serviceMap.size() >= Math.min(Math.max(
+                        Constants.MIN_LIMIT, maxServiceMapSize.get()), 
+                        Constants.HARD_LIMIT)) {
+                    responseReply = Response.Reply.ERR_FILEERROR;
+                } else if (serviceMap.containsKey(key)) {
+                    responseReply = Response.Reply.ERR_NICKNAMEINUSE;
+                } else {
+                    serviceMap.put(key, service);
+                    responseReply = Response.Reply.RPL_OK;
+                }
             }
         }
         return responseReply;
     }
 
     /** 
-     * Метод помещающий информацию об клиенте-сервере IRC в ассоциативный 
-     * массив. Помещение будет успешным, если размер массива меньше 
-     * максимального размера массива {@link #maxIrcServerMapSize} и в 
-     * массиве нет объекта с таким-же никнэймом. Ключами служат FQDN 
-     * серверов, символы которых, приведены к нижниму регистру.
+     * Метод, помещающий информацию об клиенте-сервере IRC в 
+     * ассоциативный массив. Помещение будет успешным, если размер 
+     * массива меньше максимального размера массива 
+     * {@link #maxIrcServerMapSize} и в массиве нет объекта с таким-же 
+     * никнэймом. Ключами служат FQDN серверов, символы которых, 
+     * приведены к нижниму регистру.
      * @param ircServer информация о клиенте-сервере IRC.
      * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
      * метода, {@link Response.Reply#ERR_FILEERROR} поместить объект в 
@@ -313,16 +316,16 @@ public class DB {
      * объект уже находится в массиве. 
      */            
     public Response.Reply register(IrcServer ircServer) {
-    	Response.Reply responseReply = null;
-    	String key = ircServer.getHostname().toLowerCase(Locale.ENGLISH);
+        Response.Reply responseReply = null;
+        String key = ircServer.getHostname().toLowerCase(Locale.ENGLISH);
         synchronized (ircServer) {
             synchronized (ircServerMap) {
                 if (ircServerMap.size() >= Math.min(Math.max(
                         Constants.MIN_LIMIT, maxIrcServerMapSize.get()), 
                         Constants.HARD_LIMIT)) {
-                	responseReply = Response.Reply.ERR_FILEERROR;
+                    responseReply = Response.Reply.ERR_FILEERROR;
                 } else if (ircServerMap.containsKey(key)) {
-                	responseReply = Response.Reply.ERR_NOTOK;
+                    responseReply = Response.Reply.ERR_NOTOK;
                 } else {
                 ircServerMap.put(key, ircServer);
                 responseReply = Response.Reply.RPL_OK;
@@ -333,13 +336,13 @@ public class DB {
     }
 
     /** 
-     * Метод помещающий информацию об соединении в список. Помещение 
+     * Метод, помещающий информацию об соединении в список. Помещение 
      * будет успешным, если размер списка меньше максимального размера 
      * {@link #maxConnectionListSize} и в списке нет объекта с таким-же
      * никнэймом.
      * @param connection информация о соединении IRC.
      * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода,  {@link Response.Reply#ERR_FILEERROR} - превышено 
+     * метода,  {@link Response.Reply#ERR_FILEERROR} превышено 
      * ограничение на количество соединений, 
      * {@link Response.Reply#ERR_NOTOK} поместить объект в массив не 
      * удалось. 
@@ -363,7 +366,7 @@ public class DB {
 
 
     /** 
-     * Метод удаляющий информацию об обычном клиенте IRC из 
+     * Метод, удаляющий информацию об обычном клиенте IRC из 
      * ассоциативного массива. 
      * @param user информация об обычном клиенте IRC.
      * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
@@ -379,7 +382,7 @@ public class DB {
     }
 
     /** 
-     * Метод удаляющий информацию об обычном клиенте IRC из 
+     * Метод, удаляющий информацию об обычном клиенте IRC из 
      * ассоциативного массива. 
      * @param nickname никнэйм обычного клиента IRC.
      * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
@@ -394,21 +397,21 @@ public class DB {
         if (user == null) {
             responseReply = Response.Reply.ERR_NOTOK;
         } else {
-        	synchronized (user) {
-        		if (user == Globals.anonymousUser.get()) {
-        			responseReply = Response.Reply.ERR_NOTOK;
-        		} else if (userMap.remove(key) != null) {
-        			responseReply = Response.Reply.RPL_OK;
-        		} else {
-        			responseReply = Response.Reply.ERR_NOTOK;
-        		}
-        	}
+            synchronized (user) {
+                if (user == Globals.anonymousUser.get()) {
+                    responseReply = Response.Reply.ERR_NOTOK;
+                } else if (userMap.remove(key) != null) {
+                    responseReply = Response.Reply.RPL_OK;
+                } else {
+                    responseReply = Response.Reply.ERR_NOTOK;
+                }
+            }
         }
         return responseReply;
     }
 
     /** 
-     * Метод удаляющий информацию о канале IRC из ассоциативного 
+     * Метод, удаляющий информацию о канале IRC из ассоциативного 
      * массива. 
      * @param channel канале IRC.
      * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
@@ -420,24 +423,24 @@ public class DB {
         Response.Reply responseReply = null;
         String key = channel.getNickname().toLowerCase(Locale.ENGLISH);
         if (channel instanceof MonitorIrcChannel) {
-        	responseReply = Response.Reply.RPL_OK;
+            responseReply = Response.Reply.RPL_OK;
         } else if (channelMap.containsKey(key)) {
-        	synchronized (channel) {
-        		if (channel.isUserSetEmpty()) {
-        			channelMap.remove(key);
-        			responseReply = Response.Reply.RPL_OK;
-        		} else {
-        			responseReply = Response.Reply.ERR_NOTOK;
-        		}
-        	}
+            synchronized (channel) {
+                if (channel.isUserSetEmpty()) {
+                    channelMap.remove(key);
+                    responseReply = Response.Reply.RPL_OK;
+                } else {
+                    responseReply = Response.Reply.ERR_NOTOK;
+                }
+            }
         } else {
-        	responseReply = Response.Reply.ERR_NOSUCHCHANNEL;
+            responseReply = Response.Reply.ERR_NOSUCHCHANNEL;
         }
         return responseReply;
     }
 
     /** 
-     * Метод удаляющий информацию о клиенте-сервисе IRC из 
+     * Метод, удаляющий информацию о клиенте-сервисе IRC из 
      * ассоциативного массива. 
      * @param service клиент-сервис IRC.
      * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
@@ -445,14 +448,14 @@ public class DB {
      * нет. 
      */            
     public Response.Reply unRegister(Service service) {
-    	Response.Reply responseReply = null;
-    	String key = service.getNickname().toLowerCase(Locale.ENGLISH);
+        Response.Reply responseReply = null;
+        String key = service.getNickname().toLowerCase(Locale.ENGLISH);
         synchronized (service) {
             synchronized (serviceMap) {
                 if (serviceMap.remove(key) != null){
                     responseReply = Response.Reply.RPL_OK;
                 } else {
-                	responseReply = Response.Reply.ERR_NOTOK;
+                    responseReply = Response.Reply.ERR_NOTOK;
                 }
             }
         }
@@ -461,7 +464,7 @@ public class DB {
 
 
     /** 
-     * Метод удаляющий информацию о клиенте-сервере IRC из 
+     * Метод, удаляющий информацию о клиенте-сервере IRC из 
      * ассоциативного массива. 
      * @param ircServer клиент-сервер IRC.
      * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
@@ -469,26 +472,26 @@ public class DB {
      * нет. 
      */            
     public Response.Reply unRegister(IrcServer ircServer) {
-    	Response.Reply responseReply = null;
-    	String key = ircServer.getHostname().toLowerCase(Locale.ENGLISH);
+        Response.Reply responseReply = null;
+        String key = ircServer.getHostname().toLowerCase(Locale.ENGLISH);
         if (ircServer == Globals.anonymousIrcServer.get()) {
-        	responseReply = Response.Reply.ERR_NOTOK;
+            responseReply = Response.Reply.ERR_NOTOK;
         } else {
-        	synchronized (ircServer) {
-        		synchronized (ircServerMap) {
-        			if (ircServerMap.remove(key) != null){
-        				responseReply = Response.Reply.RPL_OK;
-        			} else {
-        				responseReply = Response.Reply.ERR_NOTOK;
-        			}
-        		}
-        	}
+            synchronized (ircServer) {
+                synchronized (ircServerMap) {
+                    if (ircServerMap.remove(key) != null){
+                        responseReply = Response.Reply.RPL_OK;
+                    } else {
+                        responseReply = Response.Reply.ERR_NOTOK;
+                    }
+                }
+            }
         }
         return responseReply;
     }
 
     /** 
-     * Метод удаляющий информацию о соединении IRC из списка. 
+     * Метод, удаляющий информацию о соединении IRC из списка. 
      * @param connection соединение IRC.
      * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
      * метода, {@link Response.Reply#ERR_NOTOK} такого объекта в списке
@@ -497,11 +500,11 @@ public class DB {
     public Response.Reply unRegister(Connection connection) {
         Response.Reply response = null;
         if (connection == Globals.nullConnection.get()) {
-        	response =  Response.Reply.RPL_OK;
+            response =  Response.Reply.RPL_OK;
         } else if (connectionList.remove(connection) == true) {
-        	response = Response.Reply.RPL_OK;
+            response = Response.Reply.RPL_OK;
         } else {
-        	response = Response.Reply.ERR_NOTOK;
+            response = Response.Reply.ERR_NOTOK;
         }
         return response;
     }
@@ -552,11 +555,11 @@ public class DB {
      * @return true если этот объект находится в списке.
      */
     public boolean isRegistered(Connection connection) {
-    	boolean result = false;
+        boolean result = false;
         if (connection == Globals.nullConnection.get()) {
-        	result =  true;
+            result =  true;
         } else {
-        	result = connectionList.contains(connection);
+            result = connectionList.contains(connection);
         }
         return result;
     }
@@ -568,7 +571,7 @@ public class DB {
      * null - если объекта с таким доменном имени в массиве нет.
      */
     public IrcServer getIrcServer(String ircServername) {
-    	String key = ircServername.toLowerCase(Locale.ENGLISH);
+        String key = ircServername.toLowerCase(Locale.ENGLISH);
         synchronized (ircServerMap) {
             return ircServerMap.get(key);
         }
@@ -576,7 +579,7 @@ public class DB {
 
     /**
      * Получение множества клиентов-серверов IRC из массива.
-     * @return LinkedHashSet<IrcServer> - все клиенты-серверы IRC, 
+     * @return LinkedHashSet<IrcServer> все клиенты-серверы IRC, 
      * находящиеся в массиве, кроме служебного псевдосервера 
      * {@link Globals#anonymousIrcServer}. 
      */
@@ -593,7 +596,7 @@ public class DB {
 
     /**
      * Получение множества доменных имен клиентов-серверов IRC из массива.
-     * @return LinkedHashSet<String> - все доменные имена 
+     * @return LinkedHashSet<String> все доменные имена 
      * клиентов-серверов IRC, находящиеся в массиве, кроме служебного 
      * псевдосервера {@link Globals#anonymousIrcServer}. 
      */
@@ -619,13 +622,13 @@ public class DB {
      * null - если объекта с таким имени в массиве нет.
      */
     public IrcChannel getChannel(String channelNickname) {
-    	String key = channelNickname.toLowerCase(Locale.ENGLISH);
+        String key = channelNickname.toLowerCase(Locale.ENGLISH);
         return channelMap.get(key);
     }
 
     /**
      * Получение множества каналов IRC из массива.
-     * @return LinkedHashSet<IrcServer> - все каналы IRC. 
+     * @return LinkedHashSet<IrcServer> все каналы IRC. 
      */
     public LinkedHashSet<IrcChannel> getChannelSet() {
          return new LinkedHashSet<IrcChannel>(channelMap.values());
@@ -633,7 +636,7 @@ public class DB {
 
     /**
      * Получение множества имен каналов IRC из массива.
-     * @return LinkedHashSet<String> - все имена каналов IRC, 
+     * @return LinkedHashSet<String> все имена каналов IRC, 
      * находящиеся в массиве. 
      */
     public LinkedHashSet<String> getChannelNicknameSet() {
@@ -695,7 +698,7 @@ public class DB {
      */
     public LinkedHashSet<User> getUserSet() {
         LinkedHashSet<User> userSet = 
-        		new LinkedHashSet<User>(userMap.values());
+                new LinkedHashSet<User>(userMap.values());
         return userSet;
     }
 
@@ -706,7 +709,7 @@ public class DB {
      */
     public LinkedList<User> getUserList() {
         LinkedList<User> userList = 
-        		new LinkedList<User>(userMap.values());
+                new LinkedList<User>(userMap.values());
         return userList;
     }
 
@@ -717,7 +720,7 @@ public class DB {
      */
     public LinkedHashSet<String> getUserNicknameSet() {
         LinkedList<User> elementList = 
-        		new LinkedList<User>(userMap.values());
+                new LinkedList<User>(userMap.values());
         LinkedHashSet<String> nicknameSet = new LinkedHashSet<String>();
         for (User element : elementList) {
             nicknameSet.add(element.getNickname());
@@ -767,7 +770,7 @@ public class DB {
      * никнэймом в массиве нет.
      */
     public Service getService(String serviceName) {
-    	String key = serviceName.toLowerCase(Locale.ENGLISH);
+        String key = serviceName.toLowerCase(Locale.ENGLISH);
         synchronized (serviceMap) {
             return serviceMap.get(key);
         }
@@ -849,64 +852,64 @@ public class DB {
      * историями.
      */
     public ArrayList<DriedUser> getHistoryList(String nickname) {
-    	String key = nickname.toLowerCase(Locale.ENGLISH);
-    	ArrayList<DriedUser> result = null;
-    	synchronized (nicknameHistoryMap) {
-    		result = nicknameHistoryMap.get(key);
-    		if (result != null) {
-    			synchronized (result) {
-    				result = new ArrayList<DriedUser>(result);
-    			}
-    		} else {
-    			result = new ArrayList<DriedUser>();
-    		}
-    	}
-    	return result;
+        String key = nickname.toLowerCase(Locale.ENGLISH);
+        ArrayList<DriedUser> result = null;
+        synchronized (nicknameHistoryMap) {
+            result = nicknameHistoryMap.get(key);
+            if (result != null) {
+                synchronized (result) {
+                    result = new ArrayList<DriedUser>(result);
+                }
+            } else {
+                result = new ArrayList<DriedUser>();
+            }
+        }
+        return result;
     }
 
     /**
      * Очистка массива историй никнэймов.
      */
     public void dropHistory() {
-    	nicknameHistoryMap = 
-    			new LinkedHashMap <String, ArrayList<DriedUser>>();
+        nicknameHistoryMap = 
+                new LinkedHashMap <String, ArrayList<DriedUser>>();
     }
     
     /**
      * Метод dropAll используется для удаления данных. Данные удаляются
      * из следущих объектов репозитария:
      * <UL>
-     * <LI> {@link #ircTalkerMap} - ассоциативный массив, хранящий 
+     * <LI> {@link #ircTalkerMap} ассоциативный массив, хранящий 
      * данные об всех клиентах IRC;</LI>
-     * <LI> {@link #userMap} - ассоциативный массив, хранящий данные об 
+     * <LI> {@link #userMap} ассоциативный массив, хранящий данные об 
      * обычных клиентах IRC.;</LI>
-     * <LI> {@link #channelMap} - ассоциативный массив, хранящий данные 
+     * <LI> {@link #channelMap} ассоциативный массив, хранящий данные 
      * о каналах IRC;</LI>
-     * <LI> {@link #serviceMap} - ассоциативный массив, хранящий данные 
+     * <LI> {@link #serviceMap} ассоциативный массив, хранящий данные 
      * о клиентах-сервисах IRC;</LI>
-     * <LI> {@link #ircServerMap} - ассоциативный массив, хранящий данные 
+     * <LI> {@link #ircServerMap} ассоциативный массив, хранящий данные 
      * о клиентах-серверах IRC;</LI>
-     * <LI> {@link #nicknameHistoryMap}  - ассоциативный массив, хранящий  
+     * <LI> {@link #nicknameHistoryMap} ассоциативный массив, хранящий  
      * истории никнэймов.</LI>
-     * <LI> {@link #connectionList}  - список, хранящий истории 
+     * <LI> {@link #connectionList} список, хранящий истории 
      * никнэймов.</LI>
      * </UL>
      */
     public void dropAll() {
-    	ircTalkerMap = new LinkedHashMap<String, IrcTalker>();
+        ircTalkerMap = new LinkedHashMap<String, IrcTalker>();
 
-    	userMap = new ConcurrentSkipListMap<String, User>();
+        userMap = new ConcurrentSkipListMap<String, User>();
 
-    	channelMap = new ConcurrentSkipListMap <String, IrcChannel>();
+        channelMap = new ConcurrentSkipListMap <String, IrcChannel>();
 
-    	serviceMap = new LinkedHashMap<String, Service>();
+        serviceMap = new LinkedHashMap<String, Service>();
 
-    	ircServerMap = new LinkedHashMap<String, IrcServer>();
+        ircServerMap = new LinkedHashMap<String, IrcServer>();
 
-    	nicknameHistoryMap = 
-    			new LinkedHashMap <String, ArrayList<DriedUser>>();
-    	
-    	connectionList = new CopyOnWriteArrayList <Connection>();
+        nicknameHistoryMap = 
+                new LinkedHashMap <String, ArrayList<DriedUser>>();
+        
+        connectionList = new CopyOnWriteArrayList <Connection>();
     }
 
 
@@ -947,10 +950,10 @@ public class DB {
      * @param ircTranscriptConfig . 
      
     public void setIrcTranscriptConfig(
-    		IrcTranscriptConfig ircTranscriptConfig) {
+            IrcTranscriptConfig ircTranscriptConfig) {
         this.ircTranscriptConfig = ircTranscriptConfig;
     }
-	*/
+    */
     /**
      * Возвращает объект класса {@link IrcServerConfig}.
      * @return {@link IrcServerConfig} .
@@ -1010,11 +1013,11 @@ public class DB {
     public boolean checkOperator(String name, String password) {
         boolean result = false;
         synchronized (ircOperatorConfigMap) {
-        	IrcOperatorConfig ioc = ircOperatorConfigMap.get(name);
+            IrcOperatorConfig ioc = ircOperatorConfigMap.get(name);
             if (ioc != null) {
                 result = ioc.getPassword().equals(password);
             } else {
-            	result = false;
+                result = false;
             }
         }
         return result;

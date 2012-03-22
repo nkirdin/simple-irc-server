@@ -180,9 +180,9 @@ public class WhoisIrcCommand extends IrcCommandBase {
         for (User user : outputUserSet) {
             client.send(rplWhoIsUser(client, user));
             client.send(rplWhoIsServer(client, 
-            		user.getNickname(),
-            		user.getIrcServer().getHostname(),
-            		user.getIrcServer().getInfo()));
+                    user.getNickname(),
+                    user.getIrcServer().getHostname(),
+                    user.getIrcServer().getInfo()));
             if (user.isOperator()) {
                 client.send(rplWhoIsOperator(client, user));
             }

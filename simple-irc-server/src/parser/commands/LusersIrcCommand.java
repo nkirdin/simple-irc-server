@@ -216,7 +216,7 @@ public class LusersIrcCommand extends IrcCommandBase {
             int numOfChannels) {
         
         String remark = Response.makeText(
-        		Response.Reply.RPL_LUSERCHANNELS, 
+                Response.Reply.RPL_LUSERCHANNELS, 
                 requestor.getNickname(), 
                 String.valueOf(numOfChannels));
 

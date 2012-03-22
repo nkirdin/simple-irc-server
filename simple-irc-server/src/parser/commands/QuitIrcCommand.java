@@ -127,11 +127,11 @@ public class QuitIrcCommand extends IrcCommandBase {
                     }
                 }
             }
-        	DriedUser driedUser = new DriedUser(client.getNickname(), 
-        			client.getUsername(), client.getHostname(), 
-        			client.getRealname(), client.getIrcServer().getHostname(), 
-        			client.getId());
-        	db.register(driedUser);
+            DriedUser driedUser = new DriedUser(client.getNickname(), 
+                    client.getUsername(), client.getHostname(), 
+                    client.getRealname(), client.getIrcServer().getHostname(), 
+                    client.getId());
+            db.register(driedUser);
         }
 
         OutputQueueProcessor.process(requestor.getConnection(),

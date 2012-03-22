@@ -27,7 +27,7 @@
  * @author  Nikolay Kirdin
 */
 public enum UserMode {
-	
+    
     /**  У клиента установлен AWAY &lt;message&gt;. */
     a('a'),
     

@@ -104,7 +104,7 @@ public class TraceIrcCommand extends IrcCommandBase {
         } else {
             servernameMask = "";
         }
-		
+        
         setExecutable(false);
         */
     }

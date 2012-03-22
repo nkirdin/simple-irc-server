@@ -121,7 +121,7 @@ public class ListIrcCommand extends IrcCommandBase {
 
         String topic = "";
         LinkedHashSet<IrcChannel> channelSet = 
-        		new LinkedHashSet<IrcChannel>();
+                new LinkedHashSet<IrcChannel>();
         Iterator<IrcChannel> channelSetIterator = null;
 
         if (!isExecutable()) {

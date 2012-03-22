@@ -31,7 +31,7 @@ import java.util.logging.Level;
  * @author  Nikolay Kirdin
  */
 public class User extends IrcTalker implements Comparable {
-	
+    
     /** 
      * Параметр &lt;username&gt; команды IRC NICK. 
      * Аккаунт клиента на его хосте. 
@@ -74,18 +74,18 @@ public class User extends IrcTalker implements Comparable {
      * достигнуто ограничение по объему доступной памяти.
      */
     public static User create() {
-    	User result = null;
-    	long freeMemory = Runtime.getRuntime().freeMemory();
-    	if (freeMemory < Constants.MIN_FREE_MEMORY) {
-    		System.gc();
-    	}
-    	freeMemory = Runtime.getRuntime().freeMemory();
-    	if (freeMemory >= Constants.MIN_FREE_MEMORY) {
-    		result = new User();
-    	} else {
-    		Globals.logger.get().log(Level.SEVERE, 
-    				"Insufficient free memory (B): " + freeMemory);
-    	}
+        User result = null;
+        long freeMemory = Runtime.getRuntime().freeMemory();
+        if (freeMemory < Constants.MIN_FREE_MEMORY) {
+            System.gc();
+        }
+        freeMemory = Runtime.getRuntime().freeMemory();
+        if (freeMemory >= Constants.MIN_FREE_MEMORY) {
+            result = new User();
+        } else {
+            Globals.logger.get().log(Level.SEVERE, 
+                    "Insufficient free memory (B): " + freeMemory);
+        }
         return result;
     }
     
@@ -99,12 +99,12 @@ public class User extends IrcTalker implements Comparable {
     public static User create(IrcTalker ircTalker) {
         User user = User.create();
         if (user != null) {
-        	user.setNickname(ircTalker.getNickname());
-        	user.setNetworkId(ircTalker.getNetworkId());
-        	user.setHostname(ircTalker.getHostname());
-        	user.setHopcount(ircTalker.getHopcount());
-        	user.setRegistered(ircTalker.isRegistered());
-        	user.setConnection(ircTalker.getConnection());
+            user.setNickname(ircTalker.getNickname());
+            user.setNetworkId(ircTalker.getNetworkId());
+            user.setHostname(ircTalker.getHostname());
+            user.setHopcount(ircTalker.getHopcount());
+            user.setRegistered(ircTalker.isRegistered());
+            user.setConnection(ircTalker.getConnection());
         }
         return user;
     }
@@ -119,13 +119,13 @@ public class User extends IrcTalker implements Comparable {
     public static User create(IrcServer ircServer) {
         User user = User.create();
         if (user != null) {
-        	user.setNickname(ircServer.getNickname());
-        	user.setNetworkId(ircServer.getNetworkId());
-        	user.setHostname(ircServer.getHostname());
-        	user.setHopcount(ircServer.getHopcount());
-        	user.setRegistered(ircServer.isRegistered());
-        	user.setConnection(ircServer.getConnection());
-        	user.setIrcServer(ircServer);
+            user.setNickname(ircServer.getNickname());
+            user.setNetworkId(ircServer.getNetworkId());
+            user.setHostname(ircServer.getHostname());
+            user.setHopcount(ircServer.getHopcount());
+            user.setRegistered(ircServer.isRegistered());
+            user.setConnection(ircServer.getConnection());
+            user.setIrcServer(ircServer);
         }
         return user;
     }
@@ -282,9 +282,9 @@ public class User extends IrcTalker implements Comparable {
      * Если у этого клиента установлен режим "invisible", информация о 
      * нем предоставляется в следущих случаях:
      * <UL>
-     * 		<LI> Источник запроса является оператором.</LI>
-     * 		<LI> Источник запроса и этот клиент - это один и тот же 
-     * 		объект.</LI>
+     *         <LI> Источник запроса является оператором.</LI>
+     *         <LI> Источник запроса и этот клиент - это один и тот же 
+     *         объект.</LI>
      * </UL>
      * @param requestor клиент, которому нужен доступ к информации об
      * этом клиенте.
@@ -337,7 +337,7 @@ public class User extends IrcTalker implements Comparable {
      * @param channel удаляемый канал.
      */
     public void remove(IrcChannel channel) {
-    	channelSet.remove(channel);
+        channelSet.remove(channel);
     }
     
     /**
@@ -351,10 +351,10 @@ public class User extends IrcTalker implements Comparable {
     public Response.Reply add(IrcChannel channel) {
         Response.Reply responseReply = null;
         if (channelSet.size() < maximumChannelNumber) {
-        	channelSet.add(channel);
-        	responseReply = Response.Reply.RPL_OK;
+            channelSet.add(channel);
+            responseReply = Response.Reply.RPL_OK;
         } else {
-        	responseReply = Response.Reply.ERR_TOOMANYCHANNELS;
+            responseReply = Response.Reply.ERR_TOOMANYCHANNELS;
         }
         return responseReply;
     }
@@ -422,6 +422,6 @@ public class User extends IrcTalker implements Comparable {
      */
     public String toString() {
         return String.valueOf(getId()) + " " + getNickname() + " " + username +
-        		" " + realname + " " + "Registered: " + isRegistered() ;
+                " " + realname + " " + "Registered: " + isRegistered() ;
     }
 }

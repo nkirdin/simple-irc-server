@@ -270,54 +270,54 @@ public class IrcCommandParser {
             
             
             if (!commandName.isEmpty()) {
-            	boolean isOperator = (requestor instanceof User) && 
-            			((User) requestor).isOperator(); 
-            	boolean isApprovedOrdinaryClientCommand = 
-            			Arrays.asList(
-            					new String[] {"ping", "pong", "admin", 
-            							"time", "oper"}
-            					).contains(commandName);
-            	boolean highLoad = !Globals.ircServerProcessorSet.get(
-            			).isEmpty();
-            	boolean isDroppable = highLoad && !isOperator 
-            			&& !isApprovedOrdinaryClientCommand; 
-            	
-            	boolean isOperCommand = commandName.equals("oper");
-            	
+                boolean isOperator = (requestor instanceof User) && 
+                        ((User) requestor).isOperator(); 
+                boolean isApprovedOrdinaryClientCommand = 
+                        Arrays.asList(
+                                new String[] {"ping", "pong", "admin", 
+                                        "time", "oper"}
+                                ).contains(commandName);
+                boolean highLoad = !Globals.ircServerProcessorSet.get(
+                        ).isEmpty();
+                boolean isDroppable = highLoad && !isOperator 
+                        && !isApprovedOrdinaryClientCommand; 
+                
+                boolean isOperCommand = commandName.equals("oper");
+                
                 if (Globals.ircTranscriptConfig.get() != null) {
 
-                	String firstPart = ircIncomingMessage.incomingTime +
-                			" " + ircIncomingMessage.id +
-                			" " + ircIncomingMessage.getSource() +
-                			" " + ircIncomingMessage.sender.getNickname();
-                	if (isDroppable) {
-                		firstPart = firstPart + " " + 
-                				Response.Reply.ERR_FILEERROR.code;
-                	} else {
-                		firstPart = firstPart + " " + "---";
-                	}
-                	
-                	String lastPart = null;
-                	if (isOperCommand) {
-                		lastPart = (prefix.isEmpty() ? 
-    							"" : ": " + prefix + " " ) 
-    							+ "OPER ******** ********";
-                	} else {
-                		lastPart = ircIncomingMessage.message;
-                	}
-                	
-                	String transcript = firstPart + " " + lastPart; 
-                					
-                	Globals.ircTranscriptConfig.get().offerToQueue(
-                			transcript);
+                    String firstPart = ircIncomingMessage.incomingTime +
+                            " " + ircIncomingMessage.id +
+                            " " + ircIncomingMessage.getSource() +
+                            " " + ircIncomingMessage.sender.getNickname();
+                    if (isDroppable) {
+                        firstPart = firstPart + " " + 
+                                Response.Reply.ERR_FILEERROR.code;
+                    } else {
+                        firstPart = firstPart + " " + "---";
+                    }
+                    
+                    String lastPart = null;
+                    if (isOperCommand) {
+                        lastPart = (prefix.isEmpty() ? 
+                                "" : ": " + prefix + " " ) 
+                                + "OPER ******** ********";
+                    } else {
+                        lastPart = ircIncomingMessage.message;
+                    }
+                    
+                    String transcript = firstPart + " " + lastPart; 
+                                    
+                    Globals.ircTranscriptConfig.get().offerToQueue(
+                            transcript);
                 }
-            	
-            	if (isDroppable) {
-            		requestor.send(IrcCommandBase.errFileError(
-            				requestor, commandName, "SERVER"));
-            	} else {
-            		checkAndExecute();
-            	}
+                
+                if (isDroppable) {
+                    requestor.send(IrcCommandBase.errFileError(
+                            requestor, commandName, "SERVER"));
+                } else {
+                    checkAndExecute();
+                }
             }
 
         } catch (IndexOutOfBoundsException e) {
@@ -327,15 +327,15 @@ public class IrcCommandParser {
         } catch (IrcSyntaxException e) {
             if (e.getMessage().equals("ERR_UMODEUNKNOWNFLAG")) {
                 requestor.send(
-                		IrcCommandBase.errUModeUnknownFlag(requestor));
+                        IrcCommandBase.errUModeUnknownFlag(requestor));
             } else if (e.getMessage().equals("ERR_NEEDMOREPARAMS")) {
                 requestor.send(
-                		IrcCommandBase.errNeedMoreParams(requestor, 
+                        IrcCommandBase.errNeedMoreParams(requestor, 
                         command));
             } else if (e.getMessage().equals("SILENCE")) {
             } else {
                 requestor.send(
-                		IrcCommandBase.errUnknownCommand(requestor, 
+                        IrcCommandBase.errUnknownCommand(requestor, 
                         command));
             }
         } catch (IrcExecutionException e) {
@@ -428,15 +428,15 @@ public class IrcCommandParser {
                 && (prefixHost == null)
                 && (prefixIrcServer == null)) {
                 if (Globals.db.get().getUser(prefixNickname) != null &&
-                		Globals.db.get().getUser(prefixNickname).getConnection() ==
+                        Globals.db.get().getUser(prefixNickname).getConnection() ==
                     requestor.getConnection()) {
                     requestor = Globals.db.get().getUser(prefixNickname);
                 } else if (Globals.db.get().getIrcServer(prefixNickname) != null &&
-                		Globals.db.get().getIrcServer(prefixNickname).getConnection() 
+                        Globals.db.get().getIrcServer(prefixNickname).getConnection() 
                                 == requestor.getConnection()) {
                     requestor = Globals.db.get().getIrcServer(prefixNickname);
                 } else if (Globals.db.get().getService(prefixNickname) != null &&
-                		Globals.db.get().getService(prefixNickname).getConnection() ==
+                        Globals.db.get().getService(prefixNickname).getConnection() ==
                         requestor.getConnection()) {
                     requestor = Globals.db.get().getService(prefixNickname);
                 } else {
@@ -464,7 +464,7 @@ public class IrcCommandParser {
                 && (prefixHost == null)
                 && (prefixIrcServer == null)) {
                 if (Globals.db.get().getService(prefixNickname) != null &&
-                		Globals.db.get().getService(prefixNickname) ==
+                        Globals.db.get().getService(prefixNickname) ==
                     requestor) {
                     requestor = Globals.db.get().getService(prefixNickname);
                 } else {
@@ -508,7 +508,7 @@ public class IrcCommandParser {
         }
 
         ircCommandCarrier.checking(parameterList, trailing, requestor, 
-        		Globals.db.get());
+                Globals.db.get());
         ircCommandCarrier.run();
         
     }
@@ -517,28 +517,28 @@ public class IrcCommandParser {
      * Задание входящего сообщения клиента. 
      * @param ircIncomingMessage входящее сообщение клиента.
      */
-	public void setIncomingMessage(IrcIncomingMessage 
-			ircIncomingMessage) {
-		this.ircIncomingMessage = ircIncomingMessage;
-		setParsingString(ircIncomingMessage.message);
-		setRequestor(ircIncomingMessage.sender); 
-	}
+    public void setIncomingMessage(IrcIncomingMessage 
+            ircIncomingMessage) {
+        this.ircIncomingMessage = ircIncomingMessage;
+        setParsingString(ircIncomingMessage.message);
+        setRequestor(ircIncomingMessage.sender); 
+    }
 
-	/**
-	 * Получение входящего сообщения клиента. 
-	 * @return входящее сообщение клиента.
-	 */
-	public IrcTranscriptConfig getIrcTranscriptConfig() {
-		return ircTranscriptConfig;
-	}
+    /**
+     * Получение входящего сообщения клиента. 
+     * @return входящее сообщение клиента.
+     */
+    public IrcTranscriptConfig getIrcTranscriptConfig() {
+        return ircTranscriptConfig;
+    }
 
-	/**
-	 * Задание параметров файла-протокола клиентских сообщений.
-	 * @param ircTranscriptConfig объект-хранилище параметров 
-	 * файла-протокола клиентских сообщений.
-	 */
-	public void setIrcTranscriptConfig(IrcTranscriptConfig 
-			ircTranscriptConfig) {
-		this.ircTranscriptConfig = ircTranscriptConfig;
-	}
+    /**
+     * Задание параметров файла-протокола клиентских сообщений.
+     * @param ircTranscriptConfig объект-хранилище параметров 
+     * файла-протокола клиентских сообщений.
+     */
+    public void setIrcTranscriptConfig(IrcTranscriptConfig 
+            ircTranscriptConfig) {
+        this.ircTranscriptConfig = ircTranscriptConfig;
+    }
 }

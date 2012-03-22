@@ -138,7 +138,7 @@ public class KillIrcCommand extends IrcCommandBase {
         user.send(client, comment);
 
         for (Iterator<IrcChannel> iterator = 
-        		user.getChannelSetIterator();
+                user.getChannelSetIterator();
             iterator.hasNext();) {
             IrcChannel ch = iterator.next();
             ch.send(client, comment);
@@ -151,11 +151,11 @@ public class KillIrcCommand extends IrcCommandBase {
                 }
             }
         }
-    	DriedUser driedUser = new DriedUser(user.getNickname(), 
-    			user.getUsername(), user.getHostname(), 
-    			user.getRealname(),	user.getIrcServer().getHostname(), 
-    			user.getId());
-    	db.register(driedUser);
+        DriedUser driedUser = new DriedUser(user.getNickname(), 
+                user.getUsername(), user.getHostname(), 
+                user.getRealname(),    user.getIrcServer().getHostname(), 
+                user.getId());
+        db.register(driedUser);
         user.close();
     }
 }

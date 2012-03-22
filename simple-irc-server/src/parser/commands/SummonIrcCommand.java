@@ -108,7 +108,7 @@ public class SummonIrcCommand extends IrcCommandBase {
     private IrcCommandReport errSummonDisabled(IrcTalker requestor) {
         
         String remark = Response.makeText(
-        		Response.Reply.ERR_SUMMONDISABLED,
+                Response.Reply.ERR_SUMMONDISABLED,
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,

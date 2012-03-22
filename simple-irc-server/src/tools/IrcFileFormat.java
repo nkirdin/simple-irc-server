@@ -50,7 +50,7 @@ public final class IrcFileFormat {
      * если при обращении к файлу было сгенерировано исключение.
      */
     public static List<String> getFormattedText(String inputFilename, 
-    		int truncLen, int maxLines, int maxChars) {
+            int truncLen, int maxLines, int maxChars) {
         int lineIndex = 0;
         int lineCount = 0;
         int charCount = 0;
@@ -68,7 +68,7 @@ public final class IrcFileFormat {
                 lineIndex = 0;
                 do {
                     outputLength = Math.min(inputLine.length() - lineIndex,
-                    		maxLines - truncLen);
+                            maxLines - truncLen);
                     outputString = inputLine.substring(lineIndex,
                             lineIndex + outputLength);
                     result.add(outputString);
@@ -78,13 +78,13 @@ public final class IrcFileFormat {
                 charCount += inputLine.length();
             }
         } catch (IOException e) {
-        	result = null;
+            result = null;
         } finally {
-        	try {
-        		if (br != null) {
-        			br.close();
-        		}
-        	} catch (IOException e) {}
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException e) {}
         }
         return result;
     }

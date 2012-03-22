@@ -183,7 +183,7 @@ public class JoinIrcCommand extends IrcCommandBase {
                                     " Channel: " + ch.getNickname() +
                                     " User: " + client.getNickname();
                             Globals.logger.get().log(
-                            		Level.SEVERE, remark);
+                                    Level.SEVERE, remark);
                             ircCommandReport = errFileError(client, 
                                     "WRONG Response.Reply:" + 
                                     responseReply, 
@@ -216,10 +216,16 @@ public class JoinIrcCommand extends IrcCommandBase {
                     ch = IrcChannel.create(s, "", db);
                     
                     if (ch == null) {
-                    	IrcCommandReport ircCommandReport = null;
-                    	ircCommandReport = errFileError(client,
+                        IrcCommandReport ircCommandReport = null;
+                        long freeMemory = 
+                            Runtime.getRuntime().freeMemory();
+                        ircCommandReport = errFileError(client,
                             commandName, "MEMORY");
                         client.send(ircCommandReport);
+                        
+                        Globals.logger.get().log(Level.SEVERE, 
+                                "Insufficient free memory(B)" + 
+                                freeMemory);
                         continue;
                     }
                     responseReply = db.register(ch);
@@ -242,7 +248,7 @@ public class JoinIrcCommand extends IrcCommandBase {
                                     " Channel: " + ch.getNickname() +
                                     " User: " + client.getNickname();
                             Globals.logger.get().log(
-                            		Level.SEVERE, remark);
+                                    Level.SEVERE, remark);
                             ircCommandReport = errFileError( client,
                                     "WRONG Response.Reply:" + 
                                     responseReply, 
@@ -269,7 +275,7 @@ public class JoinIrcCommand extends IrcCommandBase {
                                     " Channel: " + ch.getNickname() +
                                     " User: " + client.getNickname();
                             Globals.logger.get().log(
-                            		Level.SEVERE, remark);
+                                    Level.SEVERE, remark);
                             ircCommandReport = errFileError(client, 
                                     "WRONG Response.Reply:" + 
                                     responseReply, 
@@ -356,8 +362,8 @@ public class JoinIrcCommand extends IrcCommandBase {
             String channelName) {
         
         String remark = Response.makeText(
-        		Response.Reply.ERR_INVITEONLYCHAN, 
-        		requestor.getNickname(),
+                Response.Reply.ERR_INVITEONLYCHAN, 
+                requestor.getNickname(),
                 channelName);
 
         return new IrcCommandReport(remark, requestor,

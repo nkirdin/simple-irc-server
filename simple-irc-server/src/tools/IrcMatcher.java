@@ -28,7 +28,7 @@
  * @author  Nikolay Kirdin
  */
 public final class IrcMatcher {
-	
+    
     /** Конструктор по умолчанию. */
     private IrcMatcher() {}
     

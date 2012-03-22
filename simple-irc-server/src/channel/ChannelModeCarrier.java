@@ -47,7 +47,7 @@ public class ChannelModeCarrier {
     /**
      * Конструктор.
      * @param mode режим канала IRC.
-     * @param operation действие, которое надо выполнить с указанным. 
+     * @param operation действие, которое надо выполнить с указанным
      * режимом.
      * @param parameter параметер режима.
      */

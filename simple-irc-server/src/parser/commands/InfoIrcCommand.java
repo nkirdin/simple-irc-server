@@ -123,15 +123,15 @@ public class InfoIrcCommand extends IrcCommandBase {
                 client.getNickname());
         
         List<String> stringList = IrcFileFormat.getFormattedText(
-        		Globals.infoFilename.get(),
-        		remark.length(),
-        		Constants.MAX_OUTPUT_LINE_NUMBER,
-        		Constants.MAX_OUTPUT_LINE_CHARS);
+                Globals.infoFilename.get(),
+                remark.length(),
+                Constants.MAX_OUTPUT_LINE_NUMBER,
+                Constants.MAX_OUTPUT_LINE_CHARS);
         
         if (stringList != null) {
-        	for (String s: stringList) {
-        		client.send(rplInfo(client, remark + s));
-        	}
+            for (String s: stringList) {
+                client.send(rplInfo(client, remark + s));
+            }
         }
         client.send(rplEndOfInfo(client));     
     }

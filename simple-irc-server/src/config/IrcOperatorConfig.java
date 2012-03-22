@@ -37,40 +37,40 @@ public class IrcOperatorConfig {
     /** &lt;password&gt; */
     private String password;
     
-	/**
-	 * Получение &lt;username&gt;.
-	 * @return &lt;username&gt;.
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Получение &lt;username&gt;.
+     * @return &lt;username&gt;.
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Задание &lt;username&gt;.
-	 * @param name &lt;username&gt;.
-	 */
-	 public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Задание &lt;username&gt;.
+     * @param name &lt;username&gt;.
+     */
+     public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * Получение &lt;password&gt;.
-	 * @return &lt;password&gt;.
-	 */
-	public String getPassword()
-	{
-		return password;
-	}
+    /**
+     * Получение &lt;password&gt;.
+     * @return &lt;password&gt;.
+     */
+    public String getPassword()
+    {
+        return password;
+    }
 
-	/**
-	 * Задание &lt;password&gt;.
-	 * @param password &lt;password&gt;.
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    /**
+     * Задание &lt;password&gt;.
+     * @param password &lt;password&gt;.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	
+    
     /**
      * Конструктор.
      * @param name &lt;username&gt;.

@@ -185,15 +185,15 @@ interface Globals {
      * состояние перегруженности одного из программных процессоров. 
      */
     AtomicReference<Set<IrcServerProcessor>> ircServerProcessorSet = 
-    		new AtomicReference<Set<IrcServerProcessor>>(new 
-    				HashSet<IrcServerProcessor>());
+            new AtomicReference<Set<IrcServerProcessor>>(new 
+                    HashSet<IrcServerProcessor>());
     /** 
      * Объект-хранилище параметров файла-протокола клиентских сообщений. 
      */
     AtomicReference<IrcTranscriptConfig> ircTranscriptConfig = 
-    		new AtomicReference<IrcTranscriptConfig>();
+            new AtomicReference<IrcTranscriptConfig>();
     
     /** Период (ms) вывода диагностических сообщений. */
     AtomicLong monitoringPeriod = 
-    		new AtomicLong(Constants.MONITORING_PERIOD);
+            new AtomicLong(Constants.MONITORING_PERIOD);
 }

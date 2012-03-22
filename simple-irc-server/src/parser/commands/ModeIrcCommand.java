@@ -323,8 +323,8 @@ public class ModeIrcCommand extends IrcCommandBase {
     private IrcCommandReport errUserDontMatch(IrcTalker requestor) {
         
         String remark = Response.makeText(
-        		Response.Reply.ERR_USERSDONTMATCH, 
-        		requestor.getNickname());
+                Response.Reply.ERR_USERSDONTMATCH, 
+                requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,
                 Globals.thisIrcServer.get());

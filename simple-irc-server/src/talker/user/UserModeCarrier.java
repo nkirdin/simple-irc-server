@@ -28,7 +28,7 @@
  * @author  Nikolay Kirdin
  */
 public class UserModeCarrier {
-	
+    
     /** Режим клиента.*/
     private UserMode mode;
     

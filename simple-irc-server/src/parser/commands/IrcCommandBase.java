@@ -571,7 +571,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */    
     protected static IrcCommandReport errNeedMoreParams(
-    		IrcTalker requestor, String commandName) {
+            IrcTalker requestor, String commandName) {
 
         String remark = Response.makeText(
                 Response.Reply.ERR_NEEDMOREPARAMS,
@@ -590,7 +590,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errUnknownCommand(
-    		IrcTalker requestor, String commandName) {
+            IrcTalker requestor, String commandName) {
 
         String remark = Response.makeText(
                 Response.Reply.ERR_UNKNOWNCOMMAND,
@@ -608,7 +608,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errUModeUnknownFlag(
-    		IrcTalker requestor) {
+            IrcTalker requestor) {
 
         String remark = Response.makeText(
                 Response.Reply.ERR_UMODEUNKNOWNFLAG,
@@ -643,7 +643,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNotRegistered(
-    		IrcTalker requestor) {
+            IrcTalker requestor) {
         
         String remark = Response.makeText(
                 Response.Reply.ERR_NOTREGISTERED, 
@@ -661,7 +661,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNoSuchChannel(
-    		IrcTalker requestor,
+            IrcTalker requestor,
             String channelName) {
         
         String remark = Response.makeText(
@@ -681,7 +681,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNotOnChannel(
-    		IrcTalker requestor,
+            IrcTalker requestor,
             String channelName) {
         
         String remark = Response.makeText(
@@ -700,7 +700,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errUserRestricted(
-    		IrcTalker requestor) {
+            IrcTalker requestor) {
         
         String remark = Response.makeText(Response.Reply.ERR_RESTRICTED, 
                 requestor.getNickname());
@@ -717,7 +717,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNotChannelOp(
-    		IrcTalker requestor,
+            IrcTalker requestor,
             String channelName) {
         
         String remark = Response.makeText(
@@ -777,7 +777,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNoPrivileges(
-    		IrcTalker requestor) {
+            IrcTalker requestor) {
         
         String remark = Response.makeText(
                 Response.Reply.ERR_NOPRIVILEGES, 
@@ -795,7 +795,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNoSuchServer(
-    		IrcTalker requestor, 
+            IrcTalker requestor, 
             String servername) {
         
         String remark = Response.makeText(
@@ -814,7 +814,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errOnUsingNickname(
-    		IrcTalker requestor, 
+            IrcTalker requestor, 
             String nickname) {
         
         String remark = Response.makeText(
@@ -848,7 +848,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNoTextToSend(
-    		IrcTalker requestor) {
+            IrcTalker requestor) {
         
         String remark = Response.makeText(Response.Reply.ERR_NOTEXTTOSEND,
                 requestor.getNickname());
@@ -882,7 +882,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errAlreadyRegistered(IrcTalker
-    		requestor) {
+            requestor) {
         
             String remark = Response.makeText(
                     Response.Reply.ERR_ALREADYREGISTRED,
@@ -1002,7 +1002,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * @return строка с одним из этих символов.
      */
     public static String getUserStatus(
-    		EnumSet <ChannelMode> channelMode) {
+            EnumSet <ChannelMode> channelMode) {
         String result = null;
         
         if (channelMode.contains(ChannelMode.o) ||
@@ -1043,7 +1043,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * ответом.
      */
     public static IrcCommandReport errTooManyChannels(
-    		IrcTalker ircTalker, 
+            IrcTalker ircTalker, 
             String channelName) {
         String remark = Response.makeText(
                 Response.Reply.ERR_TOOMANYCHANNELS,  
@@ -1062,7 +1062,7 @@ public class IrcCommandBase implements IrcParamRegex {
      * ответом.
      */
     public static IrcCommandReport errCannotSendToChan(
-    		IrcTalker ircTalker, 
+            IrcTalker ircTalker, 
             String channelName) {
         String remark = Response.makeText(
                 Response.Reply. ERR_CANNOTSENDTOCHAN,

@@ -109,7 +109,7 @@ public class DieIrcCommand extends IrcCommandBase {
         }
 
         String content = client.getNickname() + " " + commandName
-        		+ " " + Globals.thisIrcServer.get().getHostname();
+                + " " + Globals.thisIrcServer.get().getHostname();
 
         NoticeIrcCommand.create(db, Globals.thisIrcServer.get(),
                 targetList, content).run();

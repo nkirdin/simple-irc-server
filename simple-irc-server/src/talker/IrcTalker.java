@@ -39,7 +39,7 @@ import java.net.*;
  */
     
 public abstract class IrcTalker implements Recipient {
-	
+    
     /** Счетчик генератора уникальных идентификаторов. */
     private static AtomicLong seq = new AtomicLong(0);
     
@@ -51,7 +51,7 @@ public abstract class IrcTalker implements Recipient {
     
     /** ReadWrite Lock для IrcTalkerState. */
     private final ReentrantReadWriteLock stateRWLock = 
-    		new ReentrantReadWriteLock();
+            new ReentrantReadWriteLock();
     
     /** ReadLock для state. */
     private final Lock stateRLock = stateRWLock.readLock();
@@ -160,7 +160,7 @@ public abstract class IrcTalker implements Recipient {
      * @param name никнэйм.
      */
     public synchronized void setNickname(String name) {
-    	nickname = name;
+        nickname = name;
     }
 
     /**
@@ -391,8 +391,8 @@ public abstract class IrcTalker implements Recipient {
          String message = ircCommandReport.getReport();
          String nick = ircCommandReport.getSender().getNickname();
          if (message.charAt(0) != ':') {
-        	 message = ":" + nick + " " + message;
-        	 ircCommandReport.setReport(message);       
+             message = ":" + nick + " " + message;
+             ircCommandReport.setReport(message);       
          }
          result = IrcTalker.this.offerToOutputQueue(ircCommandReport);
          return result;
@@ -427,7 +427,7 @@ public abstract class IrcTalker implements Recipient {
     public BlockingQueue<IrcIncomingMessage> getInputQueue() {
         return  getConnection().getInputQueue();
     }
-	*/
+    */
     /**
      * Метод используется для получения количества элементов во входной 
      * очереди.
@@ -523,38 +523,38 @@ public abstract class IrcTalker implements Recipient {
         }
         return result;
     }
-	*/
+    */
     
     /** 
      * Установка state.
      * @param state
      */
     public void setState(IrcTalkerState state) {
-    	stateWLock.lock();
-    	try {
-    		this.state = state;
-    	} finally {
-    		stateWLock.unlock();
-    	}
+        stateWLock.lock();
+        try {
+            this.state = state;
+        } finally {
+            stateWLock.unlock();
+        }
     }
 
     /** Получение state. 
      * @return state
      */
     public IrcTalkerState getState() {
-    	IrcTalkerState result = null;
-    	stateRLock.lock();
-    	try {
-    		result = state;
-    	} finally {
-    		stateRLock.unlock();
-    	}
-    	return result;
+        IrcTalkerState result = null;
+        stateRLock.lock();
+        try {
+            result = state;
+        } finally {
+            stateRLock.unlock();
+        }
+        return result;
     }
     
     /** Перевод клиента в состояние {@link IrcTalkerState#CLOSE}. */
     public void close() {
-    	stateWLock.lock();
+        stateWLock.lock();
         try {
             if (getState() != IrcTalkerState.CLOSE &&
                 getState() != IrcTalkerState.CLOSING &&
@@ -567,13 +567,13 @@ public abstract class IrcTalker implements Recipient {
                         + " ircTalker set CLOSE");
             }
         } finally {
-        	stateWLock.unlock();
+            stateWLock.unlock();
         }
     }
 
     /** Перевод клиента в состояние {@link IrcTalkerState#BROKEN}. */
     public void setBroken() {
-    	stateWLock.lock();
+        stateWLock.lock();
         try {
             if (getState() != IrcTalkerState.CLOSE &&
                 getState() != IrcTalkerState.CLOSING &&
@@ -586,7 +586,7 @@ public abstract class IrcTalker implements Recipient {
                         + " ircTalker set BROKEN");
             }
         } finally {
-        	stateWLock.unlock();
+            stateWLock.unlock();
         }
     }
 }

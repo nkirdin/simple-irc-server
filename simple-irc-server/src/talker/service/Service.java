@@ -61,18 +61,18 @@ class Service extends IrcTalker {
      * ограничение по доступной памяти.
      */
     public static Service create() {
-    	Service result = null;
-    	long freeMemory = Runtime.getRuntime().freeMemory();
-    	if (freeMemory < Constants.MIN_FREE_MEMORY) {
-    		System.gc();
-    	}
-    	freeMemory = Runtime.getRuntime().freeMemory();
-    	if (freeMemory >= Constants.MIN_FREE_MEMORY) {
-    		result = new Service();
-    	} else {
-    		Globals.logger.get().log(Level.SEVERE, 
-    				"Insufficient free memory (b): " + freeMemory);
-    	}
+        Service result = null;
+        long freeMemory = Runtime.getRuntime().freeMemory();
+        if (freeMemory < Constants.MIN_FREE_MEMORY) {
+            System.gc();
+        }
+        freeMemory = Runtime.getRuntime().freeMemory();
+        if (freeMemory >= Constants.MIN_FREE_MEMORY) {
+            result = new Service();
+        } else {
+            Globals.logger.get().log(Level.SEVERE, 
+                    "Insufficient free memory (b): " + freeMemory);
+        }
         return result;
     }
     
@@ -87,12 +87,12 @@ class Service extends IrcTalker {
     public static Service create(IrcTalker ircTalker) {
         Service service = Service.create();
         if (service != null) {
-        	service.setNickname(ircTalker.getNickname());
-        	service.setNetworkId(ircTalker.getNetworkId());
-        	service.setHostname(ircTalker.getHostname());
-        	service.setHopcount(ircTalker.getHopcount());
-        	service.setRegistered(ircTalker.isRegistered());
-        	service.setConnection(ircTalker.getConnection());
+            service.setNickname(ircTalker.getNickname());
+            service.setNetworkId(ircTalker.getNetworkId());
+            service.setHostname(ircTalker.getHostname());
+            service.setHopcount(ircTalker.getHopcount());
+            service.setRegistered(ircTalker.isRegistered());
+            service.setConnection(ircTalker.getConnection());
         }
         return service;
     }
@@ -108,13 +108,13 @@ class Service extends IrcTalker {
     public static Service create(IrcServer ircServer) {
         Service service = Service.create();
         if (service != null) {
-        	service.setNickname(ircServer.getNickname());
-        	service.setNetworkId(ircServer.getNetworkId());
-        	service.setHostname(ircServer.getHostname());
-        	service.setHopcount(ircServer.getHopcount());
-        	service.setRegistered(ircServer.isRegistered());
-        	service.setConnection(ircServer.getConnection());
-        	service.setIrcServer(ircServer);
+            service.setNickname(ircServer.getNickname());
+            service.setNetworkId(ircServer.getNetworkId());
+            service.setHostname(ircServer.getHostname());
+            service.setHopcount(ircServer.getHopcount());
+            service.setRegistered(ircServer.isRegistered());
+            service.setConnection(ircServer.getConnection());
+            service.setIrcServer(ircServer);
         }
         return service;
     }
@@ -130,13 +130,13 @@ class Service extends IrcTalker {
     public static Service create(User user) {
         Service service = Service.create();
         if (service != null) {
-        	service.setNickname(user.getNickname());
-        	service.setNetworkId(user.getNetworkId());
-        	service.setHostname(user.getHostname());
-        	service.setHopcount(user.getHopcount());
-        	service.setRegistered(user.isRegistered());
-        	service.setIrcServer(user.getIrcServer());
-        	service.setConnection(user.getConnection());
+            service.setNickname(user.getNickname());
+            service.setNetworkId(user.getNetworkId());
+            service.setHostname(user.getHostname());
+            service.setHopcount(user.getHopcount());
+            service.setRegistered(user.isRegistered());
+            service.setIrcServer(user.getIrcServer());
+            service.setConnection(user.getConnection());
         }
         return service;
     }

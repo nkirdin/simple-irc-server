@@ -71,23 +71,23 @@ interface IrcParamRegex {
 
     /** IP-адрес хоста. */
     String hostAddrRegex = "(" + ip4AddrRegex + ")|(" + ip6AddrRegex + 
-    		")";
+            ")";
     
     /** Компонент доменного имени. */
     String shortNameRegex = "([A-Za-z][A-Za-z0-9\\-]*[A-Za-z0-9]*)";
     
     /** Полное доменное имя. */
     String hostNameRegex = shortNameRegex + "(\\." + shortNameRegex + 
-    		")*";
+            ")*";
 
     /** Пятисимвольный идентификатор для "safe" канала. */
     String channelIdRegex = "([A-Z]|[0-9]){5}";
     
     /** Имя канала без префикса. */
     String chanStringRegex = "(" + "[\\x01-\\x06]|[\\x08-\\x09]|" +
-    		"[\\x0B-\\x0C]|[\\x0E-\\x1F]|[\\x21-\\x2B]|[\\x2D-\\x39]|" +
-    		"[\\x3B-\\xFF]" + ")" + "{1," + (Constants.CHANNELLEN - 1) 
-    		+ "}";
+            "[\\x0B-\\x0C]|[\\x0E-\\x1F]|[\\x21-\\x2B]|[\\x2D-\\x39]|" +
+            "[\\x3B-\\xFF]" + ")" + "{1," + (Constants.CHANNELLEN - 1) 
+            + "}";
     /*String channelRegex = "(" + "#" + "|" + "\\+" + "|"
             + "(!" + channelIdRegex + ")" + "|" + "&" + ")"
             + chanStringRegex + "(:" + chanStringRegex + ")*";
@@ -99,7 +99,7 @@ interface IrcParamRegex {
 
     /** Ключ (пароль) канала. */
     String keyRegex = "(" + "[\\x01-\\x06]|\\x08|[\\x0E-\\x1F]|" +
-    		"[\\x21-\\x7F]" + "){1,23}";
+            "[\\x21-\\x7F]" + "){1,23}";
 
     /** Никнэйм пользователя. */        
     String nickNameRegex = "(" + letterRegex + "|" + specialRegex + ")"
@@ -177,13 +177,13 @@ interface IrcParamRegex {
     /** Маска login name пользователя  для его хоста. */        
     String userUsernameMask = "(" + wildManyRegex + "|"
             + wildOneRegex + ")*" + userRegexForMask + "(" + 
-    		wildManyRegex + "|" + wildOneRegex + "|" + nickNameRegex + 
-    		")*";
+            wildManyRegex + "|" + wildOneRegex + "|" + nickNameRegex + 
+            ")*";
 
     /** Маска никнэйма. */
     String userNicknameMask = "(" + wildManyRegex + "|" + wildOneRegex +
-    		")*" + nickNameRegex + "(" + wildManyRegex + "|" + 
-    		wildOneRegex + "|" + nickNameRegex + ")*";
+            ")*" + nickNameRegex + "(" + wildManyRegex + "|" + 
+            wildOneRegex + "|" + nickNameRegex + ")*";
     
     /** Строка для формирования маски имени канала. */        
     String chanStringForMaskRegex = "("
@@ -205,7 +205,7 @@ interface IrcParamRegex {
 
     /** Имя сервиса. */        
     String serviceNameRegex = nickNameRegex + "(" + "@" + hostNameRegex 
-    		+ ")?";
+            + ")?";
 
     /** Скомпилированные варианты регулярных выражений. */
     /** Маска доменного имени хоста. */

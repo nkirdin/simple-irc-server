@@ -139,12 +139,12 @@ public class PrivmsgIrcCommand extends IrcCommandBase {
                 IrcChannel ch = db.getChannel(target);
 
                 if (ch == null || !ch.isVisible(client)) {
-                	client.send(errNoSuchChannel(client, target));
+                    client.send(errNoSuchChannel(client, target));
                 } else if (!ch.canReceive(client)) {
-                	client.send(errCannotSendToChan(client, target));
+                    client.send(errCannotSendToChan(client, target));
                 } else {
-                	ch.send(client, 
-                			commandName + " " + target + " " + message);
+                    ch.send(client, 
+                            commandName + " " + target + " " + message);
                 }
 
             } else if (isIt(target, nickNamePattern)) {

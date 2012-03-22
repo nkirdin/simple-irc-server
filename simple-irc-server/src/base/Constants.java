@@ -193,7 +193,7 @@ interface Constants {
     int MAX_SERVER_CLIENTS = HARD_LIMIT;
     
     /** Максимальное количество каналов. */
-    int MAX_CHANNEL_NUMBER = HARD_LIMIT;
+    int MAX_CHANNEL_NUMBER = HARD_LIMIT / 2;
    
     /** Максимальное количество членов канала. */     
     int MAX_CHANNEL_MEMBER = 1000;

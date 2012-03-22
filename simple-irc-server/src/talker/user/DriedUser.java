@@ -29,44 +29,44 @@
  */
 
 public class DriedUser {
-	
-	/** Id клиента. */
-	public final long id;
-	
-	/** Никнэйм клиента. */
-	public final String nickname;
-	
-	/** Аккоунт пользователя на его хосте. */
-	public final String username;
-	
-	/** FQDN хоста пользователя. */
-	public final String hostname;
-	
-	/** "Реальное" имя пользователя. */
-	public final String realname; 
-	
-	/** FQDN сервера, к которому был подключен пользователь. */
-	public final String serverHostname;
+    
+    /** Id клиента. */
+    public final long id;
+    
+    /** Никнэйм клиента. */
+    public final String nickname;
+    
+    /** Аккоунт пользователя на его хосте. */
+    public final String username;
+    
+    /** FQDN хоста пользователя. */
+    public final String hostname;
+    
+    /** "Реальное" имя пользователя. */
+    public final String realname; 
+    
+    /** FQDN сервера, к которому был подключен пользователь. */
+    public final String serverHostname;
 
 
 
-	/**
-	 * Конструктор.
-	 * @param nickname никнэйм клиента.
-	 * @param username аккоунт пользователя на его хосте.
-	 * @param hostname FQDN хоста пользователя.
-	 * @param realname "реальное" имя пользователя.
-	 * @param serverHostname FQDN сервера, к которому был подключен 
-	 * пользователь.
-	 * @param id Id клиента.
-	 */
-	public DriedUser (String nickname, String username, String hostname, 
-			String realname, String serverHostname, long id) {
-		this.nickname = nickname;
-		this.username = username;
-		this.hostname = hostname;
-		this.realname = realname;
-		this.serverHostname = serverHostname;
-		this.id = id;
-	}
+    /**
+     * Конструктор.
+     * @param nickname никнэйм клиента.
+     * @param username аккоунт пользователя на его хосте.
+     * @param hostname FQDN хоста пользователя.
+     * @param realname "реальное" имя пользователя.
+     * @param serverHostname FQDN сервера, к которому был подключен 
+     * пользователь.
+     * @param id Id клиента.
+     */
+    public DriedUser (String nickname, String username, String hostname, 
+            String realname, String serverHostname, long id) {
+        this.nickname = nickname;
+        this.username = username;
+        this.hostname = hostname;
+        this.realname = realname;
+        this.serverHostname = serverHostname;
+        this.id = id;
+    }
 }

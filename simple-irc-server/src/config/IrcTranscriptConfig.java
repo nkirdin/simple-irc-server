@@ -32,10 +32,10 @@ import java.util.concurrent.BlockingQueue;
  */
 public class IrcTranscriptConfig {
     
-	/** Время последней записи протокола на внешний носитель. */
-	private long writingTime; 
-	
-	/** Путь к файлу-протоколу клиентских сообщений. */
+    /** Время последней записи протокола на внешний носитель. */
+    private long writingTime; 
+    
+    /** Путь к файлу-протоколу клиентских сообщений. */
     private String transcript;
 
     /** Количество ротаций файла-протокола клиентских сообщений. */
@@ -46,116 +46,116 @@ public class IrcTranscriptConfig {
         
     /** Очередь сообщений клиентов. */
     private BlockingQueue<String> transcriptQueue = 
-    		new ArrayBlockingQueue<String>(
-    				Globals.maxTranscriptQueueSize);
+            new ArrayBlockingQueue<String>(
+                    Globals.maxTranscriptQueueSize);
 
-	/**
+    /**
      * Конструктор.
      * @param transcript путь к файлу-протоколу клиентских сообщений.
      * @param rotate количество ротаций.
      * @param length длина файла-протокола клиентских сообщений..
      */
     public IrcTranscriptConfig(String transcript, int rotate, 
-    		int length) {
+            int length) {
         this.transcript = transcript;
         this.setRotate(rotate);
         this.setLength(length);
     }
 
-	/**
-	 * Получение пути к файлу-протоколу клиентских сообщений.
-	 * @return the transcript
-	 */
-	public String getTranscript() {
-		return transcript;
-	}
+    /**
+     * Получение пути к файлу-протоколу клиентских сообщений.
+     * @return the transcript
+     */
+    public String getTranscript() {
+        return transcript;
+    }
 
-	/**
-	 * Задание пути к файлу-протоколу клиентских сообщений.
-	 * @param transcript
-	 */
-	public void setTranscript(String transcript) {
-		this.transcript = transcript;
-	}
+    /**
+     * Задание пути к файлу-протоколу клиентских сообщений.
+     * @param transcript
+     */
+    public void setTranscript(String transcript) {
+        this.transcript = transcript;
+    }
 
-	/**
-	 * Получение максимального количества ротаций файла-протокола.
-	 * @return максимальное количество ротаций файла-протокола.
-	 */
-	public int getRotate() {
-		return rotate;
-	}
+    /**
+     * Получение максимального количества ротаций файла-протокола.
+     * @return максимальное количество ротаций файла-протокола.
+     */
+    public int getRotate() {
+        return rotate;
+    }
 
-	/**
-	 * Задание максимального количества ротаций файла-протокола.
-	 * @param rotate максимальное количество ротаций файла-протокола.
-	 */
-	public void setRotate(int rotate) {
-		this.rotate = rotate;
-	}
+    /**
+     * Задание максимального количества ротаций файла-протокола.
+     * @param rotate максимальное количество ротаций файла-протокола.
+     */
+    public void setRotate(int rotate) {
+        this.rotate = rotate;
+    }
 
-	/**
-	 * Получение максимальной длины файла-протокола.
-	 * @return максимальная длина файла-протокола.
-	 */
-	public long getLength() {
-		return length;
-	}
+    /**
+     * Получение максимальной длины файла-протокола.
+     * @return максимальная длина файла-протокола.
+     */
+    public long getLength() {
+        return length;
+    }
 
-	/**
-	 * Задание максимальной длины файла-протокола.
-	 * @param length максимальная длина файла-протокола.
-	 */
-	public void setLength(long length) {
-		this.length = length;
-	}
+    /**
+     * Задание максимальной длины файла-протокола.
+     * @param length максимальная длина файла-протокола.
+     */
+    public void setLength(long length) {
+        this.length = length;
+    }
 
-	/**
-	 * Получение времени последней операции записи в файл-протокол.
-	 * @return время последней операции записи в файл-протокол.
-	 */
-	public long getWritingTime() {
-		return writingTime;
-	}
+    /**
+     * Получение времени последней операции записи в файл-протокол.
+     * @return время последней операции записи в файл-протокол.
+     */
+    public long getWritingTime() {
+        return writingTime;
+    }
 
-	/**
-	 * Задание времени последней операции записи в файл-протокол.
-	 * @param writingTime время последней операции записи в файл-протокол.
-	 */
-	public void setWritingTime(long writingTime) {
-		this.writingTime = writingTime;
-	}
+    /**
+     * Задание времени последней операции записи в файл-протокол.
+     * @param writingTime время последней операции записи в файл-протокол.
+     */
+    public void setWritingTime(long writingTime) {
+        this.writingTime = writingTime;
+    }
 
-	/** 
-	 * Получение очереди сообщений.
-	 * @return очередь сообщений.
-	 */
-	public BlockingQueue<String> getTranscriptQueue() {
-		return transcriptQueue;
-	}
-	
-	/**
-	 * Запись сообщения в очередь.
-	 * @param record сообщение.
-	 */
-	public boolean offerToQueue(String record) {
-		return transcriptQueue.offer(record);
-		
-	}
-	
-	/** 
-	 * Получение сообщения из очереди.
-	 * @return сообщение.
-	 */
-	public String pollFromQueue() {
-		return transcriptQueue.poll();		
-	}
+    /** 
+     * Получение очереди сообщений.
+     * @return очередь сообщений.
+     */
+    public BlockingQueue<String> getTranscriptQueue() {
+        return transcriptQueue;
+    }
+    
+    /**
+     * Запись сообщения в очередь.
+     * @param record сообщение.
+     */
+    public boolean offerToQueue(String record) {
+        return transcriptQueue.offer(record);
+        
+    }
+    
+    /** 
+     * Получение сообщения из очереди.
+     * @return сообщение.
+     */
+    public String pollFromQueue() {
+        return transcriptQueue.poll();        
+    }
 
-	/** Получение длины очереди.
-	 * @return длина очереди.
-	 */
-	public int getQueueSize() {
-		return transcriptQueue.size();
-	}
-	
+    /** Получение длины очереди.
+     * @return длина очереди.
+     */
+    public int getQueueSize() {
+        return transcriptQueue.size();
+    }
+    
 }
