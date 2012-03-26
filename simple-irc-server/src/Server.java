@@ -422,7 +422,7 @@ public class Server implements Runnable {
                 ircTalkerProcessor.thread.get());
         
         try {
-            Thread.sleep(Globals.sleepTO.get());
+        	Thread.sleep(Globals.sleepTO.get());
         } catch (InterruptedException e) {}
         
         error = ircTalkerProcessor.thread.get().getState() == 

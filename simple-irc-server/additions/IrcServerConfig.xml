@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File Name: IrcServerConfig.xml -->
+<CONFIG>
+<ADMIN name="Adminname Adminsurename" location="25, Serverstreet, Servercity, Servercountry" 
+location2="Organizationname, 25, Organizationstreet, Organizationcity, Organizationcountry"  email="ircAdmin@dom.ain" 
+info="Experimental IRC Server"></ADMIN>
+<SERVER timezone="GMT+0400" debuglevel="WARNING"></SERVER>
+<INTERFACE  port="6667" charset="UTF-8"></INTERFACE>
+<TRANSCRIPT transcript="IrcServerTranscript.txt" length="100K" rotate="5"></TRANSCRIPT>
+<OPERATOR username="operatorname1" password="operatorpassword1"></OPERATOR>
+<OPERATOR username="operatorname2" password="operatorpassword2"></OPERATOR>
+</CONFIG>

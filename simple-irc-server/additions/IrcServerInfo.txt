@@ -1,0 +1,7 @@
+
+The Information about this IRC Server realization.
+
+It is a simple program that was written in order to check knowledge of Java programming language.
+
+It was very cool and fun to programming.
+
