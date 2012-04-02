@@ -141,7 +141,7 @@ public class IsonIrcCommand extends IrcCommandBase {
 
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_ISON}.
+     * {@link Reply#RPL_ISON}.
      * @param ircTalker отправитель.
      * @param outputString 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -149,7 +149,7 @@ public class IsonIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplIson(IrcTalker ircTalker,
             String outputString) {
-        String remark = Response.makeText(Response.Reply.RPL_ISON,  
+        String remark = Reply.makeText(Reply.RPL_ISON,  
                 ircTalker.getNickname(), outputString);
         return new IrcCommandReport(remark, ircTalker,
                 Globals.thisIrcServer.get());

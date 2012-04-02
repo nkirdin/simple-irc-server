@@ -101,14 +101,14 @@ public class SummonIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_SUMMONDISABLED}. 
+     * {@link Reply#ERR_SUMMONDISABLED}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport errSummonDisabled(IrcTalker requestor) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_SUMMONDISABLED,
+        String remark = Reply.makeText(
+                Reply.ERR_SUMMONDISABLED,
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,

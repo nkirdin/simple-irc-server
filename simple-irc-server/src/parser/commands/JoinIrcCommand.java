@@ -127,7 +127,7 @@ public class JoinIrcCommand extends IrcCommandBase {
 
     /** Исполнитель команды. */
     public void run() {
-        Response.Reply responseReply = null;
+        Reply responseReply = null;
 
         if (!isExecutable()) {
             return;
@@ -149,8 +149,6 @@ public class JoinIrcCommand extends IrcCommandBase {
                     }
 
                     if (ch.checkMember(client)) {
-                        response = new ResponseSuccess(
-                                Response.Reply.RPL_OK);
                         continue;
                     }
 
@@ -167,25 +165,25 @@ public class JoinIrcCommand extends IrcCommandBase {
 
                     responseReply = ch.add(client, keyList.isEmpty()
                             ? null : keyList.poll());
-                    if (responseReply != Response.Reply.RPL_OK) {
+                    if (responseReply != Reply.RPL_OK) {
                         IrcCommandReport ircCommandReport = null;
                         if (responseReply == 
-                                Response.Reply.ERR_BADCHANNELKEY) {
+                                Reply.ERR_BADCHANNELKEY) {
                             ircCommandReport = errBadChannelKey(client, 
                                     ch.getNickname());
                         } else if (responseReply == 
-                                Response.Reply.ERR_CHANNELISFULL) {
+                                Reply.ERR_CHANNELISFULL) {
                             ircCommandReport = errChannelListFull(client, 
                                     ch.getNickname());
                         } else {
-                            String remark = "WRONG Response.Reply:" + 
+                            String remark = "WRONG Reply:" + 
                                     responseReply +
                                     " Channel: " + ch.getNickname() +
                                     " User: " + client.getNickname();
                             Globals.logger.get().log(
                                     Level.SEVERE, remark);
                             ircCommandReport = errFileError(client, 
-                                    "WRONG Response.Reply:" + 
+                                    "WRONG Reply:" + 
                                     responseReply, 
                                     client.getNickname() + " " + 
                                     ch.getNickname());
@@ -196,13 +194,13 @@ public class JoinIrcCommand extends IrcCommandBase {
                     }
 
                     responseReply = client.add(ch);
-                    if (responseReply != Response.Reply.RPL_OK) {
+                    if (responseReply != Reply.RPL_OK) {
                         client.send(errTooManyChannels(client, s));
 
                         ch.remove(client);
                         if (ch.isUserSetEmpty()) {
                             responseReply = db.unRegister(ch);
-                            if (responseReply == Response.Reply.RPL_OK) {
+                            if (responseReply == Reply.RPL_OK) {
                                 ch.delete();
                             } else {
                                 throw new Error(
@@ -213,7 +211,7 @@ public class JoinIrcCommand extends IrcCommandBase {
                         continue;
                     }
                 } else {
-                    ch = IrcChannel.create(s, "", db);
+                    ch = IrcChannel.create(s, "");
                     
                     if (ch == null) {
                         IrcCommandReport ircCommandReport = null;
@@ -230,27 +228,27 @@ public class JoinIrcCommand extends IrcCommandBase {
                     }
                     responseReply = db.register(ch);
 
-                    if (responseReply != Response.Reply.RPL_OK) {
+                    if (responseReply != Reply.RPL_OK) {
                         IrcCommandReport ircCommandReport = null;
                         String remark = null;
                         if (responseReply != 
-                                Response.Reply.ERR_NICKNAMEINUSE) {
+                                Reply.ERR_NICKNAMEINUSE) {
                             ircCommandReport = errNicknameInUse(client,
                                     ch.getNickname());
                         } else if (responseReply != 
-                                Response.Reply.ERR_FILEERROR) {
+                                Reply.ERR_FILEERROR) {
                             ircCommandReport = errFileError(client,
                                     "Maximum channel number was reached.", 
                                     ch.getNickname());
                         } else {
-                            remark = "WRONG Response.Reply:" + 
+                            remark = "WRONG Reply:" + 
                                     responseReply +
                                     " Channel: " + ch.getNickname() +
                                     " User: " + client.getNickname();
                             Globals.logger.get().log(
                                     Level.SEVERE, remark);
                             ircCommandReport = errFileError( client,
-                                    "WRONG Response.Reply:" + 
+                                    "WRONG Reply:" + 
                                     responseReply, 
                                     client.getNickname() + " " + 
                                     ch.getNickname());
@@ -259,25 +257,25 @@ public class JoinIrcCommand extends IrcCommandBase {
                         continue;
                     }
                     responseReply = ch.add(client, null);
-                    if (responseReply != Response.Reply.RPL_OK) {
+                    if (responseReply != Reply.RPL_OK) {
                         IrcCommandReport ircCommandReport = null;
                         if (responseReply == 
-                                Response.Reply.ERR_BADCHANNELKEY) {
+                                Reply.ERR_BADCHANNELKEY) {
                             ircCommandReport = errBadChannelKey(client, 
                                     ch.getNickname());
                         } else if (responseReply == 
-                                Response.Reply.ERR_CHANNELISFULL) {
+                                Reply.ERR_CHANNELISFULL) {
                             ircCommandReport = errChannelListFull(client, 
                                     ch.getNickname());
                         } else {
-                            String remark = "WRONG Response.Reply:" + 
+                            String remark = "WRONG Reply:" + 
                                     responseReply +
                                     " Channel: " + ch.getNickname() +
                                     " User: " + client.getNickname();
                             Globals.logger.get().log(
                                     Level.SEVERE, remark);
                             ircCommandReport = errFileError(client, 
-                                    "WRONG Response.Reply:" + 
+                                    "WRONG Reply:" + 
                                     responseReply, 
                                     client.getNickname() + " " + 
                                     ch.getNickname());
@@ -290,13 +288,13 @@ public class JoinIrcCommand extends IrcCommandBase {
                     ch.setCreator(client);
                     ch.setChannelOperator(client);
                     responseReply = client.add(ch);
-                    if (responseReply != Response.Reply.RPL_OK) {
+                    if (responseReply != Reply.RPL_OK) {
                         client.send(errTooManyChannels(client, s));
 
                         ch.remove(client);
                         if (ch.isUserSetEmpty()) {
                             responseReply = db.unRegister(ch);
-                            if (responseReply == Response.Reply.RPL_OK) {
+                            if (responseReply == Reply.RPL_OK) {
                                 ch.delete();
                             } else {
                                 throw new Error(
@@ -353,7 +351,7 @@ public class JoinIrcCommand extends IrcCommandBase {
         
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_INVITEONLYCHAN}. 
+     * {@link Reply#ERR_INVITEONLYCHAN}. 
      * @param requestor источник команды.
      * @param channelName имя канала.
      * @return объект с сообщением.
@@ -361,8 +359,8 @@ public class JoinIrcCommand extends IrcCommandBase {
     private IrcCommandReport errInviteOnly(IrcTalker requestor,
             String channelName) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_INVITEONLYCHAN, 
+        String remark = Reply.makeText(
+                Reply.ERR_INVITEONLYCHAN, 
                 requestor.getNickname(),
                 channelName);
 
@@ -372,7 +370,7 @@ public class JoinIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_BANNEDFROMCHAN}. 
+     * {@link Reply#ERR_BANNEDFROMCHAN}. 
      * @param requestor источник команды.
      * @param channelName имя канала.
      * @return объект с сообщением.
@@ -380,8 +378,8 @@ public class JoinIrcCommand extends IrcCommandBase {
     private IrcCommandReport errBannedFromChan(IrcTalker requestor,
             String channelName) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_BANNEDFROMCHAN, 
+        String remark = Reply.makeText(
+                Reply.ERR_BANNEDFROMCHAN, 
                 requestor.getNickname(),
                 channelName);
 
@@ -391,7 +389,7 @@ public class JoinIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает текст сообщения соответствующие формализованным 
-     * сообщениям {@link Response.Reply#ERR_BADCHANNELKEY}
+     * сообщениям {@link Reply#ERR_BADCHANNELKEY}
      * @param requestor источник команды.
      * @param channelName имя канала.
      * @return объект с сообщением.
@@ -399,8 +397,8 @@ public class JoinIrcCommand extends IrcCommandBase {
      public IrcCommandReport errBadChannelKey(IrcTalker requestor,
             String channelName) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_BADCHANNELKEY, 
+        String remark = Reply.makeText(
+                Reply.ERR_BADCHANNELKEY, 
                 requestor.getNickname(), channelName);
         return new IrcCommandReport(remark, requestor,
                 Globals.thisIrcServer.get());
@@ -408,7 +406,7 @@ public class JoinIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает текст сообщения соответствующие формализованным 
-     * сообщениям {@link Response.Reply#ERR_BADCHANNELKEY}
+     * сообщениям {@link Reply#ERR_BADCHANNELKEY}
      * @param requestor источник команды.
      * @param channelName имя канала.
      * @return объект с сообщением.
@@ -416,8 +414,8 @@ public class JoinIrcCommand extends IrcCommandBase {
      public IrcCommandReport errChannelListFull(IrcTalker requestor,
             String channelName) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_CHANNELISFULL, 
+        String remark = Reply.makeText(
+                Reply.ERR_CHANNELISFULL, 
                 requestor.getNickname(), channelName);
         
         return new IrcCommandReport(remark, requestor,

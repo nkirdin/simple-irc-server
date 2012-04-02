@@ -103,8 +103,7 @@ public class ParameterInitialization {
         Globals.anonymousUser.get().setHostname("localhost");
         
         Globals.monitorIrcChannel.set(new MonitorIrcChannel(
-                "&MonitorIrcChannel","Connections monitor", 
-                Globals.db.get()));
+                "&MonitorIrcChannel","Connections monitor"));
         
         
         Globals.db.get().register(Globals.thisIrcServer.get());
@@ -175,7 +174,8 @@ public class ParameterInitialization {
         
         Globals.db.get().setIrcServerConfig(new IrcServerConfig(
                 Globals.timeZone.get(),
-                Globals.fileLogLevel.get()));      
+                Globals.fileLogLevel.get(),
+                Globals.motdFilename.get()));      
         
         Globals.db.get().setIrcInterfaceConfig(new IrcInterfaceConfig(
                 Globals.serverInetAddress.get(),

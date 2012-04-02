@@ -262,7 +262,7 @@ public class WhoIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_WHOREPLY}.
+     * {@link Reply#RPL_WHOREPLY}.
      * @param ircTalker отправитель.
      * @param channelNickname
      * @param userUsername
@@ -280,8 +280,8 @@ public class WhoIrcCommand extends IrcCommandBase {
             String userHostname, String userServername, 
             String userNickname, String status, int userHopcount, 
             String userRealname) {
-                    String remark = Response.makeText(
-                            Response.Reply.RPL_WHOREPLY,
+                    String remark = Reply.makeText(
+                            Reply.RPL_WHOREPLY,
                             ircTalker.getNickname(),
                             channelNickname,
                             userUsername,
@@ -297,7 +297,7 @@ public class WhoIrcCommand extends IrcCommandBase {
 
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_ENDOFWHO}.
+     * {@link Reply#RPL_ENDOFWHO}.
      * @param ircTalker отправитель.
      * @param token
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -305,7 +305,7 @@ public class WhoIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplEndOfWho(IrcTalker ircTalker,
             String token) {
-        String remark = Response.makeText(Response.Reply.RPL_ENDOFWHO,
+        String remark = Reply.makeText(Reply.RPL_ENDOFWHO,
                 ircTalker.getNickname(),
                 token);
         return new IrcCommandReport(remark, ircTalker,
@@ -314,7 +314,7 @@ public class WhoIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_WHOREPLY}.
+     * {@link Reply#RPL_WHOREPLY}.
      * @param ircTalker отправитель.
      * @param channel канал
      * @param user исследуемый клиент.
@@ -346,7 +346,7 @@ public class WhoIrcCommand extends IrcCommandBase {
                 userRealname = nick;
             }   
             status = status + getUserStatus(userChannelModeSet);  
-            String remark = Response.makeText(Response.Reply.RPL_WHOREPLY,
+            String remark = Reply.makeText(Reply.RPL_WHOREPLY,
                     ircTalker.getNickname(),
                     channel.getNickname(),
                     userUsername,

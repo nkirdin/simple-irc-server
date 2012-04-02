@@ -277,7 +277,7 @@ public class User extends IrcTalker implements Comparable {
     /**
      * Проверка того, что информация об этом клиенте доступна клиенту,
      * указанному в качестве аргумента.
-     * Если у этого клиента режим "invisible" - {@link UserMode#i} не 
+     * Если у этого клиента режим "invisible" {@link UserMode#i} не 
      * установлен, то информация предоставляется.
      * Если у этого клиента установлен режим "invisible", информация о 
      * нем предоставляется в следущих случаях:
@@ -344,17 +344,17 @@ public class User extends IrcTalker implements Comparable {
      * Добавление канала, указанного в качестве аргумента во множество
      * каналов, членом которых является клиент.
      * @param channel добавляемый канал.
-     * @return {@link Response.Reply#RPL_OK} если добавление было успешно
-     * завершено, {@link Response.Reply#ERR_TOOMANYCHANNELS}, если
+     * @return {@link Reply#RPL_OK} если добавление было успешно
+     * завершено, {@link Reply#ERR_TOOMANYCHANNELS}, если
      * превышено максимально допустимое количество каналов.
      */
-    public Response.Reply add(IrcChannel channel) {
-        Response.Reply responseReply = null;
+    public Reply add(IrcChannel channel) {
+        Reply responseReply = null;
         if (channelSet.size() < maximumChannelNumber) {
             channelSet.add(channel);
-            responseReply = Response.Reply.RPL_OK;
+            responseReply = Reply.RPL_OK;
         } else {
-            responseReply = Response.Reply.ERR_TOOMANYCHANNELS;
+            responseReply = Reply.ERR_TOOMANYCHANNELS;
         }
         return responseReply;
     }

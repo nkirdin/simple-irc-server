@@ -100,14 +100,14 @@ public class UsersIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#ERR_USERSDISABLED}.
+     * {@link Reply#ERR_USERSDISABLED}.
      * @param ircTalker отправитель.
      * @return объект класса {@link IrcCommandReport} с формализованным 
      * ответом.
      */
     private IrcCommandReport errUsersDisabled(IrcTalker ircTalker) {
-        String remark = Response.makeText(
-                Response.Reply.ERR_USERSDISABLED,
+        String remark = Reply.makeText(
+                Reply.ERR_USERSDISABLED,
                 ircTalker.getNickname());
         return new IrcCommandReport(remark, ircTalker,
                 Globals.thisIrcServer.get());

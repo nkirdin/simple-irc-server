@@ -223,11 +223,11 @@ IrcServerProcessor {
                     connection.avgInputPeriodMeter.setValue(currentTime);
 
                     boolean result = connection.offerToInputQueue(new 
-                            IrcIncomingMessage(inputString,    ircTalker));
+                            IrcIncomingMessage(inputString, ircTalker));
 
                     if (!result) {
-                        String remark = Response.makeText(
-                                Response.Reply.ERR_FILEERROR, 
+                        String remark = Reply.makeText(
+                                Reply.ERR_FILEERROR, 
                                 ircTalker.getNickname(),
                                 "offer to input queue " ,
                                 connection.toString());

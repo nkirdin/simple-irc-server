@@ -111,7 +111,6 @@ public class IrcServer extends IrcTalker {
         }
         return ircServer;
     }
-
     
     /** 
      * Получение FQDN сервера.
@@ -138,7 +137,7 @@ public class IrcServer extends IrcTalker {
     }
     
     /** 
-     * Действия, выполняемые при установлении связи с клиентом. 
+     * Действия, выполняемые при установлении связи с удаленным сервером. 
      * (Не реализовано.)
      * @param port порт.
      * @param ircServer сервер.

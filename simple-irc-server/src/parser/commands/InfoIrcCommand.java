@@ -29,7 +29,7 @@ import java.util.*;
  *    <P>Command: INFO
  * <P>Parameters: [&lt;server&gt;]
  *
- * @version 0.5 2012-02-11
+ * @version 0.5.2 2012-03-29
  * @author  Nikolay Kirdin
  */
 public class InfoIrcCommand extends IrcCommandBase {
@@ -39,7 +39,7 @@ public class InfoIrcCommand extends IrcCommandBase {
     
     /** Параметр: &lt;server&gt;. */
     private String servernameMask = null;
-
+    
     public InfoIrcCommand() {}
 
     /** 
@@ -67,14 +67,12 @@ public class InfoIrcCommand extends IrcCommandBase {
      * находится секция "trailing".
      * @param requestor источник команды.
      * @param db репозитарий.
-     * @throws IrcSyntaxException если будет обнаружена синтаксическая 
-     * ошибка.
      */
      
     public void checking(LinkedList<String> pList,
             boolean trailing,
             IrcTalker requestor,
-            DB db) throws IrcSyntaxException {
+            DB db) {
 
         int index = 0;
         this.db = db;
@@ -119,26 +117,18 @@ public class InfoIrcCommand extends IrcCommandBase {
             return;
         } 
 
-        String remark = Response.makeText(Response.Reply.RPL_INFO,  
+        String remark = Reply.makeText(Reply.RPL_INFO,  
                 client.getNickname());
-        
-        List<String> stringList = IrcFileFormat.getFormattedText(
-                Globals.infoFilename.get(),
-                remark.length(),
-                Constants.MAX_OUTPUT_LINE_NUMBER,
-                Constants.MAX_OUTPUT_LINE_CHARS);
-        
-        if (stringList != null) {
-            for (String s: stringList) {
-                client.send(rplInfo(client, remark + s));
-            }
+
+        for (String s: Constants.INFO_TEXT) {
+        	client.send(rplInfo(client, remark + s));
         }
         client.send(rplEndOfInfo(client));     
     }
 
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_INFO}.
+     * {@link Reply#RPL_INFO}.
      * @param ircTalker отправитель.
      * @param s выводимая строка.
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -151,13 +141,13 @@ public class InfoIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_ENDOFINFO}.
+     * {@link Reply#RPL_ENDOFINFO}.
      * @param ircTalker отправитель.
      * @return объект класса {@link IrcCommandReport} с формализованным 
      * ответом.
      */
     private IrcCommandReport rplEndOfInfo(IrcTalker ircTalker) {
-        String remark = Response.makeText(Response.Reply.RPL_ENDOFINFO, 
+        String remark = Reply.makeText(Reply.RPL_ENDOFINFO, 
                 client.getNickname());
         
         return new IrcCommandReport(remark, ircTalker, 

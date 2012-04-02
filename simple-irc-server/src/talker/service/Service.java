@@ -1,5 +1,3 @@
-import java.util.logging.Level;
-
 /*
  * 
  * Service 
@@ -21,6 +19,8 @@ import java.util.logging.Level;
  * <http://www.gnu.org/licenses/>.
  *
  */
+
+import java.util.logging.Level;
 
 /**
  * Класс, служащий для хранения информации о клиентах-сервисах IRC.

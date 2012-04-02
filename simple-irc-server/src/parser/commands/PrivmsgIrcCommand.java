@@ -167,8 +167,8 @@ public class PrivmsgIrcCommand extends IrcCommandBase {
                         ":" + client.getNickname() + " " + 
                         commandName + " " + target + " " + message);
                 if (!sended) {
-                    String remark = Response.makeText(
-                        Response.Reply. ERR_FILEERROR,
+                    String remark = Reply.makeText(
+                        Reply. ERR_FILEERROR,
                         "Send to user error",
                         target);
                     client.send(Globals.thisIrcServer.get(), remark);
@@ -183,7 +183,7 @@ public class PrivmsgIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_AWAY}. 
+     * {@link Reply#RPL_AWAY}. 
      * @param requestor источник команды.
      * @param target клиент с установленным Away текстом.
      * @param text Away текст.
@@ -192,7 +192,7 @@ public class PrivmsgIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplAway(IrcTalker requestor, String target, 
             String text) {
         
-        String remark = Response.makeText(Response.Reply.RPL_AWAY, 
+        String remark = Reply.makeText(Reply.RPL_AWAY, 
                 requestor.getNickname(),
                 target,
                 text);

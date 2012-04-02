@@ -21,24 +21,26 @@
  */
 
 import java.util.*;
-import java.util.logging.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
 /**
  * Класс, который хранит информацию о канале IRC.
+ * Используются следующие поля интерфейса {@link Constants} и 
+ * {@link Globals}:
+ * {@link Constants#MAX_CHANNEL_RATE_10}; 
+ * {@link Constants#MAX_CHANNEL_NUMBER};
+ * {@link Constants#MIN_LIMIT};
+ * {@link Constants#NUMBER_RATE_POINTS};
+ * {@link Constants#MIN_FREE_MEMORY};
+ * {@link Constants#MAX_CHANNEL_MEMBER};
+ * {@link Globals#anonymousUser}.
  *
- * @version 0.5 2012-02-20
+ * @version 0.5.2 2012-03-29
  * @author  Nikolay Kirdin
  * 
  */
-public class IrcChannel implements Comparable, Recipient {
-    
-    /** 
-     * Максмальное количество отсчетов для вычисления средней скорости 
-     * поступления сообщений {@link #avgRate}. 
-     */
-    public static final int NUMBER_RATE_POINTS = 300;
+public class IrcChannel implements Comparable, Recipient {    
     
    /** 
      * Максимальное среднее количество передач сообщений канала за 10 
@@ -54,9 +56,41 @@ public class IrcChannel implements Comparable, Recipient {
     /** Текущие режимы канала. */
     protected EnumSet<ChannelMode> modeSet =
             EnumSet.noneOf(ChannelMode.class);
-            
+      
+    /** 
+     * Получение множества режимов канала.
+     * @return  множество режимов канала.
+     */
+    public EnumSet<ChannelMode> getModeSet() {
+        return modeSet;
+    }
+
+    /** 
+     * Задание множества режимов канала.
+     * @param modeSet множество режимов канала.
+     */
+    public void setModeSet(EnumSet<ChannelMode> modeSet) {
+        this.modeSet = modeSet;
+    }
+
     /** Максимальное количество членов канала. */    
     protected int maximumMemberNumber = Constants.MAX_CHANNEL_NUMBER;
+
+    /** 
+     * Получение максимального количество членов канала.
+     * @return maximumMemberNumber максимальное количество членов канала.
+     */
+    public int getMaximumMemberNumber() {
+        return maximumMemberNumber;
+    }
+
+    /**
+     * Задание максимального количество членов канала.
+     * @param maximumMemberNumber максимальное количество членов канала.
+     */
+    public void setMaximumMemberNumber(int maximumMemberNumber) {
+        this.maximumMemberNumber = maximumMemberNumber;
+    }
 
     /** Ассоциативный массив членов канала и их режимов. */
     protected ConcurrentSkipListMap <User, EnumSet <ChannelMode>> 
@@ -72,9 +106,6 @@ public class IrcChannel implements Comparable, Recipient {
     /** Топик канала. */
     protected String topic = "";
     
-    /** Репозитарий. */
-    protected DB db;
-    
     /** 
      * Максимальный размер множества масок для учетных записей клиентов, 
      * запрещающих членство в канале. 
@@ -88,6 +119,23 @@ public class IrcChannel implements Comparable, Recipient {
     protected ConcurrentSkipListSet<String> banMaskSet = 
             new ConcurrentSkipListSet<String>();
             
+    /**
+     * Получение множество масок запрета на подключение.
+     * @return banMaskSet
+     */    
+    public ConcurrentSkipListSet<String> getBanMaskSet() {
+        return banMaskSet;
+    }
+
+    /**
+     * Задание множество масок исключения из множества масок запрета 
+     * на подключение.
+     * @param banMaskSet множество масок запрета на подключение. 
+     */
+    public void setBanMaskSet(ConcurrentSkipListSet<String> banMaskSet) {
+        this.banMaskSet = banMaskSet;
+    }
+
     /** 
      * Максимальный размер множества масок исключений для учетных 
      * записей клиентов.
@@ -103,6 +151,26 @@ public class IrcChannel implements Comparable, Recipient {
     protected ConcurrentSkipListSet<String> exceptionBanMaskSet =
             new ConcurrentSkipListSet<String>();
     
+    /**
+     * Получение множество масок исключения из множества масок запрета 
+     * на подключение.
+     * @return exceptionBanMaskSet
+     */    
+    public ConcurrentSkipListSet<String> getExceptionBanMaskSet() {
+        return exceptionBanMaskSet;
+    }
+
+    /**
+     * Задание множество масок исключения из множества масок запрета 
+     * на подключение.
+     * @param exceptionBanMaskSet  множество масок исключения из 
+     * множества масок запрета на подключение. 
+     */
+    public void setExceptionBanMaskSet(
+            ConcurrentSkipListSet<String> exceptionBanMaskSet) {
+        this.exceptionBanMaskSet = exceptionBanMaskSet;
+    }
+
     /** 
      * Максимальный размер множества масок для автоматического 
      * подключения к каналу "invite only" ({@link ChannelMode#i}). 
@@ -116,31 +184,31 @@ public class IrcChannel implements Comparable, Recipient {
     protected ConcurrentSkipListSet<String> inviteMaskSet = 
             new ConcurrentSkipListSet<String>();
 
-    /** 
-     * Получение репозитария.
-     * @return DB репозитарий. 
+    /**
+     * Получение множество масок для автоматического подключения к 
+     * каналам "inviteOnly" {@link ChannelMode#i}
+     * @return inviteMaskSet
      */
-    public DB getDb() {
-        return db;
+    public ConcurrentSkipListSet<String> getInviteMaskSet() {
+        return inviteMaskSet;
     }
 
-    /** 
-     * Задание репозитария.
-     * @param db репозитарий. 
+    /**
+     * Задание {@link #inviteMaskSet}
+     * @param inviteMaskSet  множество масок для автоматического 
+     * подключения к каналам "inviteOnly" {@link ChannelMode#i} 
      */
-    public void setDb(DB db) {
-        this.db = db;
+    public void setInviteMaskSet(ConcurrentSkipListSet<String> inviteMaskSet) {
+        this.inviteMaskSet = inviteMaskSet;
     }
 
     /** 
      * Конструктор.
      * @param nickname имя канала.
-     * @param db репозитарий.
      */
-    protected IrcChannel(String nickname, DB db) {
+    protected IrcChannel(String nickname) {
         this.nickname = nickname;
-        this.db = db;
-        avgRate = new IrcAvgMeter(NUMBER_RATE_POINTS);
+        avgRate = new IrcAvgMeter(Constants.NUMBER_RATE_POINTS);
         avgRate.setValue(System.currentTimeMillis() - 60000);
         avgRate.setValue(System.currentTimeMillis());
     }
@@ -151,8 +219,8 @@ public class IrcChannel implements Comparable, Recipient {
      * @param topic топик канала.
      * @param db репозитарий.
      */
-    protected IrcChannel(String nickname, String topic, DB db) {
-        this(nickname, db);
+    protected IrcChannel(String nickname, String topic) {
+        this(nickname);
         this.topic = topic;
     }
     
@@ -166,7 +234,7 @@ public class IrcChannel implements Comparable, Recipient {
      * @return новый объект класса IrcChannel или null, если нарушено 
      * ограничение по памяти.
      */
-    public static IrcChannel create(String nickname, String topic, DB db) {
+    public static IrcChannel create(String nickname, String topic) {
         IrcChannel result = null;
         long freeMemory = Runtime.getRuntime().freeMemory();
         if (freeMemory < Constants.MIN_FREE_MEMORY) {
@@ -174,7 +242,7 @@ public class IrcChannel implements Comparable, Recipient {
         }
         freeMemory = Runtime.getRuntime().freeMemory();
         if (freeMemory >= Constants.MIN_FREE_MEMORY) {
-            result = new IrcChannel(nickname, topic, db);
+            result = new IrcChannel(nickname, topic);
         } else {
             result = null;
         }
@@ -182,8 +250,8 @@ public class IrcChannel implements Comparable, Recipient {
     }
 
     /** 
-     * Завершающие действия при удалении канала.
-     * (Действия выполняемые при удалении канала: 
+     * Завершающие действия при удалении канала. (Не реализовано.)
+     * Действия выполняемые при удалении канала: 
      * <UL>
      * <LI>удаление имени канала;</LI>
      * <LI>удаление топика канала;</LI> 
@@ -192,7 +260,7 @@ public class IrcChannel implements Comparable, Recipient {
      * ограничителей максимального количества членов ассоциативных 
      * массивов и множеств;</LI> 
      * <LI> очистка режимов канала; очистка всех ассоциативных массивов 
-     * и множеств. - не реализовано)</LI>
+     * и множеств. </LI>
      * </UL>
      */
     public void delete() {
@@ -222,7 +290,6 @@ public class IrcChannel implements Comparable, Recipient {
      * @return множество членов канала. 
      */
     public LinkedHashSet<User> getUserSet() {
-        /*unmodifiableSet*/
         return new LinkedHashSet<User>(memberMap.keySet());
     }
     
@@ -308,28 +375,28 @@ public class IrcChannel implements Comparable, Recipient {
      * добавить этого клиента. 
      * @param requestor клиент.
      * @param channelKey ключ (пароль) канала.
-     * @return {@link Response.Reply#RPL_OK} если клиент был добавлен в
-     * ассоциативный массив, {@link Response.Reply#ERR_BADCHANNELKEY},
+     * @return {@link Reply#RPL_OK} если клиент был добавлен в
+     * ассоциативный массив, {@link Reply#ERR_BADCHANNELKEY},
      * если указан неправильный пароль, 
-     * {@link Response.Reply#ERR_CHANNELISFULL}, если превышено 
+     * {@link Reply#ERR_CHANNELISFULL}, если превышено 
      * ограничение на количество членов канала.
      */
-    public Response.Reply add(User requestor, String channelKey) {
+    public Reply add(User requestor, String channelKey) {
         
-        Response.Reply response = null;
+        Reply response = null;
         
         if ((this.channelKey == null && channelKey != null)
                 || (this.channelKey != null && 
                 !this.channelKey.equals(channelKey))
                 && (!requestor.isOperator())) {
-            response = Response.Reply.ERR_BADCHANNELKEY;
+            response = Reply.ERR_BADCHANNELKEY;
         } else {
             if (memberMap.size() < maximumMemberNumber) {
                 memberMap.put(requestor, 
                         EnumSet.noneOf(ChannelMode.class));
-                response = Response.Reply.RPL_OK;
+                response = Reply.RPL_OK;
             } else {
-                response = Response.Reply.ERR_CHANNELISFULL;
+                response = Reply.ERR_CHANNELISFULL;
             }
         }
         return response;
@@ -347,11 +414,11 @@ public class IrcChannel implements Comparable, Recipient {
      * Предоставление символов, обозначающих режимы канала.
      * Режимы канала обозначаются следующим образом:
      * <UL>
-     *         <LI> секретный канала обозначается символом "@" 
-     *         ({@link ChannelMode#s});</LI>
-     *         <LI> приватный канала обозначается символом "*" 
-     *         ({@link ChannelMode#p});</LI>
-     *         <LI> публичный канал обозначается символом "=".</LI>
+     *     <LI> секретный канала обозначается символом "@" 
+     *     ({@link ChannelMode#s});</LI>
+     *     <LI> приватный канала обозначается символом "*" 
+     *     ({@link ChannelMode#p});</LI>
+     *     <LI> публичный канал обозначается символом "=".</LI>
      * </UL>
      * @return строка с одним из этих символов.
      */
@@ -371,11 +438,11 @@ public class IrcChannel implements Comparable, Recipient {
      * Предоставление символов, обозначающих режимы члена канала.
      * Режимы члена канала обозначаются следующим образом:
      * <UL>
-     *         <LI> оператор канала  ({@link ChannelMode#o}) или создатель 
-     *         канала ({@link ChannelMode#O}) обозначается символом "@";</LI>
-     *         <LI> член канала, обладающий правом посылать сообщения в 
-     *         модерируемый канал ({@link ChannelMode#v}), обозначается 
-     *         символом "+";</LI>
+     *     <LI> оператор канала  ({@link ChannelMode#o}) или создатель 
+     *     канала ({@link ChannelMode#O}) обозначается символом "@";</LI>
+     *     <LI> член канала, обладающий правом посылать сообщения в 
+     *     модерируемый канал ({@link ChannelMode#v}), обозначается 
+     *     символом "+";</LI>
      * </UL>
      * @return строка с одним из этих символов.
      */
@@ -631,13 +698,11 @@ public class IrcChannel implements Comparable, Recipient {
      * Изменение режимов канала.
      * @param modeCarrier объект, содержащий флаг, тип операции и 
      * параметры.
-     * @param requestor источник запроса на изменение.
-     * @return ResponseSuccess если запрос на изменение был успешно 
-     * выполнен, ResponseFailure если запрос выполнить не удалось.
+     * @return Reply содержащий цифровой ответ на запрос.
      */
-    public Response updateChannelmode(ChannelModeCarrier modeCarrier,
-            User requestor) {
-        Response response = null;
+    public Reply updateChannelmode(ChannelModeCarrier 
+            modeCarrier) {
+        Reply responseReply = null;
         ModeOperation modeOperation = modeCarrier.getOperation();
         ChannelMode channelMode = modeCarrier.getMode();
         String parameter = modeCarrier.getParameter();
@@ -649,40 +714,34 @@ public class IrcChannel implements Comparable, Recipient {
                 case o:
                 case v:
 
-                    User user = db.getUser(parameter);
+                    User user = null;
+                    String key = parameter.toLowerCase(Locale.ENGLISH);
+                    for (User channelMember : memberMap.keySet()) {
+                        if (key.equals(channelMember.getNickname())) {
+                            user = channelMember;
+                            break;
+                        }
+                    }
 
                     if (user == null) {
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_NOSUCHNICK,
-                                requestor.getNickname(),
-                                parameter);
+                        responseReply = 
+                                Reply.ERR_USERNOTINCHANNEL;
                         break;
                     }
 
                     if (user.isRestricted()) {
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_RESTRICTED,
-                                requestor.getNickname());
+                        responseReply = Reply.ERR_RESTRICTED;
                         break;
                     }
 
                     EnumSet <ChannelMode> userChannelMode = 
                             memberMap.get(user);
                         
-                        if (userChannelMode == null) {
-                            response = ResponseFailure.create(
-                                    Response.Reply.ERR_USERNOTINCHANNEL,
-                                    requestor.getNickname(),
-                                    parameter,
-                                    getNickname());
-                            break;
-                        } else {
-                            synchronized (userChannelMode) {
-                                userChannelMode.add(channelMode);
-                            }
-                        }
+                    synchronized (userChannelMode) {
+                        userChannelMode.add(channelMode);
+                    }
                     
-                    response = new ResponseSuccess(Response.Reply.RPL_OK);
+                    responseReply = Reply.RPL_OK;
                     break;
 
                 case p:
@@ -691,15 +750,11 @@ public class IrcChannel implements Comparable, Recipient {
                            || modeSet.contains(ChannelMode.s)))) {
                         modeSet.add(channelMode);
                     }
-                    response = new ResponseSuccess(Response.Reply.RPL_OK);
+                    responseReply = Reply.RPL_OK;
                     break;
                 case k:
                     if (channelKey != null && !channelKey.isEmpty()) {
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_KEYSET,
-                                
-                                requestor.getNickname(),
-                                getNickname());
+                        responseReply = Reply.ERR_KEYSET;
                         break;
                                 
                     }
@@ -707,13 +762,10 @@ public class IrcChannel implements Comparable, Recipient {
                         !parameter.isEmpty()) {
                         channelKey = parameter;
                         modeSet.add(channelMode);
-                        response = new ResponseSuccess(
-                                    Response.Reply.RPL_OK);
+                        responseReply = Reply.RPL_OK;
                     } else {
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_UNKNOWNCOMMAND,
-                                requestor.getNickname(),
-                                "MODE +k *********");
+                        responseReply = 
+                                Reply.ERR_UNKNOWNCOMMAND;
                         break;
                     }
                     break;
@@ -722,36 +774,26 @@ public class IrcChannel implements Comparable, Recipient {
                     try {
                         i = Integer.parseInt(parameter);
                     } catch (NumberFormatException e) {
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_UNKNOWNCOMMAND,
-                                requestor.getNickname(),
-                                "MODE +l " + parameter);
+                        responseReply = 
+                                Reply.ERR_UNKNOWNCOMMAND;
                         break;
                     }
                     if (i <= Constants.MAX_CHANNEL_MEMBER) {
                         maximumMemberNumber = i;
                         modeSet.add(channelMode);
-                        response = new ResponseSuccess(
-                            Response.Reply.RPL_OK);
+                        responseReply = Reply.RPL_OK;
                     } else {
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_UNKNOWNCOMMAND,
-                                requestor.getNickname(),
-                                "MODE +l " + parameter);
+                        responseReply = 
+                                Reply.ERR_UNKNOWNCOMMAND;
                     }
                     break;
                 case b:
                     if (banMaskSet.size() < maxBanMaskSetSize) {
                         banMaskSet.add(parameter);
                         modeSet.add(channelMode);
-                        response = new ResponseSuccess(
-                                    Response.Reply.RPL_OK);
+                        responseReply = Reply.RPL_OK;
                     } else {
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_BANLISTFULL,
-                                requestor.getNickname(),
-                                getNickname(),
-                                "*");
+                        responseReply = Reply.ERR_BANLISTFULL;
                         break;
                     }
                     break;
@@ -760,18 +802,13 @@ public class IrcChannel implements Comparable, Recipient {
                             maxExceptionBanMaskSetSize) {
                         exceptionBanMaskSet.add(parameter);
                         modeSet.add(channelMode);
-                        response = new ResponseSuccess(
-                                    Response.Reply.RPL_OK);
+                        responseReply = Reply.RPL_OK;
                     } else {
                         /* Отсутствует код для индикации переполнения
                            списка исключений из запрета на членство. 
                            Использую ERR_BANLISTFULL.
                         */
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_BANLISTFULL,
-                                requestor.getNickname(),
-                                getNickname(),
-                                "*");
+                        responseReply = Reply.ERR_BANLISTFULL;
                         break;        
                     }
                     break;
@@ -779,24 +816,19 @@ public class IrcChannel implements Comparable, Recipient {
                     if (inviteMaskSet.size() < maxInviteMaskSetSize) {
                         inviteMaskSet.add(parameter);
                         modeSet.add(channelMode);
-                        response = new ResponseSuccess(
-                                Response.Reply.RPL_OK);
+                        responseReply = Reply.RPL_OK;
                     } else {
                         /* Отсутствует код для индикации переполнения
                            списка на автоматическое включение в члены 
                            канала "invite only". Использую ERR_BANLISTFULL.
                         */
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_BANLISTFULL,
-                                requestor.getNickname(),
-                                getNickname(),
-                                "*");
+                        responseReply = Reply.ERR_BANLISTFULL;
                         break;
                     }
                     break;
                 default:
                     modeSet.add(channelMode);
-                    response = new ResponseSuccess(Response.Reply.RPL_OK);
+                    responseReply = Reply.RPL_OK;
                     break;
                 }
 
@@ -806,65 +838,62 @@ public class IrcChannel implements Comparable, Recipient {
                 case O:
                 case o:
                 case v:
-                    User user = db.getUser(parameter);
+                    User user = null;
+                    String key = parameter.toLowerCase(Locale.ENGLISH);
+                    for (User channelMember : memberMap.keySet()) {
+                        if (key.equals(channelMember.getNickname())) {
+                            user = channelMember;
+                            break;
+                        }
+                    }
 
                     if (user == null) {
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_NOSUCHNICK,
-                                requestor.getNickname(),
-                                parameter);
+                        responseReply = 
+                                Reply.ERR_USERNOTINCHANNEL;
                         break;
                     }
                     EnumSet <ChannelMode> userChannelMode = 
                             memberMap.get(user);
-                    if (userChannelMode == null) {
-                        response = ResponseFailure.create(
-                                Response.Reply.ERR_USERNOTINCHANNEL,
-                                requestor.getNickname(),
-                                parameter,
-                                getNickname());
-                        break;
-                    } else {
-                        synchronized (userChannelMode) {
-                            userChannelMode.remove(channelMode);
-                        }
+                    
+                    synchronized (userChannelMode) {
+                        userChannelMode.remove(channelMode);
                     }
                     
-                    response = new ResponseSuccess(Response.Reply.RPL_OK);
+                    responseReply = Reply.RPL_OK;
                     break;
                 case k:
                     channelKey = null;
                     modeSet.remove(channelMode);
-                    response = new ResponseSuccess(Response.Reply.RPL_OK);
+                    responseReply = Reply.RPL_OK;
                     break;
                 case l:
                     maximumMemberNumber = Constants.MIN_LIMIT;
-                    response = new ResponseSuccess(Response.Reply.RPL_OK);
+                    responseReply = Reply.RPL_OK;
                     break;
                 case b:
                     banMaskSet.remove(parameter);
                     if (banMaskSet.isEmpty()) {
                         modeSet.remove(channelMode);
                     }
-                    response = new ResponseSuccess(Response.Reply.RPL_OK);
+                    responseReply = Reply.RPL_OK;
                     break;
                 case e:
                     exceptionBanMaskSet.remove(parameter);
                     if (exceptionBanMaskSet.isEmpty()) {
                         modeSet.remove(channelMode);
                     }
-                    response = new ResponseSuccess(Response.Reply.RPL_OK);
+                    responseReply = Reply.RPL_OK;
                     break;
                 case I:
                     inviteMaskSet.remove(parameter);
                     if (inviteMaskSet.isEmpty()) {
                         modeSet.remove(channelMode);
                     }
-                    response = new ResponseSuccess(Response.Reply.RPL_OK);
+                    responseReply = Reply.RPL_OK;
                     break;
                 default:
                     modeSet.remove(channelMode);
-                    response = new ResponseSuccess(Response.Reply.RPL_OK);
+                    responseReply = Reply.RPL_OK;
                     break;
                 }
                 break;
@@ -873,17 +902,15 @@ public class IrcChannel implements Comparable, Recipient {
                         "Channel updateChannelmode(): Internal error");
             }
         }
-        return response;
+        return responseReply;
     }
 
     /** 
      * Предоставление информации о всех режимах канала.
      * @param requestor источник запроса.
-     * @return ResponseSuccess с информацией о режимах канала.
+     * @return строка с информацией о режимах канала.
      */
-    public Response listChannelmode(User requestor) {
-        Response response = null;
-//        LinkedHashMap <User, EnumSet <ChannelMode>> memberMapClone = null;
+    public String listChannelmode(User requestor) {
         String modeString = "+";
         String paramString = "";
         for (ChannelMode channelmode : modeSet) {
@@ -948,127 +975,9 @@ public class IrcChannel implements Comparable, Recipient {
         }
         modeString = (paramString.isEmpty()) ?
                 modeString : modeString + " " + paramString;
-        response = ResponseSuccess.create(
-                Response.Reply.RPL_CHANNELMODEIS,
-                requestor.getNickname(),
-                getNickname(),
-                modeString);
-        return response;
+        return modeString;
     }
 
-    /** 
-     * Предоставление информации о конкретном режиме канала.
-     * @param channelMode режим, информацию о котором нужно предоставить.
-     * @param requestor источник запроса на индикацию.
-     * @return ResponseSuccess с информацией о режимах канала.
-     */
-    public LinkedList<Response> listChannelmode(ChannelMode channelMode,
-            User requestor) {
-        Response response = null;
-        LinkedList<Response> result = new LinkedList<Response>();
-        ConcurrentSkipListMap <User, EnumSet <ChannelMode>> memberMapClone = null;
-        String modeString = (modeSet.contains(channelMode)) ?
-                "+" + channelMode.op : "+";
-        String paramString = "";
-
-
-        switch (channelMode) {
-        case O:
-        case o:
-        case v:
-
-            memberMapClone = new
-                    ConcurrentSkipListMap <User, EnumSet <ChannelMode>> 
-                    (memberMap);
-
-            for (User user : memberMapClone.keySet()) {
-                if (memberMapClone.get(user).contains(channelMode)) {
-                    paramString = paramString + user.getNickname() + ",";
-                }
-            }
-            if (paramString.endsWith(",")) {
-                paramString = paramString.substring(0,
-                        paramString.length() - 1);
-            }
-            modeString = (paramString.isEmpty()) ? "+" :
-                    "+" + channelMode.op + " " + paramString;
-            response = ResponseSuccess.create(
-                     Response.Reply.RPL_CHANNELMODEIS,
-                     requestor.getNickname(),
-                     getNickname(),
-                     modeString);
-            result.offer(response);
-            break;
-        case l:
-            paramString = String.valueOf(maximumMemberNumber);
-            modeString = (paramString.isEmpty()) ? "+" :
-                    "+" + channelMode.op + " " + paramString;
-            response = ResponseSuccess.create(
-                    Response.Reply.RPL_CHANNELMODEIS,
-                    requestor.getNickname(),
-                    getNickname(),
-                    modeString);
-            result.offer(response);
-            break;
-        case b:
-            for (String mask : banMaskSet) {
-                response = ResponseSuccess.create(
-                        Response.Reply.RPL_BANLIST,
-                        requestor.getNickname(),
-                        getNickname(),
-                        mask);
-                result.offer(response);
-            }
-                
-            response = ResponseSuccess.create(
-                    Response.Reply.RPL_ENDOFBANLIST,
-                    requestor.getNickname(),
-                    getNickname());
-            result.offer(response);
-            break;
-        case e:
-            for (String mask : exceptionBanMaskSet) {
-                response = ResponseSuccess.create(
-                        Response.Reply.RPL_EXCEPTLIST,
-                        requestor.getNickname(),
-                        getNickname(),
-                        mask);
-                result.offer(response);
-            }
-            response = ResponseSuccess.create(
-                    Response.Reply.RPL_ENDOFEXCEPTLIST,
-                    requestor.getNickname(),
-                    getNickname());
-            result.offer(response);
-            break;
-        case I:
-            for (String mask : inviteMaskSet) {
-                response = ResponseSuccess.create(
-                        Response.Reply.RPL_INVITELIST,
-                        requestor.getNickname(),
-                        getNickname(),
-                        mask);
-                result.offer(response);
-            }
-            response = ResponseSuccess.create(
-                    Response.Reply.RPL_ENDOFINVITELIST,
-                    requestor.getNickname(),
-                    getNickname());
-            result.offer(response);
-            break;
-        default:
-            response = ResponseSuccess.create(
-                    Response.Reply.RPL_CHANNELMODEIS,
-                    requestor.getNickname(),
-                    getNickname(),
-                    modeString);
-            result.offer(response);
-            break;
-        }
-        
-        return result;
-    }
-    
     
     /**
      * Отправка сообщения в канал. Сообщение будет отправлено всем 

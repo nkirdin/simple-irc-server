@@ -121,13 +121,13 @@ public class OperIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_YOUREOPER}. 
+     * {@link Reply#RPL_YOUREOPER}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport rplYoureOper(IrcTalker requestor) {
         
-        String remark = Response.makeText(Response.Reply.RPL_YOUREOPER,
+        String remark = Reply.makeText(Reply.RPL_YOUREOPER,
                     requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,
@@ -136,14 +136,14 @@ public class OperIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_PASSWDMISMATCH}. 
+     * {@link Reply#ERR_PASSWDMISMATCH}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport errPasswdMismatch(IrcTalker requestor) {
         
-        String remark = Response.makeText(
-                    Response.Reply.ERR_PASSWDMISMATCH,
+        String remark = Reply.makeText(
+                    Reply.ERR_PASSWDMISMATCH,
                     requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,

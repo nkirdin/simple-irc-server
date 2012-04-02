@@ -29,7 +29,7 @@ import java.nio.charset.*;
  * Server - класс, который служит для управления запуском, остановом, и 
  * перезапуском основных компонентов сервера IRC. 
  *
- * @version 0.5.1 2012-02-20
+ * @version 0.5.1 2012-03-27
  * @author  Nikolay Kirdin
  */
 
@@ -38,12 +38,12 @@ public class Server implements Runnable {
     /** Код завершения в случае успешного завершения. */
     public static final int  SERV_OK = 0;
     
-    /** Код завершения для ситуации "неизвестный ключ командной строки". */
+    /** Код завершения для ситуации "ошибка в командной строке". */
     public static final int SERV_WRONG_KEY = 1;
     
     /** 
      * Код завершения для ситуации "во время запуска компонентов 
-     * сервера произошла ошибка". 
+     * сервера произошла ошибка, или ошибка в файле конфигурации". 
      */
     public static final int SERV_START_ERR = 2;    
     
@@ -98,7 +98,7 @@ public class Server implements Runnable {
     
     /** Конструктор. */
     public Server() {}
-    
+        
     /**
      * Метод используется для запуска сервера из командной строки. 
      * С помощью ключей командной строки можно указать пути к файлу 
@@ -134,23 +134,22 @@ public class Server implements Runnable {
      */
     
     public static void main(String[] args) {
-        Server server = new Server();
-        String key = null;
-        boolean done = false;
         String helpText = 
-                "Simple Irc Server v." + Constants.SERVER_VERSION + " " +
+        		"Simple Irc Server v." + Constants.SERVER_VERSION + " " +
                 "Copyright (C) 2012  Nikolay Kirdin\n" +
                 "This program comes with ABSOLUTELY NO WARRANTY. \n" +
                 "This program is free software: you can redistribute it " +
                 "and/or modify it under the terms of the GNU Lesser " +
                 "General Public License Version 3. " +
                 "http://www.gnu.org/licenses/.\n\n" + 
-                "Usage: Server.server [-c <config file>] [-h]" +
-                " [-l <logging file>] [-V] \n" +
-                " By default: configuration file " +
-                "is \"IrcServerConfig.xml\",\n" +
-                " logging file is \"IrcServerLog.xml\" in a current " +
-                "directory.\n" + "-V print version of program/n";
+                "Usage: Server [-c <config file>] [-h] [-l <logging file>] [-V]\n" +
+                "By default: configuration file is \"IrcServerConfig.xml\",\n" +
+                " logging file is \"IrcServerLog.xml\" in a current directory.\n"
+                + "-V print version of program./n";
+            
+        Server server = new Server();
+        String key = null;
+        boolean done = false;
 
         int index = 0;
         
@@ -422,7 +421,7 @@ public class Server implements Runnable {
                 ircTalkerProcessor.thread.get());
         
         try {
-        	Thread.sleep(Globals.sleepTO.get());
+            Thread.sleep(Globals.sleepTO.get());
         } catch (InterruptedException e) {}
         
         error = ircTalkerProcessor.thread.get().getState() == 

@@ -32,8 +32,14 @@ import java.nio.charset.*;
  * Класс, который хранит информацию о соединении. Объект этого класса 
  * характеризуется состояниями, которые определены в 
  * {@link ConnectionState}. 
+ * 
+ * Используются следующие поля интерфейсов {@link Constants} и 
+ * {@link Globals}:
+ * {@link Constants#MIN_FREE_MEMORY};
+ * {@link Globals#minAvgReadPeriod};
+ * {@link Globals#logger};
  *
- * @version 0.5 2012-02-13
+ * @version 0.5.1 2012-03-27
  * @author  Nikolay Kirdin
  * 
  */
@@ -251,14 +257,16 @@ public class Connection implements Runnable, Comparable {
                 bw.get().close();
             }
         } catch (IOException e) {
-            Globals.logger.get().log(Level.INFO, "Closing:" + bw.get() + " " + e);
+            Globals.logger.get().log(Level.INFO, "Closing:" + bw.get() 
+            		+ " " + e);
         }
         try {
             if (br.get() != null) {
                 br.get().close();
             }
         } catch (IOException e) {
-            Globals.logger.get().log(Level.INFO, "Closing:" + br.get() + " " + e);
+            Globals.logger.get().log(Level.INFO, "Closing:" + br.get() 
+            		+ " " + e);
         }
     }
 
@@ -378,21 +386,21 @@ public class Connection implements Runnable, Comparable {
         try {
             if (bw.get() != null)
                 bw.get().close();
-            Globals.logger.get().log(Level.FINEST, "Buffered Writer closed:" + 
-                    bw.get());
+            Globals.logger.get().log(Level.FINEST, 
+            		"Buffered Writer closed:" + bw.get());
         } catch (IOException e) {
-            Globals.logger.get().log(Level.INFO, "Closing error:" + bw.get() + 
-                    " " + e);
+            Globals.logger.get().log(Level.INFO, "Closing error:" + 
+            		bw.get() + " " + e);
         }
 
         try {
             if (br.get() != null)
                 br.get().close();
-            Globals.logger.get().log(Level.FINEST, "Buffered Reader closed:" + 
-                    br.get());
+            Globals.logger.get().log(Level.FINEST, 
+            		"Buffered Reader closed:" + br.get());
         } catch (IOException e) {
-            Globals.logger.get().log(Level.INFO, "Closing error:" + br.get() + 
-                    " " + e);
+            Globals.logger.get().log(Level.INFO, "Closing error:" + 
+            		br.get() + " " + e);
         }
 
         setConnectionState(ConnectionState.CLOSED);

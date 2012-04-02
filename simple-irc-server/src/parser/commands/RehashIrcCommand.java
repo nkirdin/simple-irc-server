@@ -109,7 +109,7 @@ public class RehashIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_REHASHING}. 
+     * {@link Reply#RPL_REHASHING}. 
      * @param requestor источник команды.
      * @param filename имя файла.
      * @return объект с сообщением.
@@ -117,7 +117,7 @@ public class RehashIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplRehashing(IrcTalker requestor,
             String filename) {
         
-        String remark = Response.makeText(Response.Reply.RPL_REHASHING, 
+        String remark = Reply.makeText(Reply.RPL_REHASHING, 
                 requestor.getNickname(),
                 filename);
 

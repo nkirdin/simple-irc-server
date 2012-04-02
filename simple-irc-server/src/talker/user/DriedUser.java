@@ -48,8 +48,6 @@ public class DriedUser {
     /** FQDN сервера, к которому был подключен пользователь. */
     public final String serverHostname;
 
-
-
     /**
      * Конструктор.
      * @param nickname никнэйм клиента.

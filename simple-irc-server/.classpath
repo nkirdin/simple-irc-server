@@ -14,5 +14,5 @@
 	<classpathentry excluding="server/|service/|user/" kind="src" path="src/talker"/>
 	<classpathentry kind="src" path="src/tools"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="output" path="build"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

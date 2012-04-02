@@ -38,8 +38,8 @@ import javax.xml.stream.*;
  *   &lt;!-- DTD --&gt;
  *   &lt;!DOCTYPE CONFIG
  *       [
- *           &lt;!ELEMENT CONFIG (ADMIN, SERVER?, INTERFACE?, OPERATOR?,
- *            TRANSCRIPT?)&gt;
+ *           &lt;!ELEMENT CONFIG (ADMIN, SERVER?, INTERFACE?, TRANSCRIPT?, 
+ *            OPERATOR*)&gt;
  *               &lt;!ELEMENT ADMIN (#PCDATA)&gt;
  *               &lt;!ATTLIST ADMIN 
  *                   name CDATA #REQUIRED 
@@ -52,6 +52,7 @@ import javax.xml.stream.*;
  *               &lt;!ATTLIST SERVER
  *                   debuglevel CDATA 
  *                   timezone CDATA
+ *                   motd CDATA
  *               &gt;
  *               &lt;!ELEMENT INTERFACE (#PCDATA)&gt;
  *               &lt;!ATTLIST INTERFACE
@@ -78,7 +79,7 @@ import javax.xml.stream.*;
  * чтобы в файле конфигурации был полностью определен элемент "ADMIN".
  * <p> Ниже приведены описания элементов и атрибутов: 
  * <ol>
- *         <li> Все атрибуты должны быть строками в кодировке US-ASCII.</li>
+ *        <li> Все атрибуты должны быть строками в кодировке US-ASCII.</li>
  *        <li> Атрибуты элемента "ADMIN":
  *        <ul>
  *          <li>"name", с помощью этого атрибута указываются имя и 
@@ -120,6 +121,9 @@ import javax.xml.stream.*;
  *              часовой пояс сервера. Допустимые значения определены в 
  *              классе {@link java.util.TimeZone}. По умолчанию 
  *              используется значение "GMT".</li> 
+ *              <li>"motd", с помощью этого атрибута указывается 
+ *              путь к файлу MOTD. По умолчанию будет использован файл 
+ *              {@link Constants#MOTD_FILE_PATH} в текущем каталоге;</li>
  *          </ul>
  *      <li> Атрибуты элемента "INTERFACE":
  *          <ul> 
@@ -156,8 +160,9 @@ import javax.xml.stream.*;
  *          <ul>
  *              <li>"transcript", с помощью этого атрибута указывается 
  *              путь к файлу с протоколом клиентских сообщений. По 
- *              умолчанию будет использован файл "IrcTranscript.txt" в 
- *              текущем каталоге;</li>
+ *              умолчанию будет использован файл 
+ *              {@link Constants#TRANSCRIPT_FILE_PATH} в текущем 
+ *              каталоге;</li>
  *              <li>"rotate", с помощью этого атрибута указывается 
  *              количество сохраняемых экземпляров файлов-протоколов 
  *              клиентских сообщений. По умолчанию это количество равно 
@@ -167,7 +172,9 @@ import javax.xml.stream.*;
  *              сообщений. К числу может быть добавлен суффикс - 
  *              одна из латинских букв "K" или "M", для задания 
  *              множителей 1024 и 1048576 соответственно. По умолчанию
- *              эта    длина ограничена 100K байт.</li>
+ *              эта длина ограничена 
+ *              {@link Constants.TRANSCRIPT_FILE_LENGTH}
+ *              байт.</li>
  *          </ul>
  *         </li>
  *         <li>Атрибуты элемента "OPERATOR": "username" и "password". 
@@ -211,7 +218,8 @@ import javax.xml.stream.*;
  *         &lt;/ADMIN&gt;
  *         &lt;SERVER 
  *             timezone="GMT+0400" 
- *             debuglevel="WARNING"&gt;
+ *             debuglevel="WARNING"
+ *             motd="IrcServerMotd.txt"&gt;
  *         &lt;/SERVER&gt;
  *         &lt;INTERFACE  
  *             port="6667" 
@@ -232,7 +240,7 @@ import javax.xml.stream.*;
  * </pre>
  *
  * 
- * @version 0.5 2012-02-11
+ * @version 0.5.1 2012-03-27
  * @author  Nikolay Kirdin
  *  
  */
@@ -363,7 +371,7 @@ public class IrcConfigParser {
                 } else {
                     error = true;
                     errorDescription = "Admin\'s info not defined.";
-                    logger.log(Level.WARNING, errorDescription);
+                    logger.log(Level.SEVERE, errorDescription);
                 }
 
                 if (ircServerConfig != null) {
@@ -399,7 +407,9 @@ public class IrcConfigParser {
                         "for server." + " TimeZone: " + 
                         ircServerConfig.getTimeZone().getID() +","
                         + " DebugLevel: " + 
-                        ircServerConfig.getDebugLevel());
+                        ircServerConfig.getDebugLevel()
+                        + " MotdFile: " + 
+                        ircServerConfig.getMotdFilename());
 
                 logger.log(Level.WARNING, "Configuration parameters " +
                         "for interface."
@@ -717,6 +727,9 @@ public class IrcConfigParser {
         String debugAtt = null;
         Level debugLevel = null;
                 
+        String motdAttribute = "motd";
+        String motdAtt = null;
+                
         while (!done) {
             line = xsr.getLocation().getLineNumber();
             column = xsr.getLocation().getColumnNumber();
@@ -741,6 +754,7 @@ public class IrcConfigParser {
                 timezoneAttString = xsr.getAttributeValue(null, 
                         timezoneAttribute);
                 debugAtt = xsr.getAttributeValue(null, debugAttribute);
+                motdAtt = xsr.getAttributeValue(null, motdAttribute);
                 
                 if (timezoneAttString != null) {
                     try {
@@ -796,6 +810,22 @@ public class IrcConfigParser {
                     }                    
                 } 
                 
+                if (motdAtt != null) {
+                    try {
+                        motdAtt = IrcCommandBase.check(
+                        		motdAtt, 
+                                "(" + IrcParamRegex.nospcrlfclRegex + 
+                                "){1,255}");
+                        
+                    } catch (IrcSyntaxException e) {
+                        locError = true;
+                        done = true;
+                        errorDescription = " Line: " + line +
+                                " Column: " + column + 
+                                " Syntax error near attribute(s) " 
+                                + e;
+                    }
+                } 
                 if (!locError && ! error) {
                     if (timeZone == null) {
                         timeZone = TimeZone.getDefault();
@@ -803,11 +833,15 @@ public class IrcConfigParser {
                     if (debugLevel == null) {
                         debugLevel = Globals.fileLogLevel.get();
                     }
+                    if (motdAtt == null) {
+                    	motdAtt = Globals.motdFilename.get();
+                    }
                     
                     ircServerConfig = db.getIrcServerConfig();
                     synchronized (ircServerConfig) {
                         ircServerConfig.setTimeZone(timeZone);
                         ircServerConfig.setDebugLevel(debugLevel);
+                        ircServerConfig.setMotdFilename(motdAtt);
                     }
                 }
 
@@ -1002,14 +1036,6 @@ public class IrcConfigParser {
                                     + ifaceAttString;                            
                         } 
 
-                    /*    
-                    } catch (IrcSyntaxException e) {
-                        locError = true;
-                        done = true;
-                        errorDescription = " Line: " + line + " Column: " + 
-                                column + " Syntax error near attribute(s): " + 
-                                ifaceAttString + " " + e;
-                    }*/
                     } catch (IndexOutOfBoundsException e) {
                         locError = true;
                         done = true;
@@ -1147,13 +1173,6 @@ public class IrcConfigParser {
                                 " Column: " + column + 
                                 " Syntax error near attribute(s) " 
                                 + e;
-                    }
-                    catch (IndexOutOfBoundsException e) {
-                        locError = true;
-                        done = true;
-                        errorDescription = " Line: " + line + 
-                                " Column: " + column + 
-                                " Need more attribute(s) " + e;
                     }
                 } 
 

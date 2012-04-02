@@ -26,7 +26,7 @@ import java.util.regex.*;
 /**
  * IrcCommandBase - класс-родитель всех исполнителей команд IRC.
  *
- * @version 0.5 2012-02-07
+ * @version 0.5.2 2012-03-29
  * @author  Nikolay Kirdin
  */
 public class IrcCommandBase implements IrcParamRegex {
@@ -35,7 +35,7 @@ public class IrcCommandBase implements IrcParamRegex {
     public static final String commandName = "UNKNOWNCOMMAND";
 
     /** Формализованный результат исполнения команды. */
-    protected Response response = null;
+    protected Reply response = null;
 
     /** Список параметров. */
     protected LinkedList<String> pList;
@@ -444,25 +444,25 @@ public class IrcCommandBase implements IrcParamRegex {
 
         String remark = null;
 
-        remark = Response.makeText(Response.Reply.RPL_WELCOME, 
+        remark = Reply.makeText(Reply.RPL_WELCOME, 
                 client.getNickname(),
                 client.getNickname(),
                 client.getUsername(),
                 client.getIrcServer().getHostname());
         client.send(Globals.thisIrcServer.get(), remark);
 
-        remark = Response.makeText(Response.Reply.RPL_YOURHOST, 
+        remark = Reply.makeText(Reply.RPL_YOURHOST, 
                 client.getNickname(),
                 Globals.thisIrcServer.get().getHostname(),
                 Constants.SERVER_VERSION);
         client.send(Globals.thisIrcServer.get(), remark);
 
-        remark = Response.makeText(Response.Reply.RPL_CREATED, 
+        remark = Reply.makeText(Reply.RPL_CREATED, 
                 client.getNickname(),
                 Constants.DATE_CREATED);
         client.send(Globals.thisIrcServer.get(), remark);
 
-        remark = Response.makeText(Response.Reply.RPL_MYINFO, 
+        remark = Reply.makeText(Reply.RPL_MYINFO, 
                 client.getNickname(),
                 Globals.thisIrcServer.get().getHostname(),
                 Constants.SERVER_VERSION,
@@ -470,7 +470,7 @@ public class IrcCommandBase implements IrcParamRegex {
                 Constants.CHANNEL_MODES);
         client.send(Globals.thisIrcServer.get(), remark);
 
-        remark = Response.makeText(Response.Reply.RPL_ISUPPORT, 
+        remark = Reply.makeText(Reply.RPL_ISUPPORT, 
                 client.getNickname(),
                 "PREFIX=" + Constants.PREFIX +
                 " " + "CHANTYPES=" + Constants.CHANTYPES +
@@ -517,8 +517,8 @@ public class IrcCommandBase implements IrcParamRegex {
         //ircServerSet.remove(Globals.thisIrcServer.get());
 
         if (ircServerSet.isEmpty()) {
-            String remark = Response.makeText(
-                    Response.Reply.ERR_NOSUCHSERVER, 
+            String remark = Reply.makeText(
+                    Reply.ERR_NOSUCHSERVER, 
                     client.getNickname(), 
                     servernameMask);
             client.send(
@@ -565,7 +565,7 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NEEDMOREPARAMS}. 
+     * {@link Reply#ERR_NEEDMOREPARAMS}. 
      * @param requestor источник команды.
      * @param commandName название команды.
      * @return объект с сообщением.
@@ -573,8 +573,8 @@ public class IrcCommandBase implements IrcParamRegex {
     protected static IrcCommandReport errNeedMoreParams(
             IrcTalker requestor, String commandName) {
 
-        String remark = Response.makeText(
-                Response.Reply.ERR_NEEDMOREPARAMS,
+        String remark = Reply.makeText(
+                Reply.ERR_NEEDMOREPARAMS,
                 requestor.getNickname(),
                 commandName);
 
@@ -584,7 +584,7 @@ public class IrcCommandBase implements IrcParamRegex {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_UNKNOWNCOMMAND}. 
+     * {@link Reply#ERR_UNKNOWNCOMMAND}. 
      * @param requestor источник команды.
      * @param commandName название команды.
      * @return объект с сообщением.
@@ -592,8 +592,8 @@ public class IrcCommandBase implements IrcParamRegex {
     protected static IrcCommandReport errUnknownCommand(
             IrcTalker requestor, String commandName) {
 
-        String remark = Response.makeText(
-                Response.Reply.ERR_UNKNOWNCOMMAND,
+        String remark = Reply.makeText(
+                Reply.ERR_UNKNOWNCOMMAND,
                 requestor.getNickname(),
                 commandName);
 
@@ -603,15 +603,15 @@ public class IrcCommandBase implements IrcParamRegex {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_UMODEUNKNOWNFLAG}. 
+     * {@link Reply#ERR_UMODEUNKNOWNFLAG}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errUModeUnknownFlag(
             IrcTalker requestor) {
 
-        String remark = Response.makeText(
-                Response.Reply.ERR_UMODEUNKNOWNFLAG,
+        String remark = Reply.makeText(
+                Reply.ERR_UMODEUNKNOWNFLAG,
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,
@@ -620,7 +620,7 @@ public class IrcCommandBase implements IrcParamRegex {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NOSUCHNICK}. 
+     * {@link Reply#ERR_NOSUCHNICK}. 
      * @param requestor источник команды.
      * @param nickname никнэйм.
      * @return с сообщением.
@@ -628,7 +628,7 @@ public class IrcCommandBase implements IrcParamRegex {
     protected static IrcCommandReport errNoSuchNick(IrcTalker requestor, 
             String nickname) {
     
-        String remark = Response.makeText(Response.Reply.ERR_NOSUCHNICK, 
+        String remark = Reply.makeText(Reply.ERR_NOSUCHNICK, 
                 requestor.getNickname(),
                 nickname);
 
@@ -638,15 +638,15 @@ public class IrcCommandBase implements IrcParamRegex {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NOTREGISTERED}. 
+     * {@link Reply#ERR_NOTREGISTERED}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNotRegistered(
             IrcTalker requestor) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_NOTREGISTERED, 
+        String remark = Reply.makeText(
+                Reply.ERR_NOTREGISTERED, 
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,
@@ -655,7 +655,7 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NOSUCHCHANNEL}. 
+     * {@link Reply#ERR_NOSUCHCHANNEL}. 
      * @param requestor источник команды.
      * @param channelName имя канала.
      * @return объект с сообщением.
@@ -664,8 +664,8 @@ public class IrcCommandBase implements IrcParamRegex {
             IrcTalker requestor,
             String channelName) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_NOSUCHCHANNEL, 
+        String remark = Reply.makeText(
+                Reply.ERR_NOSUCHCHANNEL, 
                 requestor.getNickname(), 
                 channelName);
 
@@ -675,7 +675,7 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NOTONCHANNEL}. 
+     * {@link Reply#ERR_NOTONCHANNEL}. 
      * @param requestor источник команды.
      * @param channelName имя канала.
      * @return объект с сообщением.
@@ -684,8 +684,8 @@ public class IrcCommandBase implements IrcParamRegex {
             IrcTalker requestor,
             String channelName) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_NOTONCHANNEL, 
+        String remark = Reply.makeText(
+                Reply.ERR_NOTONCHANNEL, 
                 requestor.getNickname(), 
                 channelName);
 
@@ -695,14 +695,14 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_RESTRICTED}. 
+     * {@link Reply#ERR_RESTRICTED}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errUserRestricted(
             IrcTalker requestor) {
         
-        String remark = Response.makeText(Response.Reply.ERR_RESTRICTED, 
+        String remark = Reply.makeText(Reply.ERR_RESTRICTED, 
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,
@@ -711,7 +711,7 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_CHANOPRIVSNEEDED}. 
+     * {@link Reply#ERR_CHANOPRIVSNEEDED}. 
      * @param requestor источник команды.
      * @param channelName имя канала.
      * @return объект с сообщением.
@@ -720,8 +720,8 @@ public class IrcCommandBase implements IrcParamRegex {
             IrcTalker requestor,
             String channelName) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_CHANOPRIVSNEEDED, 
+        String remark = Reply.makeText(
+                Reply.ERR_CHANOPRIVSNEEDED, 
                 requestor.getNickname(),
                 channelName);
 
@@ -731,7 +731,7 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_USERONCHANNEL}. 
+     * {@link Reply#ERR_USERONCHANNEL}. 
      * @param requestor источник команды.
      * @param nickname никнэйм.
      * @param channelName имя канала.
@@ -740,8 +740,8 @@ public class IrcCommandBase implements IrcParamRegex {
     protected static IrcCommandReport errOnChannel(IrcTalker requestor,
             String nickname,  String channelName) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_USERONCHANNEL, 
+        String remark = Reply.makeText(
+                Reply.ERR_USERONCHANNEL, 
                 requestor.getNickname(),
                 nickname,
                 channelName);
@@ -752,7 +752,7 @@ public class IrcCommandBase implements IrcParamRegex {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_FILEERROR}. 
+     * {@link Reply#ERR_FILEERROR}. 
      * @param requestor источник команды.
      * @param arg1 первый аргумент.
      * @param arg2 второй аргумент.
@@ -761,7 +761,7 @@ public class IrcCommandBase implements IrcParamRegex {
     protected static IrcCommandReport errFileError(IrcTalker requestor,
             String arg1, String arg2) {
         
-        String remark = Response.makeText(Response.Reply.ERR_FILEERROR, 
+        String remark = Reply.makeText(Reply.ERR_FILEERROR, 
                 requestor.getNickname(),
                 arg1,
                 arg2);
@@ -772,15 +772,15 @@ public class IrcCommandBase implements IrcParamRegex {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NOPRIVILEGES}. 
+     * {@link Reply#ERR_NOPRIVILEGES}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNoPrivileges(
             IrcTalker requestor) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_NOPRIVILEGES, 
+        String remark = Reply.makeText(
+                Reply.ERR_NOPRIVILEGES, 
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,
@@ -789,7 +789,7 @@ public class IrcCommandBase implements IrcParamRegex {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NOSUCHSERVER}. 
+     * {@link Reply#ERR_NOSUCHSERVER}. 
      * @param requestor источник команды.
      * @param servername имя сервера.
      * @return объект с сообщением.
@@ -798,8 +798,8 @@ public class IrcCommandBase implements IrcParamRegex {
             IrcTalker requestor, 
             String servername) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_NOSUCHSERVER, 
+        String remark = Reply.makeText(
+                Reply.ERR_NOSUCHSERVER, 
                 requestor.getNickname(), 
                 servername);
 
@@ -809,7 +809,7 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_ERRONEUSNICKNAME}. 
+     * {@link Reply#ERR_ERRONEUSNICKNAME}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
@@ -817,8 +817,8 @@ public class IrcCommandBase implements IrcParamRegex {
             IrcTalker requestor, 
             String nickname) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_ERRONEUSNICKNAME,
+        String remark = Reply.makeText(
+                Reply.ERR_ERRONEUSNICKNAME,
                 requestor.getNickname(),
                 nickname);
 
@@ -828,13 +828,13 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NOORIGIN}. 
+     * {@link Reply#ERR_NOORIGIN}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNoOrigin(IrcTalker requestor) {
         
-        String remark = Response.makeText(Response.Reply.ERR_NOORIGIN,
+        String remark = Reply.makeText(Reply.ERR_NOORIGIN,
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,
@@ -843,14 +843,14 @@ public class IrcCommandBase implements IrcParamRegex {
         
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NOTEXTTOSEND}. 
+     * {@link Reply#ERR_NOTEXTTOSEND}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errNoTextToSend(
             IrcTalker requestor) {
         
-        String remark = Response.makeText(Response.Reply.ERR_NOTEXTTOSEND,
+        String remark = Reply.makeText(Reply.ERR_NOTEXTTOSEND,
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,
@@ -859,7 +859,7 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NORECIPIENT}. 
+     * {@link Reply#ERR_NORECIPIENT}. 
      * @param requestor источник команды.
      * @param commandName название команды.
      * @return объект с сообщением.
@@ -867,7 +867,7 @@ public class IrcCommandBase implements IrcParamRegex {
     protected static IrcCommandReport errNoRecipient(IrcTalker requestor, 
             String commandName) {
         
-        String remark = Response.makeText(Response.Reply.ERR_NORECIPIENT,
+        String remark = Reply.makeText(Reply.ERR_NORECIPIENT,
                 requestor.getNickname(),
                 commandName);
 
@@ -877,15 +877,15 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_ALREADYREGISTRED}. 
+     * {@link Reply#ERR_ALREADYREGISTRED}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     protected static IrcCommandReport errAlreadyRegistered(IrcTalker
             requestor) {
         
-            String remark = Response.makeText(
-                    Response.Reply.ERR_ALREADYREGISTRED,
+            String remark = Reply.makeText(
+                    Reply.ERR_ALREADYREGISTRED,
                     requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,
@@ -893,7 +893,7 @@ public class IrcCommandBase implements IrcParamRegex {
     }
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_WHOISSERVER}.
+     * {@link Reply#RPL_WHOISSERVER}.
      * @param ircTalker отправитель.
      * @param nickname
      * @param serverHostname
@@ -903,7 +903,7 @@ public class IrcCommandBase implements IrcParamRegex {
      */
     protected static IrcCommandReport rplWhoIsServer(IrcTalker ircTalker, 
             String nickname, String serverHostname, String serverInfo) {
-        String remark = Response.makeText(Response.Reply.RPL_WHOISSERVER,
+        String remark = Reply.makeText(Reply.RPL_WHOISSERVER,
                 ircTalker.getNickname(),
                 nickname,
                 serverHostname,
@@ -914,7 +914,7 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_NOTOPIC}.
+     * {@link Reply#RPL_NOTOPIC}.
      * @param ircTalker отправитель.
      * @param channel
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -922,7 +922,7 @@ public class IrcCommandBase implements IrcParamRegex {
      */
     public static IrcCommandReport rplNoTopic(IrcTalker ircTalker, 
             IrcChannel channel) {
-        String remark = Response.makeText(Response.Reply.RPL_NOTOPIC,
+        String remark = Reply.makeText(Reply.RPL_NOTOPIC,
                 ircTalker.getNickname(),
                 channel.getNickname());
         return new IrcCommandReport(remark, ircTalker,
@@ -930,7 +930,7 @@ public class IrcCommandBase implements IrcParamRegex {
     }
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_TOPIC}.
+     * {@link Reply#RPL_TOPIC}.
      * @param ircTalker отправитель.
      * @param channel
      * @param topic
@@ -939,7 +939,7 @@ public class IrcCommandBase implements IrcParamRegex {
      */
     public static IrcCommandReport rplTopic(IrcTalker ircTalker, 
             IrcChannel channel, String topic) {
-        String remark = Response.makeText(Response.Reply.RPL_TOPIC,
+        String remark = Reply.makeText(Reply.RPL_TOPIC,
                 ircTalker.getNickname(),
                 channel.getNickname(),
                 topic);
@@ -948,7 +948,7 @@ public class IrcCommandBase implements IrcParamRegex {
     }
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_NAMREPLY}. 
+     * {@link Reply#RPL_NAMREPLY}. 
      * @param requestor источник команды.
      * @param nick никнэйм.
      * @param channelStatus статус канала.
@@ -961,7 +961,7 @@ public class IrcCommandBase implements IrcParamRegex {
             String nick, String channelStatus, String channelName, 
             String userStatus, String userNickname) {
         
-        String remark = Response.makeText(Response.Reply.RPL_NAMREPLY,
+        String remark = Reply.makeText(Reply.RPL_NAMREPLY,
                 nick,
                 channelStatus,
                 channelName,
@@ -974,7 +974,7 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_ENDOFNAMES}. 
+     * {@link Reply#RPL_ENDOFNAMES}. 
      * @param requestor источник команды.
      * @param channelName имя канала.
      * @return объект с сообщением.
@@ -982,7 +982,7 @@ public class IrcCommandBase implements IrcParamRegex {
     public static IrcCommandReport rplEndOfNames(IrcTalker requestor,
             String channelName) {
         
-        String remark = Response.makeText(Response.Reply.RPL_ENDOFNAMES,
+        String remark = Reply.makeText(Reply.RPL_ENDOFNAMES,
                 requestor.getNickname(),
                 channelName);
 
@@ -1017,7 +1017,7 @@ public class IrcCommandBase implements IrcParamRegex {
     }
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NICKNAMEINUSE}. 
+     * {@link Reply#ERR_NICKNAMEINUSE}. 
      * @param requestor источник команды.
      * @param nickname никнэйм.
      * @return объект с сообщением.
@@ -1025,8 +1025,8 @@ public class IrcCommandBase implements IrcParamRegex {
     public static IrcCommandReport errNicknameInUse(IrcTalker requestor, 
             String nickname) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_NICKNAMEINUSE,
+        String remark = Reply.makeText(
+                Reply.ERR_NICKNAMEINUSE,
                 requestor.getNickname(),
                 nickname);
 
@@ -1036,7 +1036,7 @@ public class IrcCommandBase implements IrcParamRegex {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#ERR_TOOMANYCHANNELS}.
+     * {@link Reply#ERR_TOOMANYCHANNELS}.
      * @param ircTalker отправитель.
      * @param channelName имя канала.
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -1045,8 +1045,8 @@ public class IrcCommandBase implements IrcParamRegex {
     public static IrcCommandReport errTooManyChannels(
             IrcTalker ircTalker, 
             String channelName) {
-        String remark = Response.makeText(
-                Response.Reply.ERR_TOOMANYCHANNELS,  
+        String remark = Reply.makeText(
+                Reply.ERR_TOOMANYCHANNELS,  
                 ircTalker.getNickname(), channelName);
         
         return new IrcCommandReport(remark, ircTalker,
@@ -1055,7 +1055,7 @@ public class IrcCommandBase implements IrcParamRegex {
         
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#ERR_TOOMANYCHANNELS}.
+     * {@link Reply#ERR_TOOMANYCHANNELS}.
      * @param ircTalker отправитель.
      * @param channelName имя канала.
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -1064,12 +1064,32 @@ public class IrcCommandBase implements IrcParamRegex {
     public static IrcCommandReport errCannotSendToChan(
             IrcTalker ircTalker, 
             String channelName) {
-        String remark = Response.makeText(
-                Response.Reply. ERR_CANNOTSENDTOCHAN,
+        String remark = Reply.makeText(
+                Reply. ERR_CANNOTSENDTOCHAN,
                 ircTalker.getNickname(),
                 channelName);
         
         return new IrcCommandReport(remark, ircTalker,
                 Globals.thisIrcServer.get());
     }
+    /** 
+     * Создает сообщение соответствующее  формализованному сообщению 
+     * {@link Reply#ERR_USERNOTINCHANNEL}. 
+     * @param requestor источник команды.
+     * @param nickname никнэйм.
+     * @param channelName имя канала.
+     * @return объект с сообщением.
+     */        
+    public static IrcCommandReport errNotInChannel(IrcTalker requestor,
+            String nickname, String channelName) {
+        
+        String remark = Reply.makeText(
+                Reply.ERR_USERNOTINCHANNEL, 
+                requestor.getNickname(),
+                nickname, channelName);
+
+        return new IrcCommandReport(remark, requestor,
+                Globals.thisIrcServer.get());
+    }
+    
 }

@@ -144,7 +144,7 @@ public class ServlistIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_SERVLIST}. 
+     * {@link Reply#RPL_SERVLIST}. 
      * @param requestor источник команды.
      * @param service сервис.
      * @param servicenameMask область распространения.
@@ -154,7 +154,7 @@ public class ServlistIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplServlist(IrcTalker requestor,
             Service service, String servicenameMask, String type) {
         
-        String remark = Response.makeText(Response.Reply.RPL_SERVLIST, 
+        String remark = Reply.makeText(Reply.RPL_SERVLIST, 
                 client.getNickname(),
                 service.getNickname(),
                 service.getIrcServer().getHostname(),
@@ -170,7 +170,7 @@ public class ServlistIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_SERVLISTEND}. 
+     * {@link Reply#RPL_SERVLISTEND}. 
      * @param requestor источник команды.
      * @param servicenameMask область распространения.
      * @param type тип.
@@ -179,7 +179,7 @@ public class ServlistIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplServlistEnd(IrcTalker requestor,
             String servicenameMask, String type) {
         
-        String remark = Response.makeText(Response.Reply.RPL_SERVLISTEND, 
+        String remark = Reply.makeText(Reply.RPL_SERVLISTEND, 
                 client.getNickname(),
                 servicenameMask,
                 type);

@@ -39,8 +39,10 @@ public class NetworkConnection extends Connection implements Runnable {
     /** Таймаут сокета. */
     public AtomicInteger soTimeout = new AtomicInteger(1);
     
+    /** true - признак успешной инициализации BufferedReader.*/
     private AtomicBoolean isBufferedReaderOK = new AtomicBoolean();
 
+    /** true - признак успешной инициализации BufferedWriter.*/
     private AtomicBoolean isBufferedWriterOK = new AtomicBoolean();
     
     /** 
@@ -74,7 +76,6 @@ public class NetworkConnection extends Connection implements Runnable {
         return result;
     }
     
-    
     /**
      * Получение сокета.
      * @return сокет.
@@ -96,7 +97,6 @@ public class NetworkConnection extends Connection implements Runnable {
 
     /** Завершающие действия при разрыве связи. Закрытие сокета. */
     public void delete() {
-
         try {
             if (socket != null) {
                 synchronized (socket) {
@@ -198,7 +198,8 @@ public class NetworkConnection extends Connection implements Runnable {
             if (isBufferedReaderOK.get() && isBufferedWriterOK.get() &&
                 getConnectionState() == ConnectionState.NEW) {
                 setConnectionState(ConnectionState.OPERATIONAL);
-                Globals.logger.get().log(Level.FINEST, "NetworkConnection:" +
+                Globals.logger.get().log(Level.FINEST, 
+                        "NetworkConnection:" +
                         NetworkConnection.this + " " + 
                         getConnectionState() 
                         + " Socket streams opened");

@@ -1,6 +1,3 @@
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
 /*
  * 
  * IrcTranscriptConfig 
@@ -23,11 +20,15 @@ import java.util.concurrent.BlockingQueue;
  *
  */
 
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 /**
  * Класс, хранящий конфигурируемые параметры для протоколирования 
  * сообщений клиентов. 
  *
- * @version 0.5 2012-03-10
+ * @version 0.5.1 2012-03-27
  * @author  Nikolay Kirdin
  */
 public class IrcTranscriptConfig {

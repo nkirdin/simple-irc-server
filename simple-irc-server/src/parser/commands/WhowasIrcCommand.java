@@ -196,7 +196,7 @@ public class WhowasIrcCommand extends IrcCommandBase {
     }
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_WHOWASUSER}.
+     * {@link Reply#RPL_WHOWASUSER}.
      * @param ircTalker отправитель.
      * @param driedUser историческая информация о клиенте
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -204,7 +204,7 @@ public class WhowasIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplWhoWasUser(IrcTalker ircTalker, 
             DriedUser driedUser) {
-        String remark = Response.makeText(Response.Reply.RPL_WHOWASUSER,
+        String remark = Reply.makeText(Reply.RPL_WHOWASUSER,
                 ircTalker.getNickname(),
                 driedUser.nickname,
                 driedUser.username,
@@ -216,7 +216,7 @@ public class WhowasIrcCommand extends IrcCommandBase {
         
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#ERR_WASNOSUCHNICK}.
+     * {@link Reply#ERR_WASNOSUCHNICK}.
      * @param ircTalker отправитель.
      * @param name 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -224,7 +224,7 @@ public class WhowasIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport errWasNoSuchNick(IrcTalker ircTalker, 
             String name) {
-        String remark = Response.makeText(Response.Reply.ERR_WASNOSUCHNICK,
+        String remark = Reply.makeText(Reply.ERR_WASNOSUCHNICK,
                 ircTalker.getNickname(),
                 name);
         return new IrcCommandReport(remark, ircTalker,
@@ -233,7 +233,7 @@ public class WhowasIrcCommand extends IrcCommandBase {
         
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_ENDOFWHOWAS}.
+     * {@link Reply#RPL_ENDOFWHOWAS}.
      * @param ircTalker отправитель.
      * @param name 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -241,7 +241,7 @@ public class WhowasIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplEndOfWhoWas(IrcTalker ircTalker, 
             String name) {
-        String remark = Response.makeText(Response.Reply.RPL_ENDOFWHOWAS,
+        String remark = Reply.makeText(Reply.RPL_ENDOFWHOWAS,
                 ircTalker.getNickname(),
                 name);
         return new IrcCommandReport(remark, ircTalker,

@@ -59,8 +59,6 @@ public class DieIrcCommand extends IrcCommandBase {
      * находится секция "trailing".
      * @param requestor источник команды.
      * @param db репозитарий.
-     * @throws IrcSyntaxException если будет обнаружена синтаксическая 
-     * ошибка.
      */
     public void checking(LinkedList<String> pList,
             boolean trailing,

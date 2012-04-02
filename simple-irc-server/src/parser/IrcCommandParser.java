@@ -292,7 +292,7 @@ public class IrcCommandParser {
                             " " + ircIncomingMessage.sender.getNickname();
                     if (isDroppable) {
                         firstPart = firstPart + " " + 
-                                Response.Reply.ERR_FILEERROR.code;
+                                Reply.ERR_FILEERROR.code;
                     } else {
                         firstPart = firstPart + " " + "---";
                     }

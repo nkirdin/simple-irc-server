@@ -1,6 +1,6 @@
 /*
  * 
- * Constants 
+ * Globals 
  * is part of Simple Irc Server
  *
  *
@@ -30,7 +30,7 @@ import java.nio.charset.*;
  * Интерфейс, который определяет глобальные переменные и задает их 
  * значения по умолчанию. 
  *
- * @version 0.5 2012-02-10
+ * @version 0.5.2 2012-03-29
  * @author  Nikolay Kirdin
  */
 interface Globals {
@@ -41,7 +41,7 @@ interface Globals {
             
     /** Краткая информация о данном сервере. */        
     AtomicReference<String> thisIrcServerInfo = 
-            new AtomicReference<String>("It is a simple IRC server.");
+            new AtomicReference<String>(Constants.SERVER_INFO);
     
     /** 
      * Объект класса {@link IrcServer}, описывающий сервер для 
@@ -52,7 +52,7 @@ interface Globals {
             
     /** Краткая информация о сервере для псевдопользователя anonymous. */        
     AtomicReference<String> anonymousIrcServerInfo = 
-            new AtomicReference<String>("Irc server for anonymous.");
+            new AtomicReference<String>(Constants.ANONYMOUS_SERVER_INFO);
     
     /**
      * Объект класса {@link MonitorIrcChannel}, описывающий канал для 
@@ -66,11 +66,11 @@ interface Globals {
     
     /** Имя файла для журналирующей подсистемы по умолчанию. */
     AtomicReference<String> logFileHandlerFileName
-            = new AtomicReference<String>("IrcServerLog.xml");
+            = new AtomicReference<String>(Constants.LOG_FILE_PATH);
     
     /** Уровень сообщений журналирующей подсистемы. */
     AtomicReference<Level> fileLogLevel = 
-            new AtomicReference<Level>(Level.WARNING);
+            new AtomicReference<Level>(Level.parse(Constants.LOG_LEVEL));
     
     /** Объект журналирующей системы, управляющий выводом в файл. */        
     AtomicReference<Handler> logFileHandler = 
@@ -78,73 +78,79 @@ interface Globals {
             
     /** TimeZone для сервера по умолчанию. */
     AtomicReference<TimeZone> timeZone = new AtomicReference<TimeZone>(
-            TimeZone.getTimeZone("GMT"));
+            TimeZone.getTimeZone(Constants.TIME_ZONE));
     
     /** Путь к файлу-протоколу сообщений пользователей. */
     AtomicReference<String> transcriptFileName
-            = new AtomicReference<String>("IrcServerTranscript.txt");
+            = new AtomicReference<String>(Constants.TRANSCRIPT_FILE_PATH);
     
     /** 
      * Количество экземпляров файлов-протоколов сообщений пользователей. 
      */
-    AtomicInteger transcriptRotate = new AtomicInteger(5);
-    
-    /** Длина файла-протокола сообщений пользователей (байт). */
-    AtomicInteger transcriptLength = new AtomicInteger(102400);
+    AtomicInteger transcriptRotate = 
+            new AtomicInteger(Constants.TRANSCRIPT_ROTATE);
     
     /** Путь к файлу конфигурации по умолчанию. */
     AtomicReference<String> configFilename = 
-            new AtomicReference<String>("IrcServerConfig.xml");
-    
-    /** Максимальная длина очереди протокола сообщений. */
-    int maxTranscriptQueueSize = 4096;
+            new AtomicReference<String>(Constants.CONFIG_FILE_PATH);
     
     /** 
      * Период вывода на внешний носитель элементов очереди протокола 
      * сообщений (ms).
      */
-    int transcriptWritePeriod = 5000;
-            
-    /** Путь к файлу info по умолчанию. */
-    AtomicReference<String> infoFilename  = 
-            new AtomicReference<String>("IrcServerInfo.txt");
-            
+    AtomicInteger transcriptWritePeriod = 
+            new AtomicInteger(Constants.TRANSCRIPT_WRITE_PERIOD);
+    
+    
+    /** Максимальная длина очереди протокола сообщений. */
+    int maxTranscriptQueueSize = Math.max(Constants.MAX_SERVER_CLIENTS,
+            Constants.MAX_SERVER_CLIENTS / Constants.MIN_AVG_READ_PERIOD 
+            * Constants.TRANSCRIPT_WRITE_PERIOD) ;    
+
+    /** Длина файла-протокола сообщений пользователей (байт). */
+    AtomicInteger transcriptLength = 
+            new AtomicInteger(Constants.TRANSCRIPT_FILE_LENGTH);
+                        
     /** Путь к файлу motd по умолчанию. */
     AtomicReference<String> motdFilename  = 
-            new AtomicReference<String>("IrcServerMotd.txt");
+            new AtomicReference<String>(Constants.MOTD_FILE_PATH);
 
     /** IP-адрес интерфеса по умолчанию. */
     AtomicReference<InetAddress> serverInetAddress = 
             new AtomicReference<InetAddress>();
     
     /** Номер порта по умолчанию. */
-    AtomicInteger serverPortNumber = new AtomicInteger(6667);
+    AtomicInteger serverPortNumber = 
+            new AtomicInteger(Constants.SERVER_PORT_NUMBER);
     
     /** Объект класса {@link ServerSocket} для данного сервера. */
     AtomicReference<ServerSocket> serverSocket = 
             new AtomicReference<ServerSocket>();
             
     /** Размер буфера приема порта. */
-    AtomicInteger receiveBufferSize = new AtomicInteger(1024);
+    AtomicInteger receiveBufferSize = 
+            new AtomicInteger(Constants.RECEIVE_BUFFER_SIZE);
     
     /** 
      * Кодировка сообщений для соединения ({@link Connection}) по 
      * умолчанию. 
      */
     AtomicReference<Charset> listenerCharset = 
-            new AtomicReference<Charset>(Charset.forName("UTF-8"));
+            new AtomicReference<Charset>(
+                    Charset.forName(Constants.LISTENER_CHARSET));
             
     /** Минимальный средней период (ms) поступления  входящих сообщений
-     * для соединения  ({@link Connection}).
+     * для соединения  ({@link Connection}). По умолчанию равен 
+     * {@link Constants#MIN_AVG_READ_PERIOD}
      */       
-    AtomicLong minAvgReadPeriod = new AtomicLong(2000);
-    //AtomicInteger maxAvgReadRate = new AtomicInteger(10000);
+    AtomicLong minAvgReadPeriod = new AtomicLong(Constants.MIN_AVG_READ_PERIOD);
     
     /** Минимальный период передачи сообщения IRC PING (ms). */
-    AtomicLong pingSendingPeriod = new AtomicLong(300000);
+    AtomicLong pingSendingPeriod = 
+            new AtomicLong(Constants.PING_SENDING_PERIOD);
     
     /** Время по умолчанию для таймаутов (ms). */
-    AtomicLong sleepTO = new AtomicLong(100);
+    AtomicLong sleepTO = new AtomicLong(Constants.SLEEP_TO);
         
     /** 
      * Служебное псевдосоединение {@link NullConnection}. 

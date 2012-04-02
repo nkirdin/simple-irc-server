@@ -35,7 +35,7 @@ import java.util.logging.Level;
  * Класс, который обслуживает файл-протокол сообщений 
  * клиентов {@link IrcTranscriptConfig#transcript}. 
  * 
- * @version 0.5 2012-03-10
+ * @version 0.5.1 2012-03-27
  * @author  Nikolay Kirdin
  */
 public class TranscriptFileProcessor implements Runnable,
@@ -271,7 +271,7 @@ public class TranscriptFileProcessor implements Runnable,
      *         <LI> количество элементов очереди более чем 
      *         {@link Globals#maxTranscriptQueueSize} / 2;</LI>
      *         <LI> с момента последней записи прошло более 
-     *         {@link Globals#transcriptWritePeriod} ms.</LI>
+     *         {@link Globals#transcriptWritePeriod.get()} ms.</LI>
      * </UL> 
      * Факты возникновения исключений фиксируются в журнальном файле, 
      * выполнение метода продолжается. 
@@ -354,7 +354,7 @@ public class TranscriptFileProcessor implements Runnable,
             int queueSize = ircTranscriptConfig.getQueueSize();
             
             if ((currentTime - lastWritingTime >= 
-                    Globals.transcriptWritePeriod) || 
+                    Globals.transcriptWritePeriod.get()) || 
                     (queueSize >= Globals.maxTranscriptQueueSize / 2)) { 
                 ircTranscriptConfig.setWritingTime(currentTime);
                 flushQueue();

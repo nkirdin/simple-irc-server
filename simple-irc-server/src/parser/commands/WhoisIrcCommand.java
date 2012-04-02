@@ -212,7 +212,7 @@ public class WhoisIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_WHOISUSER}.
+     * {@link Reply#RPL_WHOISUSER}.
      * @param ircTalker отправитель.
      * @param user 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -220,7 +220,7 @@ public class WhoisIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplWhoIsUser(IrcTalker ircTalker, 
             User user) {
-        String remark = Response.makeText(Response.Reply.RPL_WHOISUSER,
+        String remark = Reply.makeText(Reply.RPL_WHOISUSER,
                 ircTalker.getNickname(),
                 user.getNickname(),
                 user.getUsername(),
@@ -232,7 +232,7 @@ public class WhoisIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_WHOISOPERATOR}.
+     * {@link Reply#RPL_WHOISOPERATOR}.
      * @param ircTalker отправитель.
      * @param user 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -240,7 +240,7 @@ public class WhoisIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplWhoIsOperator(IrcTalker ircTalker, 
             User user) {
-        String remark = Response.makeText(Response.Reply.RPL_WHOISOPERATOR,
+        String remark = Reply.makeText(Reply.RPL_WHOISOPERATOR,
                 ircTalker.getNickname(),
                 user.getNickname());
         return new IrcCommandReport(remark, ircTalker,
@@ -249,7 +249,7 @@ public class WhoisIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_WHOISIDLE}.
+     * {@link Reply#RPL_WHOISIDLE}.
      * @param ircTalker отправитель.
      * @param user 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -257,7 +257,7 @@ public class WhoisIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplWhoIsIdle(IrcTalker ircTalker, 
             User user) {
-        String remark = Response.makeText(Response.Reply.RPL_WHOISIDLE,
+        String remark = Reply.makeText(Reply.RPL_WHOISIDLE,
                 client.getNickname(),
                 user.getNickname(),
                 String.valueOf(user.getIdle()));
@@ -267,7 +267,7 @@ public class WhoisIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_WHOISCHANNELS}.
+     * {@link Reply#RPL_WHOISCHANNELS}.
      * @param ircTalker отправитель.
      * @param user 
      * @param chanString 
@@ -276,7 +276,7 @@ public class WhoisIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplWhoIsChannels(IrcTalker ircTalker, 
             User user, String chanString) {
-        String remark = Response.makeText(Response.Reply.RPL_WHOISCHANNELS,
+        String remark = Reply.makeText(Reply.RPL_WHOISCHANNELS,
                 client.getNickname(),
                 user.getNickname(),
                 chanString);
@@ -286,7 +286,7 @@ public class WhoisIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_ENDOFWHOIS}.
+     * {@link Reply#RPL_ENDOFWHOIS}.
      * @param ircTalker отправитель.
      * @param user 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -294,7 +294,7 @@ public class WhoisIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplEndOfWhoIs(IrcTalker ircTalker, 
             User user) {
-        String remark = Response.makeText(Response.Reply.RPL_ENDOFWHOIS,
+        String remark = Reply.makeText(Reply.RPL_ENDOFWHOIS,
                 client.getNickname(),
                 user.getNickname());
         return new IrcCommandReport(remark, ircTalker,

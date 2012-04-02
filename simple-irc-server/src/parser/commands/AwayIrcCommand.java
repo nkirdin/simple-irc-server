@@ -66,8 +66,6 @@ public class AwayIrcCommand extends IrcCommandBase {
      * находится секция "trailing".
      * @param requestor источник команды.
      * @param db репозитарий.
-     * @throws IrcSyntaxException если будет обнаружена синтаксическая 
-     * ошибка.
      */
     public void checking(LinkedList<String> pList,
             boolean trailing,
@@ -116,13 +114,13 @@ public class AwayIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_UNAWAY}.
+     * {@link Reply#RPL_UNAWAY}.
      * @param ircTalker отправитель.
      * @return объект класса {@link IrcCommandReport} с формализованным 
      * ответом.
      */
     private IrcCommandReport rplAnAway(IrcTalker ircTalker) {
-        String remark = Response.makeText(Response.Reply.RPL_UNAWAY, 
+        String remark = Reply.makeText(Reply.RPL_UNAWAY, 
                 client.getNickname());
         return new IrcCommandReport(remark, ircTalker, 
                 Globals.thisIrcServer.get());
@@ -130,13 +128,13 @@ public class AwayIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_NOWAWAY}.
+     * {@link Reply#RPL_NOWAWAY}.
      * @param ircTalker отправитель.
      * @return объект класса {@link IrcCommandReport} с формализованным 
      * ответом.
      */
     private IrcCommandReport rplNoAway(IrcTalker ircTalker) {
-        String remark = Response.makeText(Response.Reply.RPL_NOWAWAY, 
+        String remark = Reply.makeText(Reply.RPL_NOWAWAY, 
                 client.getNickname());
         return new IrcCommandReport(remark, ircTalker, 
                 Globals.thisIrcServer.get());

@@ -154,7 +154,7 @@ public class ServiceIrcCommand extends IrcCommandBase {
     /** Исполнитель команды. */
     public void run() {
 
-        Response.Reply responseReply = null;
+        Reply responseReply = null;
         if (!isExecutable()) {
             return;
         }
@@ -165,7 +165,7 @@ public class ServiceIrcCommand extends IrcCommandBase {
         service.setInfo(info);
         responseReply = db.register(service);
 
-        if (responseReply == Response.Reply.RPL_OK) {
+        if (responseReply == Reply.RPL_OK) {
             service.setRegistered(true);
             service.send(rplYoureService(service, nickname));
         } else {
@@ -176,7 +176,7 @@ public class ServiceIrcCommand extends IrcCommandBase {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_YOURESERVICE}. 
+     * {@link Reply#RPL_YOURESERVICE}. 
      * @param requestor источник команды.
      * @param nickname никнэйм.
      * @return объект с сообщением.
@@ -184,8 +184,8 @@ public class ServiceIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplYoureService(IrcTalker requestor,
                 String nickname) {
         
-        String remark = Response.makeText(
-                 Response.Reply.RPL_YOURESERVICE,
+        String remark = Reply.makeText(
+                 Reply.RPL_YOURESERVICE,
                 requestor.getNickname(),
                 nickname);
 

@@ -112,7 +112,7 @@ public class KillIrcCommand extends IrcCommandBase {
 
     /** Исполнитель команды. */
     public void run() {
-        Response.Reply responseReply = null; 
+        Reply responseReply = null; 
 
         if (!isExecutable()) {
             return;
@@ -146,7 +146,7 @@ public class KillIrcCommand extends IrcCommandBase {
             ch.remove(user);
             if (ch.isUserSetEmpty()) {
                 responseReply = db.unRegister(ch);
-                if (responseReply == Response.Reply.RPL_OK) {
+                if (responseReply == Reply.RPL_OK) {
                     ch.delete();
                 }
             }

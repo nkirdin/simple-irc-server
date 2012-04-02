@@ -108,7 +108,7 @@ public class InviteIrcCommand extends IrcCommandBase {
 
     /** Исполнитель команды. */
     public void run() {
-        Response.Reply responseReply = null;
+        Reply responseReply = null;
 
         if (!isExecutable()) {
             return;
@@ -150,21 +150,21 @@ public class InviteIrcCommand extends IrcCommandBase {
         }
 
         responseReply = ch.add(user, null);
-        if (responseReply != Response.Reply.RPL_OK) {
+        if (responseReply != Reply.RPL_OK) {
             String remark = null;
-            if (responseReply != Response.Reply.ERR_BADCHANNELKEY) {
-            remark = Response.makeText(responseReply, 
+            if (responseReply != Reply.ERR_BADCHANNELKEY) {
+            remark = Reply.makeText(responseReply, 
                     client.getNickname(), ch.getNickname());
-            } else if (responseReply != Response.Reply.ERR_CHANNELISFULL){
-            remark = Response.makeText(responseReply, 
+            } else if (responseReply != Reply.ERR_CHANNELISFULL){
+            remark = Reply.makeText(responseReply, 
                     client.getNickname(), ch.getNickname());
             } else {
-                remark = "WRONG Response.Reply:" + responseReply +
+                remark = "WRONG Reply:" + responseReply +
                 " Channel: " + ch.getNickname() +
                 " User: " + client.getNickname();
                 Globals.logger.get().log(Level.SEVERE, remark);
-                remark = Response.makeText(Response.Reply.ERR_FILEERROR, 
-                    "WRONG Response.Reply:" + responseReply, 
+                remark = Reply.makeText(Reply.ERR_FILEERROR, 
+                    "WRONG Reply:" + responseReply, 
                     client.getNickname() + " " + ch.getNickname());
             }
             client.send(Globals.thisIrcServer.get(), remark);
@@ -172,11 +172,11 @@ public class InviteIrcCommand extends IrcCommandBase {
         }
 
         responseReply = user.add(ch);
-        if (responseReply != Response.Reply.RPL_OK) {
+        if (responseReply != Reply.RPL_OK) {
             ch.remove(user);
             if (ch.isUserSetEmpty()) {
                 responseReply = db.unRegister(ch);
-                if (responseReply == Response.Reply.RPL_OK) {
+                if (responseReply == Reply.RPL_OK) {
                     ch.delete();
                 } else {
                     throw new Error("INVITE: db.unRegister(channel)"
@@ -192,14 +192,14 @@ public class InviteIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_INVITING}.
+     * {@link Reply#RPL_INVITING}.
      * @param ircTalker отправитель.
      * @return объект класса {@link IrcCommandReport} с формализованным 
      * ответом.
      */
     private IrcCommandReport rplInviting(IrcTalker ircTalker, 
             String channelName, String nickname) {
-        String remark = Response.makeText(Response.Reply.RPL_INVITING,  
+        String remark = Reply.makeText(Reply.RPL_INVITING,  
                 client.getNickname(), channelName, nickname);
         
         return new IrcCommandReport(remark, ircTalker,

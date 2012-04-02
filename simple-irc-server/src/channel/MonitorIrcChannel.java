@@ -36,7 +36,7 @@ import java.util.*;
  * Псевдопользователь anonymous является оператором канала 
  * ({@link ChannelMode#o}).
  *
- * @version 0.5 2012-02-12
+ * @version 0.5.1 2012-03-27
  * @author  Nikolay Kirdin 
  */
 public class MonitorIrcChannel extends IrcChannel {
@@ -45,10 +45,9 @@ public class MonitorIrcChannel extends IrcChannel {
      * Конструктор.
      * @param nickname  имя канала.
      * @param topic топик канала.
-     * @param db репозитарий.
      */
-    public MonitorIrcChannel(String nickname, String topic, DB db) {
-        super(nickname, topic, db);
+    public MonitorIrcChannel(String nickname, String topic) {
+        super(nickname, topic);
         modeSet = EnumSet.of(ChannelMode.t, ChannelMode.q);
         if (Globals.anonymousUser.get() != null) {
             memberMap.put(Globals.anonymousUser.get(),

@@ -139,7 +139,7 @@ public class KickIrcCommand extends IrcCommandBase {
 
     /** Исполнитель команды. */
     public void run() {
-        Response.Reply responseReply = null;
+        Reply responseReply = null;
 
         if (!isExecutable()) {
             return;
@@ -195,7 +195,7 @@ public class KickIrcCommand extends IrcCommandBase {
                 ch.remove(user);
                 if (ch.isUserSetEmpty()) {
                     responseReply = db.unRegister(ch);
-                    if (responseReply == Response.Reply.RPL_OK) {
+                    if (responseReply == Reply.RPL_OK) {
                         ch.delete();
                     }
                 }
@@ -247,31 +247,11 @@ public class KickIrcCommand extends IrcCommandBase {
                 ch.remove(user);
                 if (ch.isUserSetEmpty()) {
                     responseReply = db.unRegister(ch);
-                    if (responseReply == Response.Reply.RPL_OK) {
+                    if (responseReply == Reply.RPL_OK) {
                         ch.delete();
                     }
                 }
             }
         }
-    }
-    
-    /** 
-     * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_USERNOTINCHANNEL}. 
-     * @param requestor источник команды.
-     * @param nickname никнэйм.
-     * @param channelName имя канала.
-     * @return объект с сообщением.
-     */        
-    private IrcCommandReport errNotInChannel(IrcTalker requestor,
-            String nickname, String channelName) {
-        
-        String remark = Response.makeText(
-                Response.Reply.ERR_USERNOTINCHANNEL, 
-                requestor.getNickname(),
-                nickname, channelName);
-
-        return new IrcCommandReport(remark, requestor,
-                Globals.thisIrcServer.get());
     }
 }

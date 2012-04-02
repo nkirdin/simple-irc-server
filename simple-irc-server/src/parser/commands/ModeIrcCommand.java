@@ -21,6 +21,7 @@
  */
 
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * ModeIrcCommand - класс, который проверяет параметры команды IRC 
@@ -32,7 +33,7 @@ import java.util.*;
  *
  * <P>Parameters: &lt;nickname&gt; {[+|-]|i|w|s|o}
  *
- * @version 0.5 2012-02-20
+ * @version 0.5.2 2012-03-29
  * @author  Nikolay Kirdin
  */
 public class ModeIrcCommand extends IrcCommandBase {
@@ -212,7 +213,7 @@ public class ModeIrcCommand extends IrcCommandBase {
     }
     /** Исполнитель команды. */
     public void run() throws IrcExecutionException {
-        LinkedList<Response> responseList = null;
+        Reply responseReply = null;
 
         if (!isExecutable()) {
             return;
@@ -252,8 +253,9 @@ public class ModeIrcCommand extends IrcCommandBase {
             }
 
             if (channelModeList.isEmpty()) {
-                response = ch.listChannelmode(client);
-                client.send(Globals.thisIrcServer.get(), response);
+                String modeString = ch.listChannelmode(client);
+                client.send(rplChannelModeIs(client, channelName, 
+                        modeString));
                 return;
             }
 
@@ -283,28 +285,42 @@ public class ModeIrcCommand extends IrcCommandBase {
                         }
                     }
                         
-                    response = ch.updateChannelmode(channelmode, client);
-                    if (response instanceof ResponseSuccess) {
+                    responseReply = ch.updateChannelmode(channelmode);
+                    
+                    if (responseReply == Reply.RPL_OK) {
                         client.send(client, commandName + " " 
                                 + channelName
                                 + " " + channelmode.toString());
-
                         
                         ch.send(client, 
                                 commandName + " " + channelName
                                 + " " + channelmode.toString());
+                    } else if (responseReply == 
+                            Reply.ERR_USERNOTINCHANNEL) { 
+                        client.send(errNotInChannel(client, 
+                                channelmode.getParameter(),
+                                channelName));
+                    } else if (responseReply == 
+                            Reply.ERR_RESTRICTED) { 
+                        client.send(errUserRestricted(client));
+                    } else if (responseReply == 
+                            Reply.ERR_KEYSET) { 
+                        client.send(errKeySet(client, channelName));
+                    } else if (responseReply == 
+                            Reply.ERR_UNKNOWNCOMMAND) { 
+                        client.send(errUnknownCommand(client, 
+                                "MODE" + " " + channelmode));
+                    } else if (responseReply == 
+                            Reply.ERR_BANLISTFULL) { 
+                        client.send(errBanListFull(client, 
+                                channelName, channelmode.toString()));
                     } else {
-                        client.send(Globals.thisIrcServer.get(), 
-                                response);
+                        client.send(errUnknownCommand(client, 
+                                "MODE" + " " + channelmode));
                     }
                 } else if (channelmode.getOperation() == 
                         ModeOperation.LIST) {
-                    responseList = ch.listChannelmode(
-                            channelmode.getMode(), client);
-                    for (Response resp : responseList) {
-                        client.send(Globals.thisIrcServer.get(), 
-                                resp);
-                    }
+                    listChannelmode(ch, channelmode.getMode(), client);
                 } else {
                     throw new Error("MODE channel: Internal error");
                 }
@@ -313,17 +329,86 @@ public class ModeIrcCommand extends IrcCommandBase {
             throw new Error("MODE: Internal error");
         }
     }
+
+    /** 
+     * Предоставление информации о конкретном режиме канала.
+     * @param channelMode режим, информацию о котором нужно предоставить.
+     * @param requestor источник запроса на индикацию.
+     */
+    public void listChannelmode(IrcChannel ch, 
+            ChannelMode channelMode, User requestor) {
+        
+        String modeString = (ch.getModeSet().contains(channelMode)) ?
+                "+" + channelMode.op : "+";
+        String paramString = "";
+
+
+        switch (channelMode) {
+        case O:
+        case o:
+        case v:
+
+            for (Iterator<Map.Entry<User, EnumSet <ChannelMode>>>
+                    userEntryIterator = ch.getUserEntrySetIterator();
+                    userEntryIterator.hasNext();) {
+                Map.Entry<User, EnumSet <ChannelMode>> userEntry = 
+                            userEntryIterator.next();
+                if (userEntry.getValue().contains(channelMode)) {
+                    paramString = paramString + 
+                            userEntry.getKey().getNickname() + ",";
+                }
+            }
+            if (paramString.endsWith(",")) {
+                paramString = paramString.substring(0,
+                        paramString.length() - 1);
+            }
+            modeString = (paramString.isEmpty()) ? "+" :
+                    "+" + channelMode.op + " " + paramString;
+            client.send(rplChannelModeIs(client, channelName, 
+                    modeString));
+            break;
+        case l:
+            paramString = String.valueOf(ch.getMaximumMemberNumber());
+            modeString = (paramString.isEmpty()) ? "+" :
+                    "+" + channelMode.op + " " + paramString;
+            client.send(rplChannelModeIs(client, channelName, 
+                    modeString));
+            break;
+        case b:
+            for (String mask : ch.getBanMaskSet()) {
+                client.send(rplBanList(client, channelName, mask));
+            }
+            client.send(rplEndOfBanList(client, channelName));
+            break;
+        case e:
+            for (String mask : ch.getExceptionBanMaskSet()) {
+                client.send(rplExceptList(client, channelName, mask));
+            }
+            client.send(rplEndOfExceptList(client, channelName));
+            break;
+        case I:
+            for (String mask : ch.getInviteMaskSet()) {
+                client.send(rplInviteList(client, channelName, mask));
+            }
+            client.send(rplEndOfInviteList(client, channelName));
+            break;
+        default:
+            client.send(rplChannelModeIs(client, channelName, 
+                    modeString));
+            break;
+        }
+    }
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_USERSDONTMATCH}. 
+     * {@link Reply#ERR_USERSDONTMATCH}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport errUserDontMatch(IrcTalker requestor) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_USERSDONTMATCH, 
+        String remark = Reply.makeText(
+                Reply.ERR_USERSDONTMATCH, 
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,
@@ -332,7 +417,7 @@ public class ModeIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_UNKNOWNMODE}. 
+     * {@link Reply#ERR_UNKNOWNMODE}. 
      * @param requestor источник команды.
      * @param mode символ параметра.
      * @param channelName имя канала.
@@ -341,7 +426,7 @@ public class ModeIrcCommand extends IrcCommandBase {
     private IrcCommandReport errUnknownMode(IrcTalker requestor, 
         char mode, String channelName) {
         
-        String remark = Response.makeText(Response.Reply.ERR_UNKNOWNMODE,
+        String remark = Reply.makeText(Reply.ERR_UNKNOWNMODE,
                  requestor.getNickname(),
                  String.valueOf(mode),
                  channelName);
@@ -349,9 +434,10 @@ public class ModeIrcCommand extends IrcCommandBase {
         return new IrcCommandReport(remark, requestor,
                 Globals.thisIrcServer.get());
     }
+    
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_UMODEIS}. 
+     * {@link Reply#RPL_UMODEIS}. 
      * @param requestor источник команды.
      * @param user тестируемый пользователь.
      * @return объект с сообщением.
@@ -359,7 +445,7 @@ public class ModeIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplUmodeIs(IrcTalker requestor, 
             User user) {
         
-        String remark = Response.makeText(Response.Reply.RPL_UMODEIS,
+        String remark = Reply.makeText(Reply.RPL_UMODEIS,
                  requestor.getNickname(),
                  user.listUsermode());
 
@@ -367,4 +453,163 @@ public class ModeIrcCommand extends IrcCommandBase {
                 Globals.thisIrcServer.get());
     }
 
+    /** 
+     * Создает сообщение соответствующее  формализованному сообщению 
+     * {@link Reply#ERR_KEYSET}. 
+     * @param requestor источник команды.
+     * @param channelName имя канала.
+     * @return объект с сообщением.
+     */        
+    private IrcCommandReport errKeySet(IrcTalker requestor, 
+            String channelName) {
+        
+        String remark = Reply.makeText(Reply.ERR_KEYSET,
+                requestor.getNickname(),
+                channelName);
+
+        return new IrcCommandReport(remark, requestor,
+                Globals.thisIrcServer.get());
+    }
+    
+    /** 
+     * Создает сообщение соответствующее  формализованному сообщению 
+     * {@link Reply#ERR_BANLISTFULL}. 
+     * @param requestor источник команды.
+     * @param channelName имя канала.
+     * @param parameter параметры команды IRC MODE.
+     * @return объект с сообщением.
+     */        
+    private IrcCommandReport errBanListFull(IrcTalker requestor, 
+            String channelName, String parameter) {
+        
+        String remark = Reply.makeText(Reply.ERR_BANLISTFULL,
+                requestor.getNickname(), channelName, parameter);
+
+        return new IrcCommandReport(remark, requestor,
+                Globals.thisIrcServer.get());
+    }  
+    
+    /** 
+     * Создает сообщение соответствующее  формализованному сообщению 
+     * {@link Reply#RPL_CHANNELMODEIS}. 
+     * @param requestor источник команды.
+     * @param channelName имя канала.
+     * @param modeString режимы канала.
+     * @return объект с сообщением.
+     */        
+    private IrcCommandReport rplChannelModeIs(IrcTalker requestor, 
+            String channelName, String modeString) {
+        
+        String remark = Reply.makeText(Reply.RPL_CHANNELMODEIS,
+                requestor.getNickname(), channelName, modeString);
+
+        return new IrcCommandReport(remark, requestor,
+                Globals.thisIrcServer.get());
+    }    
+
+    /** 
+     * Создает сообщение соответствующее  формализованному сообщению 
+     * {@link Reply#RPL_BANLIST}. 
+     * @param requestor источник команды.
+     * @param channelName имя канала.
+     * @param mask маски.
+     * @return объект с сообщением.
+     */        
+    private IrcCommandReport rplBanList(IrcTalker requestor, 
+            String channelName, String mask) {
+        
+        String remark = Reply.makeText(Reply.RPL_BANLIST,
+                requestor.getNickname(), channelName, mask);
+
+        return new IrcCommandReport(remark, requestor,
+                Globals.thisIrcServer.get());
+    }    
+    
+    /** 
+     * Создает сообщение соответствующее  формализованному сообщению 
+     * {@link Reply#RPL_ENDOFBANLIST}. 
+     * @param requestor источник команды.
+     * @param channelName имя канала.
+     * @return объект с сообщением.
+     */        
+    private IrcCommandReport rplEndOfBanList(IrcTalker requestor, 
+            String channelName) {
+        
+        String remark = Reply.makeText(Reply.RPL_ENDOFBANLIST,
+                requestor.getNickname(), channelName);
+
+        return new IrcCommandReport(remark, requestor,
+                Globals.thisIrcServer.get());
+    }    
+    
+    /** 
+     * Создает сообщение соответствующее  формализованному сообщению 
+     * {@link Reply#RPL_EXCEPTLIST}. 
+     * @param requestor источник команды.
+     * @param channelName имя канала.
+     * @param mask маски.
+     * @return объект с сообщением.
+     */        
+    private IrcCommandReport rplExceptList(IrcTalker requestor, 
+            String channelName, String mask) {
+        
+        String remark = Reply.makeText(Reply.RPL_EXCEPTLIST,
+                requestor.getNickname(), channelName, mask);
+
+        return new IrcCommandReport(remark, requestor,
+                Globals.thisIrcServer.get());
+    }    
+    
+    /** 
+     * Создает сообщение соответствующее  формализованному сообщению 
+     * {@link Reply#RPL_ENDOFEXCEPTLIST}. 
+     * @param requestor источник команды.
+     * @param channelName имя канала.
+     * @return объект с сообщением.
+     */        
+    private IrcCommandReport rplEndOfExceptList(IrcTalker requestor, 
+            String channelName) {
+        
+        String remark = Reply.makeText(Reply.RPL_ENDOFEXCEPTLIST,
+                requestor.getNickname(), channelName);
+
+        return new IrcCommandReport(remark, requestor,
+                Globals.thisIrcServer.get());
+    }    
+    
+    /** 
+     * Создает сообщение соответствующее  формализованному сообщению 
+     * {@link Reply#RPL_INVITELIST}. 
+     * @param requestor источник команды.
+     * @param channelName имя канала.
+     * @param mask маски.
+     * @return объект с сообщением.
+     */        
+    private IrcCommandReport rplInviteList(IrcTalker requestor, 
+            String channelName, String mask) {
+        
+        String remark = Reply.makeText(Reply.RPL_INVITELIST,
+                requestor.getNickname(), channelName, mask);
+
+        return new IrcCommandReport(remark, requestor,
+                Globals.thisIrcServer.get());
+    }    
+    
+    /** 
+     * Создает сообщение соответствующее  формализованному сообщению 
+     * {@link Reply#RPL_ENDOFINVITELIST}. 
+     * @param requestor источник команды.
+     * @param channelName имя канала.
+     * @return объект с сообщением.
+     */        
+    private IrcCommandReport rplEndOfInviteList(IrcTalker requestor, 
+            String channelName) {
+        
+        String remark = Reply.makeText(Reply.RPL_ENDOFINVITELIST,
+                requestor.getNickname(), channelName);
+
+        return new IrcCommandReport(remark, requestor,
+                Globals.thisIrcServer.get());
+    }    
+    
 }

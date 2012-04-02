@@ -123,7 +123,7 @@ public class VersionIrcCommand extends IrcCommandBase {
 
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_VERSION}.
+     * {@link Reply#RPL_VERSION}.
      * @param ircTalker отправитель.
      * @param version
      * @param debugLevel
@@ -135,7 +135,7 @@ public class VersionIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplVersion(IrcTalker ircTalker,
             String version, String debugLevel, String servername,
             String comment) {
-        String remark = Response.makeText(Response.Reply.RPL_VERSION, 
+        String remark = Reply.makeText(Reply.RPL_VERSION, 
                 ircTalker.getNickname(),
                 Constants.SERVER_VERSION,
                 Globals.logger.get().getLevel().toString(),

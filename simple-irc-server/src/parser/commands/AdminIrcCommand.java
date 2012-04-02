@@ -68,8 +68,6 @@ public class AdminIrcCommand extends IrcCommandBase {
      * находится секция "trailing".
      * @param requestor источник команды.
      * @param db репозитарий.
-     * @throws IrcSyntaxException если будет обнаружена синтаксическая 
-     * ошибка.
      */
     public void checking(LinkedList<String> pList, boolean trailing, 
             IrcTalker requestor, 
@@ -131,13 +129,13 @@ public class AdminIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_ADMINME}.
+     * {@link Reply#RPL_ADMINME}.
      * @param ircTalker отправитель.
      * @return объект класса {@link IrcCommandReport} с формализованным 
      * ответом.
      */
     private IrcCommandReport rplAdminMe(IrcTalker ircTalker) {
-        String remark = Response.makeText(Response.Reply.RPL_ADMINME, 
+        String remark = Reply.makeText(Reply.RPL_ADMINME, 
                 ircTalker.getNickname(),
                 client.getIrcServer().getHostname());
         return new IrcCommandReport(remark, ircTalker,
@@ -146,7 +144,7 @@ public class AdminIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_ADMINLOC1}.
+     * {@link Reply#RPL_ADMINLOC1}.
      * @param ircTalker отправитель.
      * @param location 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -154,7 +152,7 @@ public class AdminIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplAdminLoc1(IrcTalker ircTalker, 
             String location) {
-        String remark = Response.makeText(Response.Reply.RPL_ADMINLOC1, 
+        String remark = Reply.makeText(Reply.RPL_ADMINLOC1, 
                 client.getNickname(),
                 location);
         return new IrcCommandReport(remark, ircTalker,
@@ -163,7 +161,7 @@ public class AdminIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_ADMINLOC2}.
+     * {@link Reply#RPL_ADMINLOC2}.
      * @param ircTalker отправитель.
      * @param location2 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -171,7 +169,7 @@ public class AdminIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplAdminLoc2(IrcTalker ircTalker, 
             String location2) {
-        String remark = Response.makeText(Response.Reply.RPL_ADMINLOC2, 
+        String remark = Reply.makeText(Reply.RPL_ADMINLOC2, 
                 client.getNickname(),
                 location2);
         return new IrcCommandReport(remark, ircTalker,
@@ -180,7 +178,7 @@ public class AdminIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_ADMINEMAIL}.
+     * {@link Reply#RPL_ADMINEMAIL}.
      * @param ircTalker отправитель.
      * @param email 
      * @param name 
@@ -190,7 +188,7 @@ public class AdminIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplAdminMail(IrcTalker ircTalker, 
             String email, String name, String other) {
-        String remark = Response.makeText(Response.Reply.RPL_ADMINEMAIL, 
+        String remark = Reply.makeText(Reply.RPL_ADMINEMAIL, 
                 client.getNickname(),
                 email + ", " + name + ", " + other);
         return new IrcCommandReport(remark, ircTalker,

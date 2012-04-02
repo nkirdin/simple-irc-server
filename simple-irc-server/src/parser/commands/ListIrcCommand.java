@@ -184,7 +184,7 @@ public class ListIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_LIST}. 
+     * {@link Reply#RPL_LIST}. 
      * @param requestor источник команды.
      * @param channelName имя канала.
      * @param visibleUserCount количество видимых членов канала.
@@ -194,7 +194,7 @@ public class ListIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplList(IrcTalker requestor, 
             String channelName, int visibleUserCount, String topic) {
         
-        String remark = Response.makeText(Response.Reply.RPL_LIST, 
+        String remark = Reply.makeText(Reply.RPL_LIST, 
                 requestor.getNickname(),
                 channelName + " " + visibleUserCount + " :" + topic);
 
@@ -204,13 +204,13 @@ public class ListIrcCommand extends IrcCommandBase {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_LISTEND}. 
+     * {@link Reply#RPL_LISTEND}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport rplListEnd(IrcTalker requestor) {
         
-        String remark = Response.makeText(Response.Reply.RPL_LISTEND, 
+        String remark = Reply.makeText(Reply.RPL_LISTEND, 
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,

@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.*;
  * Репозитарий в котором хранятся разделяемые данные (очереди, 
  * ассоциативные массивы и т.д.). 
  *  
- * @version 0.5 2012-02-10
+ * @version 0.5.1 2012-03-27
  * @author  Nikolay Kirdin
  */
 
@@ -184,27 +184,27 @@ public class DB {
      * никнэймом. Ключами служат никнэймы, символы которых, приведены
      * к нижниму регистру.
      * @param requestor информация об обычном клиенте.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода, {@link Response.Reply#ERR_FILEERROR} - превышено 
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода, {@link Reply#ERR_FILEERROR} - превышено 
      * ограничение на количество клиентов, 
-     * {@link Response.Reply#ERR_NICKNAMEINUSE} - клиент с таким именем 
+     * {@link Reply#ERR_NICKNAMEINUSE} - клиент с таким именем 
      * существует.
      */            
-    public Response.Reply register(User requestor) {
-        Response.Reply responseReply = null;        
+    public Reply register(User requestor) {
+        Reply responseReply = null;        
         
         if (userMap.size() >= Math.min(Math.max(
                 Constants.MIN_LIMIT,  maxUserMapSize.get()),
                 Constants.HARD_LIMIT)) {
-            responseReply = Response.Reply.ERR_FILEERROR;
+            responseReply = Reply.ERR_FILEERROR;
         } else {
             String key = 
                     requestor.getNickname().toLowerCase(Locale.ENGLISH);
             User value = userMap.putIfAbsent(key, requestor);
             if (value == null) {
-                responseReply = Response.Reply.RPL_OK;
+                responseReply = Reply.RPL_OK;
             } else {
-                responseReply = Response.Reply.ERR_NICKNAMEINUSE;
+                responseReply = Reply.ERR_NICKNAMEINUSE;
             }
         }
         return responseReply;
@@ -243,27 +243,27 @@ public class DB {
      * массиве нет объекта с таким-же именем канала. Ключами служат 
      * имена каналов, символы которых, приведены к нижниму регистру.
      * @param channel информация о канале.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода, {@link Response.Reply#ERR_FILEERROR} - превышено 
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода, {@link Reply#ERR_FILEERROR} - превышено 
      * ограничение на количество каналов, 
-     * {@link Response.Reply#ERR_NICKNAMEINUSE} - канал с таким именем 
+     * {@link Reply#ERR_NICKNAMEINUSE} - канал с таким именем 
      * существует.
      */            
-    public Response.Reply register(IrcChannel channel) {
-        Response.Reply responseReply = null;        
+    public Reply register(IrcChannel channel) {
+        Reply responseReply = null;        
         
         if (channelMap.size() >= Math.min(Math.max(
                 Constants.MIN_LIMIT,  maxChannelMapSize.get()),
-                Constants.HARD_LIMIT)) {
-            responseReply = Response.Reply.ERR_FILEERROR;
+                Constants.MAX_CHANNEL_NUMBER)) {
+            responseReply = Reply.ERR_FILEERROR;
         } else {
             String key = 
                     channel.getNickname().toLowerCase(Locale.ENGLISH);
             IrcChannel value = channelMap.putIfAbsent(key, channel);
             if (value == null) {
-                responseReply = Response.Reply.RPL_OK;
+                responseReply = Reply.RPL_OK;
             } else {
-                responseReply = Response.Reply.ERR_NICKNAMEINUSE;
+                responseReply = Reply.ERR_NICKNAMEINUSE;
             }
         }
         return responseReply;
@@ -277,25 +277,25 @@ public class DB {
      * никнэймом. Ключами служат никнэймы, символы которых, приведены к 
      * нижниму регистру.
      * @param service информация о сервисе.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода, {@link Response.Reply#ERR_FILEERROR} поместить объект в 
-     * массив не удалось, {@link Response.Reply#ERR_NICKNAMEINUSE} такой
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода, {@link Reply#ERR_FILEERROR} поместить объект в 
+     * массив не удалось, {@link Reply#ERR_NICKNAMEINUSE} такой
      * объект уже находится в массиве. 
      */            
-    public Response.Reply register(Service service) {
-        Response.Reply responseReply = null;
+    public Reply register(Service service) {
+        Reply responseReply = null;
         String key = service.getNickname().toLowerCase(Locale.ENGLISH);
         synchronized (service) {
             synchronized (serviceMap) {
                 if (serviceMap.size() >= Math.min(Math.max(
                         Constants.MIN_LIMIT, maxServiceMapSize.get()), 
                         Constants.HARD_LIMIT)) {
-                    responseReply = Response.Reply.ERR_FILEERROR;
+                    responseReply = Reply.ERR_FILEERROR;
                 } else if (serviceMap.containsKey(key)) {
-                    responseReply = Response.Reply.ERR_NICKNAMEINUSE;
+                    responseReply = Reply.ERR_NICKNAMEINUSE;
                 } else {
                     serviceMap.put(key, service);
-                    responseReply = Response.Reply.RPL_OK;
+                    responseReply = Reply.RPL_OK;
                 }
             }
         }
@@ -310,25 +310,25 @@ public class DB {
      * никнэймом. Ключами служат FQDN серверов, символы которых, 
      * приведены к нижниму регистру.
      * @param ircServer информация о клиенте-сервере IRC.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода, {@link Response.Reply#ERR_FILEERROR} поместить объект в 
-     * массив не удалось, {@link Response.Reply#ERR_NOTOK} такой
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода, {@link Reply#ERR_FILEERROR} поместить объект в 
+     * массив не удалось, {@link Reply#ERR_NOTOK} такой
      * объект уже находится в массиве. 
      */            
-    public Response.Reply register(IrcServer ircServer) {
-        Response.Reply responseReply = null;
+    public Reply register(IrcServer ircServer) {
+        Reply responseReply = null;
         String key = ircServer.getHostname().toLowerCase(Locale.ENGLISH);
         synchronized (ircServer) {
             synchronized (ircServerMap) {
                 if (ircServerMap.size() >= Math.min(Math.max(
                         Constants.MIN_LIMIT, maxIrcServerMapSize.get()), 
                         Constants.HARD_LIMIT)) {
-                    responseReply = Response.Reply.ERR_FILEERROR;
+                    responseReply = Reply.ERR_FILEERROR;
                 } else if (ircServerMap.containsKey(key)) {
-                    responseReply = Response.Reply.ERR_NOTOK;
+                    responseReply = Reply.ERR_NOTOK;
                 } else {
                 ircServerMap.put(key, ircServer);
-                responseReply = Response.Reply.RPL_OK;
+                responseReply = Reply.RPL_OK;
                 }
             }
         }
@@ -341,24 +341,24 @@ public class DB {
      * {@link #maxConnectionListSize} и в списке нет объекта с таким-же
      * никнэймом.
      * @param connection информация о соединении IRC.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода,  {@link Response.Reply#ERR_FILEERROR} превышено 
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода,  {@link Reply#ERR_FILEERROR} превышено 
      * ограничение на количество соединений, 
-     * {@link Response.Reply#ERR_NOTOK} поместить объект в массив не 
+     * {@link Reply#ERR_NOTOK} поместить объект в массив не 
      * удалось. 
      */            
-    public Response.Reply register(Connection connection) {
-        Response.Reply responseReply = null;        
+    public Reply register(Connection connection) {
+        Reply responseReply = null;        
         
         if (connectionList.size() >= Math.min(Math.max(
                 Constants.MIN_LIMIT,  maxConnectionListSize.get()),
                 Constants.HARD_LIMIT)) {
-            responseReply = Response.Reply.ERR_FILEERROR;
+            responseReply = Reply.ERR_FILEERROR;
         } else {
             if (connectionList.addIfAbsent(connection)) {
-                responseReply = Response.Reply.RPL_OK;
+                responseReply = Reply.RPL_OK;
             } else {
-                responseReply = Response.Reply.ERR_NOTOK;
+                responseReply = Reply.ERR_NOTOK;
             }
         }
         return responseReply;
@@ -369,13 +369,12 @@ public class DB {
      * Метод, удаляющий информацию об обычном клиенте IRC из 
      * ассоциативного массива. 
      * @param user информация об обычном клиенте IRC.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода, {@link Response.Reply#ERR_NOTOK} такого объекта в массиве
-     * нет, {@link Response.Reply#ERR_FILEERROR}, если никнэйм не удалось 
-     * поместить в массив с историей никнэймов. 
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода, {@link Reply#ERR_NOTOK} такого объекта в массиве
+     * нет. 
      */            
-    public Response.Reply unRegister(User user) {
-        Response.Reply responseReply = null;
+    public Reply unRegister(User user) {
+        Reply responseReply = null;
         String key = user.getNickname().toLowerCase(Locale.ENGLISH);
         responseReply = unRegisterUser(key);
         return responseReply;
@@ -385,25 +384,24 @@ public class DB {
      * Метод, удаляющий информацию об обычном клиенте IRC из 
      * ассоциативного массива. 
      * @param nickname никнэйм обычного клиента IRC.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода, {@link Response.Reply#ERR_NOTOK} такого объекта в массиве
-     * нет, {@link Response.Reply#ERR_FILEERROR}, если никнэйм не удалось 
-     * поместить в массив с историей никнэймов. 
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода, {@link Reply#ERR_NOTOK} такого объекта в массиве
+     * нет. 
      */            
-    public Response.Reply unRegisterUser(String nickname) {
-        Response.Reply responseReply = null;
+    public Reply unRegisterUser(String nickname) {
+        Reply responseReply = null;
         String key = nickname.toLowerCase(Locale.ENGLISH);
         User user = getUser(key);
         if (user == null) {
-            responseReply = Response.Reply.ERR_NOTOK;
+            responseReply = Reply.ERR_NOTOK;
         } else {
             synchronized (user) {
                 if (user == Globals.anonymousUser.get()) {
-                    responseReply = Response.Reply.ERR_NOTOK;
+                    responseReply = Reply.ERR_NOTOK;
                 } else if (userMap.remove(key) != null) {
-                    responseReply = Response.Reply.RPL_OK;
+                    responseReply = Reply.RPL_OK;
                 } else {
-                    responseReply = Response.Reply.ERR_NOTOK;
+                    responseReply = Reply.ERR_NOTOK;
                 }
             }
         }
@@ -414,27 +412,27 @@ public class DB {
      * Метод, удаляющий информацию о канале IRC из ассоциативного 
      * массива. 
      * @param channel канале IRC.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода, {@link Response.Reply#ERR_NOTOK} если объект удалить 
-     * нельзя, {@link Response.Reply#ERR_NOSUCHCHANNEL}, если такого 
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода, {@link Reply#ERR_NOTOK} если объект удалить 
+     * нельзя, {@link Reply#ERR_NOSUCHCHANNEL}, если такого 
      * канала в массиве нет. 
      */            
-    public Response.Reply unRegister(IrcChannel channel) {
-        Response.Reply responseReply = null;
+    public Reply unRegister(IrcChannel channel) {
+        Reply responseReply = null;
         String key = channel.getNickname().toLowerCase(Locale.ENGLISH);
         if (channel instanceof MonitorIrcChannel) {
-            responseReply = Response.Reply.RPL_OK;
+            responseReply = Reply.RPL_OK;
         } else if (channelMap.containsKey(key)) {
             synchronized (channel) {
                 if (channel.isUserSetEmpty()) {
                     channelMap.remove(key);
-                    responseReply = Response.Reply.RPL_OK;
+                    responseReply = Reply.RPL_OK;
                 } else {
-                    responseReply = Response.Reply.ERR_NOTOK;
+                    responseReply = Reply.ERR_NOTOK;
                 }
             }
         } else {
-            responseReply = Response.Reply.ERR_NOSUCHCHANNEL;
+            responseReply = Reply.ERR_NOSUCHCHANNEL;
         }
         return responseReply;
     }
@@ -443,19 +441,19 @@ public class DB {
      * Метод, удаляющий информацию о клиенте-сервисе IRC из 
      * ассоциативного массива. 
      * @param service клиент-сервис IRC.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода, {@link Response.Reply#ERR_NOTOK} такого объекта в массиве
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода, {@link Reply#ERR_NOTOK} такого объекта в массиве
      * нет. 
      */            
-    public Response.Reply unRegister(Service service) {
-        Response.Reply responseReply = null;
+    public Reply unRegister(Service service) {
+        Reply responseReply = null;
         String key = service.getNickname().toLowerCase(Locale.ENGLISH);
         synchronized (service) {
             synchronized (serviceMap) {
                 if (serviceMap.remove(key) != null){
-                    responseReply = Response.Reply.RPL_OK;
+                    responseReply = Reply.RPL_OK;
                 } else {
-                    responseReply = Response.Reply.ERR_NOTOK;
+                    responseReply = Reply.ERR_NOTOK;
                 }
             }
         }
@@ -467,22 +465,22 @@ public class DB {
      * Метод, удаляющий информацию о клиенте-сервере IRC из 
      * ассоциативного массива. 
      * @param ircServer клиент-сервер IRC.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода, {@link Response.Reply#ERR_NOTOK} такого объекта в массиве
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода, {@link Reply#ERR_NOTOK} такого объекта в массиве
      * нет. 
      */            
-    public Response.Reply unRegister(IrcServer ircServer) {
-        Response.Reply responseReply = null;
+    public Reply unRegister(IrcServer ircServer) {
+        Reply responseReply = null;
         String key = ircServer.getHostname().toLowerCase(Locale.ENGLISH);
         if (ircServer == Globals.anonymousIrcServer.get()) {
-            responseReply = Response.Reply.ERR_NOTOK;
+            responseReply = Reply.ERR_NOTOK;
         } else {
             synchronized (ircServer) {
                 synchronized (ircServerMap) {
                     if (ircServerMap.remove(key) != null){
-                        responseReply = Response.Reply.RPL_OK;
+                        responseReply = Reply.RPL_OK;
                     } else {
-                        responseReply = Response.Reply.ERR_NOTOK;
+                        responseReply = Reply.ERR_NOTOK;
                     }
                 }
             }
@@ -493,18 +491,18 @@ public class DB {
     /** 
      * Метод, удаляющий информацию о соединении IRC из списка. 
      * @param connection соединение IRC.
-     * @return {@link Response.Reply#RPL_OK} признак успеха выполнения 
-     * метода, {@link Response.Reply#ERR_NOTOK} такого объекта в списке
+     * @return {@link Reply#RPL_OK} признак успеха выполнения 
+     * метода, {@link Reply#ERR_NOTOK} такого объекта в списке
      * нет. 
      */            
-    public Response.Reply unRegister(Connection connection) {
-        Response.Reply response = null;
+    public Reply unRegister(Connection connection) {
+        Reply response = null;
         if (connection == Globals.nullConnection.get()) {
-            response =  Response.Reply.RPL_OK;
+            response =  Reply.RPL_OK;
         } else if (connectionList.remove(connection) == true) {
-            response = Response.Reply.RPL_OK;
+            response = Reply.RPL_OK;
         } else {
-            response = Response.Reply.ERR_NOTOK;
+            response = Reply.ERR_NOTOK;
         }
         return response;
     }

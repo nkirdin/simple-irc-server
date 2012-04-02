@@ -167,7 +167,7 @@ public class LusersIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_LUSERCLIENT}. 
+     * {@link Reply#RPL_LUSERCLIENT}. 
      * @param requestor источник команды.
      * @param numOfUsers количество пользователей.
      * @param numOfServices количество сервисов.
@@ -177,7 +177,7 @@ public class LusersIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplLuserClient(IrcTalker requestor,
             int numOfUsers, int numOfServices, int numOfServers) {
         
-        String remark = Response.makeText(Response.Reply.RPL_LUSERCLIENT,  
+        String remark = Reply.makeText(Reply.RPL_LUSERCLIENT,  
                 requestor.getNickname(), 
                 String.valueOf(numOfUsers), 
                 String.valueOf(numOfServices), 
@@ -189,7 +189,7 @@ public class LusersIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_LUSEROP}. 
+     * {@link Reply#RPL_LUSEROP}. 
      * @param requestor источник команды.
      * @param numOfOperators количество операторов.
      * @return объект с сообщением.
@@ -197,7 +197,7 @@ public class LusersIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplLuserOp(IrcTalker requestor,
             int numOfOperators) {
         
-        String remark = Response.makeText(Response.Reply.RPL_LUSEROP,  
+        String remark = Reply.makeText(Reply.RPL_LUSEROP,  
                 requestor.getNickname(), 
                 String.valueOf(numOfOperators));
 
@@ -207,7 +207,7 @@ public class LusersIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_LUSERCHANNELS}. 
+     * {@link Reply#RPL_LUSERCHANNELS}. 
      * @param requestor источник команды.
      * @param numOfChannels количество каналов.
      * @return объект с сообщением.
@@ -215,8 +215,8 @@ public class LusersIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplLuserChannels(IrcTalker requestor,
             int numOfChannels) {
         
-        String remark = Response.makeText(
-                Response.Reply.RPL_LUSERCHANNELS, 
+        String remark = Reply.makeText(
+                Reply.RPL_LUSERCHANNELS, 
                 requestor.getNickname(), 
                 String.valueOf(numOfChannels));
 
@@ -226,7 +226,7 @@ public class LusersIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_LUSERME}. 
+     * {@link Reply#RPL_LUSERME}. 
      * @param requestor источник команды.
      * @param numOfUsers количество пользователей.
      * @param numOfServers количество серверов.
@@ -235,7 +235,7 @@ public class LusersIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplLuserMe(IrcTalker requestor,
             int numOfUsers, int numOfServers) {
         
-        String remark = Response.makeText(Response.Reply.RPL_LUSERME,  
+        String remark = Reply.makeText(Reply.RPL_LUSERME,  
                 requestor.getNickname(), 
                 String.valueOf(numOfUsers), 
                 String.valueOf(numOfServers));

@@ -158,7 +158,7 @@ public class UserhostIrcCommand extends IrcCommandBase {
     
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_USERHOST}.
+     * {@link Reply#RPL_USERHOST}.
      * @param ircTalker отправитель.
      * @param outputString 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -166,7 +166,7 @@ public class UserhostIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplUserhost(IrcTalker ircTalker, 
             String outputString) {
-        String remark = Response.makeText(Response.Reply.RPL_USERHOST,
+        String remark = Reply.makeText(Reply.RPL_USERHOST,
                 ircTalker.getNickname(),
                 outputString);
         return new IrcCommandReport(remark, ircTalker,

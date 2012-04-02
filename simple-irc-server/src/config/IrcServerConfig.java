@@ -26,7 +26,7 @@ import java.util.logging.*;
 /**
  * Класс, хранящий конфигурируемые параметры для сервера в целом. 
  *
- * @version 0.5 2012-02-11
+ * @version 0.5.2 2012-03-30
  * @author  Nikolay Kirdin
  */
 public class IrcServerConfig {
@@ -37,14 +37,19 @@ public class IrcServerConfig {
     /** Уровень журналирования. */
     private Level debugLevel;
     
-    /**
+    /** Путь к файлу MOTD*/
+    private String motdFilename;
+    
+	/**
      * Конструктор.
      * @param timeZone TimeZone сервера.
      * @param debugLevel уровень журналирования.
      */
-    public IrcServerConfig(TimeZone timeZone, Level debugLevel) {
+    public IrcServerConfig(TimeZone timeZone, Level debugLevel, 
+    		String motdFilename) {
         this.timeZone = timeZone;
         this.debugLevel = debugLevel;
+        this.motdFilename = motdFilename;
     }
 
     /** Получение уровня журналирования. */
@@ -66,5 +71,15 @@ public class IrcServerConfig {
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }
+
+    /** Получение пути к motd файлу. */
+    public String getMotdFilename() {
+		return motdFilename;
+	}
+
+    /** Задание пути к motd файлу. */
+	public void setMotdFilename(String motdFilename) {
+		this.motdFilename = motdFilename;
+	}
 
 }

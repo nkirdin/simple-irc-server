@@ -125,7 +125,7 @@ public class TimeIrcCommand extends IrcCommandBase {
     }
     /**
      * Создание формализованного ответа типа
-     * {@link Response.Reply#RPL_TIME}.
+     * {@link Reply#RPL_TIME}.
      * @param ircTalker отправитель.
      * @param dateString 
      * @return объект класса {@link IrcCommandReport} с формализованным 
@@ -133,7 +133,7 @@ public class TimeIrcCommand extends IrcCommandBase {
      */
     private IrcCommandReport rplTime(IrcTalker ircTalker, 
             String dateString) {
-        String remark = Response.makeText(Response.Reply.RPL_TIME, 
+        String remark = Reply.makeText(Reply.RPL_TIME, 
                 ircTalker.getNickname(),
                 ((User) ircTalker).getIrcServer().getHostname(),
                 dateString);

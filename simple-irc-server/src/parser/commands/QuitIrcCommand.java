@@ -94,7 +94,7 @@ public class QuitIrcCommand extends IrcCommandBase {
 
     /** Исполнитель команды. */
     public void run() {
-        Response.Reply responseReply = null;
+        Reply responseReply = null;
         if (!isExecutable()) {
             return;
         }
@@ -119,7 +119,7 @@ public class QuitIrcCommand extends IrcCommandBase {
                 ch.remove(client);
                 if (ch.isUserSetEmpty()) {
                     responseReply = db.unRegister(ch);
-                    if (responseReply == Response.Reply.RPL_OK) {
+                    if (responseReply == Reply.RPL_OK) {
                         ch.delete();
                     } else {
                         throw new Error("JOIN: db.unRegister(client)" +

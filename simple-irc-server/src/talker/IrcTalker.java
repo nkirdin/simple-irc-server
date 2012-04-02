@@ -351,21 +351,6 @@ public abstract class IrcTalker implements Recipient {
         getConnection().pongTime.set(System.currentTimeMillis());
     } 
 
-    /**
-     * Отправка сообщения в клиенту.    
-     * @param ircTalker отправитель сообщения.
-     * @param response сообщение.
-     * @return результат отправки сообщения.
-     */
-     public boolean send(IrcTalker ircTalker, Response response) {
-        boolean result = false;
-        IrcCommandReport ircCommandReport = null;
-        ircCommandReport = new IrcCommandReport(response.getText(), 
-                IrcTalker.this, ircTalker);
-        result = send(ircCommandReport);
-        return result;
-     }
-     
      /**
       * Отправка сообщения в клиенту.    
       * @param ircTalker отправитель сообщения.

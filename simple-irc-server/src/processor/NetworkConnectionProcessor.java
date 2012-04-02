@@ -269,7 +269,7 @@ public class NetworkConnectionProcessor implements Runnable,
                     conn.setConnectionState(ConnectionState.CLOSED);  
                     conn.connectionStateTime.set(
                             System.currentTimeMillis());
-                    Response.Reply responseReply =
+                    Reply responseReply =
                             Globals.db.get().unRegister(conn);
                     logger.log(Level.FINER, 
                             "Unregistering and Deleting closed: " +

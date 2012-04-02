@@ -165,7 +165,7 @@ public class LinksIrcCommand extends IrcCommandBase {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_LINKS}. 
+     * {@link Reply#RPL_LINKS}. 
      * @param requestor источник команды.
      * @param servernameMask маска поиска..
      * @param hostname имя хоста.
@@ -176,7 +176,7 @@ public class LinksIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplLinks(IrcTalker requestor,
             String servernameMask, String hostname, int hopcount,
             String info) {
-         String remark = Response.makeText(Response.Reply.RPL_LINKS, 
+         String remark = Reply.makeText(Reply.RPL_LINKS, 
                 requestor.getNickname(),
                 servernameMask,
                 hostname,
@@ -189,14 +189,14 @@ public class LinksIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_ENDOFLINKS}. 
+     * {@link Reply#RPL_ENDOFLINKS}. 
      * @param requestor источник команды.
      * @param servernameMask маска для поиска.
      * @return объект с сообщением.
      */        
     private IrcCommandReport rplEndOfLinks(IrcTalker requestor,
             String servernameMask) {
-        String remark = Response.makeText(Response.Reply.RPL_ENDOFLINKS,  
+        String remark = Reply.makeText(Reply.RPL_ENDOFLINKS,  
                 client.getNickname(),
                 servernameMask);
 

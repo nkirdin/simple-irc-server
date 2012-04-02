@@ -107,7 +107,7 @@ public class NickIrcCommand extends IrcCommandBase {
 
     /** Исполнитель команды. */
     public void run() {
-        Response.Reply responseReply = null;
+        Reply responseReply = null;
         String oldNickname = null;
         boolean wasNamed = false;
         boolean rename = false;
@@ -127,12 +127,13 @@ public class NickIrcCommand extends IrcCommandBase {
         client.setNickname(nickname);
         responseReply = db.register(client);
                 
-        if (responseReply != Response.Reply.RPL_OK) {
+        if (responseReply != Reply.RPL_OK) {
             client.setNickname(oldNickname);
-            if (responseReply == Response.Reply.ERR_NICKNAMEINUSE) {
+            if (responseReply == Reply.ERR_NICKNAMEINUSE) {
                 client.send(errNicknameInUse(client, nickname));
             } else {
-                client.send(Globals.thisIrcServer.get(), response);
+                throw new Error("Internal error. Wrong reply: " + 
+                        responseReply);
             }
             return;
         }
@@ -169,14 +170,14 @@ public class NickIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NONICKNAMEGIVEN}. 
+     * {@link Reply#ERR_NONICKNAMEGIVEN}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport errNoNickname(IrcTalker requestor) {
         
-        String remark = Response.makeText(
-                Response.Reply.ERR_NONICKNAMEGIVEN,
+        String remark = Reply.makeText(
+                Reply.ERR_NONICKNAMEGIVEN,
                 requestor.getNickname());
 
         return new IrcCommandReport(remark, requestor,

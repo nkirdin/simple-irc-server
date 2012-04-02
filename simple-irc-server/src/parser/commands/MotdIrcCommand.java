@@ -116,7 +116,7 @@ public class MotdIrcCommand extends IrcCommandBase {
             return;
         }
 
-        String remark = Response.makeText(Response.Reply.RPL_MOTD, 
+        String remark = Reply.makeText(Reply.RPL_MOTD, 
                 client.getNickname());
 
         List<String> stringList = IrcFileFormat.getFormattedText(
@@ -142,13 +142,13 @@ public class MotdIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#ERR_NOMOTD}. 
+     * {@link Reply#ERR_NOMOTD}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport errNoMotd(IrcTalker requestor) {
         
-        String remark = Response.makeText(Response.Reply.ERR_NOMOTD, 
+        String remark = Reply.makeText(Reply.ERR_NOMOTD, 
                 client.getNickname());
 
         return new IrcCommandReport(remark, requestor,
@@ -157,13 +157,13 @@ public class MotdIrcCommand extends IrcCommandBase {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_MOTDSTART}. 
+     * {@link Reply#RPL_MOTDSTART}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport rplMotdStart(IrcTalker requestor) {
         
-        String remark = Response.makeText(Response.Reply.RPL_MOTDSTART, 
+        String remark = Reply.makeText(Reply.RPL_MOTDSTART, 
                 client.getNickname(),
                 client.getIrcServer().getHostname());
 
@@ -173,13 +173,13 @@ public class MotdIrcCommand extends IrcCommandBase {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_ENDOFMOTD}. 
+     * {@link Reply#RPL_ENDOFMOTD}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport rplEndMotd(IrcTalker requestor) {
         
-        String remark = Response.makeText(Response.Reply.RPL_ENDOFMOTD, 
+        String remark = Reply.makeText(Reply.RPL_ENDOFMOTD, 
                 client.getNickname());
 
         return new IrcCommandReport(remark, requestor,

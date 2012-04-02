@@ -30,9 +30,9 @@ import java.nio.charset.Charset;
  /**
  * Программный процессор, который обслуживает обращения к серверному 
  * порту. Для новых сетевых соединений он создает объекты классов 
- * {@link NetworkConnection} и {@link User} затем помещает их в репозиторий,
- * после этого запускается процессы определения доменного имени клиента 
- * и инициализации потоков ввода/вывода. 
+ * {@link NetworkConnection} и {@link User} затем помещает их в 
+ * репозиторий, после этого запускается процессы определения доменного 
+ * имени клиента и инициализации потоков ввода/вывода. 
  *
  * @version 0.5 2012-02-13
  * @author  Nikolay Kirdin
@@ -261,7 +261,7 @@ public class IncomingConnectionListener implements Runnable {
 
                     isConnectionAllowed = 
                             Globals.db.get().register(connection) ==
-                            Response.Reply.RPL_OK;
+                            Reply.RPL_OK;
                 } else {
                     isConnectionAllowed = false;
                 }
@@ -275,7 +275,7 @@ public class IncomingConnectionListener implements Runnable {
                         connection.ircTalker.set(user);
 
                         isUserAllowed = Globals.db.get().register(user) ==
-                                Response.Reply.RPL_OK;
+                                Reply.RPL_OK;
                         if (!isUserAllowed) {
                             user.setConnection(null);
                             connection.ircTalker.set(null);

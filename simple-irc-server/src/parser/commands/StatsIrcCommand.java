@@ -165,13 +165,13 @@ public class StatsIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_STATSLINKINFO}. 
+     * {@link Reply#RPL_STATSLINKINFO}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport rplStatsLinkInfo(IrcTalker requestor) {
         
-        String remark = Response.makeText(Response.Reply.RPL_STATSLINKINFO,
+        String remark = Reply.makeText(Reply.RPL_STATSLINKINFO,
                 requestor.getNickname(), "0", "0", "0", "0", "0", "0", 
                 "0");
 
@@ -181,7 +181,7 @@ public class StatsIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_STATSCOMMANDS}. 
+     * {@link Reply#RPL_STATSCOMMANDS}. 
      * @param requestor источник команды.
      * @param commandName имя команды.
      * @param times количество обращений к команде в сообщениях клиентов.
@@ -195,7 +195,7 @@ public class StatsIrcCommand extends IrcCommandBase {
             long avgDuration
             ) {
         
-        String remark = Response.makeText(Response.Reply.RPL_STATSCOMMANDS,
+        String remark = Reply.makeText(Reply.RPL_STATSCOMMANDS,
                 requestor.getNickname(),
                 commandName, 
                  String.valueOf(times),
@@ -209,7 +209,7 @@ public class StatsIrcCommand extends IrcCommandBase {
     
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_STATSUPTIME}. 
+     * {@link Reply#RPL_STATSUPTIME}. 
      * @param requestor источник команды.
      * @param upTime аптайм.
      * @return объект с сообщением.
@@ -225,7 +225,7 @@ public class StatsIrcCommand extends IrcCommandBase {
         int seconds = (int) ((upTime % (24 * 60 * 60 * 1000L) % 
                 (60 * 60 * 1000) % (60 * 1000))/ 1000);
     
-        String remark = Response.makeText(Response.Reply.RPL_STATSUPTIME,
+        String remark = Reply.makeText(Reply.RPL_STATSUPTIME,
                 requestor.getNickname(),
                 String.valueOf(days),
                 String.valueOf(hours),
@@ -238,13 +238,13 @@ public class StatsIrcCommand extends IrcCommandBase {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_STATSOLINE}. 
+     * {@link Reply#RPL_STATSOLINE}. 
      * @param requestor источник команды.
      * @return объект с сообщением.
      */        
     private IrcCommandReport rplStatsOLine(IrcTalker requestor) {
 
-        String remark = Response.makeText(Response.Reply.RPL_STATSOLINE,
+        String remark = Reply.makeText(Reply.RPL_STATSOLINE,
                 requestor.getNickname(),
                 "",
                 "");
@@ -255,7 +255,7 @@ public class StatsIrcCommand extends IrcCommandBase {
 
     /** 
      * Создает сообщение соответствующее  формализованному сообщению 
-     * {@link Response.Reply#RPL_ENDOFSTATS}. 
+     * {@link Reply#RPL_ENDOFSTATS}. 
      * @param requestor источник команды.
      * @param queryList ключи запроса.
      * @return объект с сообщением.
@@ -263,7 +263,7 @@ public class StatsIrcCommand extends IrcCommandBase {
     private IrcCommandReport rplEndOfStats(IrcTalker requestor,
             String queryList) {
 
-        String remark = Response.makeText(Response.Reply.RPL_ENDOFSTATS,
+        String remark = Reply.makeText(Reply.RPL_ENDOFSTATS,
                 requestor.getNickname(),
                 queryList);
 
