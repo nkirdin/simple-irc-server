@@ -217,7 +217,6 @@ public class IrcChannel implements Comparable, Recipient {
      * Конструктор.
      * @param nickname имя канала.
      * @param topic топик канала.
-     * @param db репозитарий.
      */
     protected IrcChannel(String nickname, String topic) {
         this(nickname);
@@ -230,7 +229,6 @@ public class IrcChannel implements Comparable, Recipient {
      * недостаточно, то объект создаваться не будет.
      * @param nickname имя канала.
      * @param topic топик канала.
-     * @param db репозитарий.
      * @return новый объект класса IrcChannel или null, если нарушено 
      * ограничение по памяти.
      */

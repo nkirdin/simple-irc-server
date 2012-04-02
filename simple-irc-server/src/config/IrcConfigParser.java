@@ -173,7 +173,7 @@ import javax.xml.stream.*;
  *              одна из латинских букв "K" или "M", для задания 
  *              множителей 1024 и 1048576 соответственно. По умолчанию
  *              эта длина ограничена 
- *              {@link Constants.TRANSCRIPT_FILE_LENGTH}
+ *              {@link Constants#TRANSCRIPT_FILE_LENGTH}
  *              байт.</li>
  *          </ul>
  *         </li>

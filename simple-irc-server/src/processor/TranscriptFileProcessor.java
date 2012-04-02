@@ -271,7 +271,7 @@ public class TranscriptFileProcessor implements Runnable,
      *         <LI> количество элементов очереди более чем 
      *         {@link Globals#maxTranscriptQueueSize} / 2;</LI>
      *         <LI> с момента последней записи прошло более 
-     *         {@link Globals#transcriptWritePeriod.get()} ms.</LI>
+     *         {@link Globals#transcriptWritePeriod} ms.</LI>
      * </UL> 
      * Факты возникновения исключений фиксируются в журнальном файле, 
      * выполнение метода продолжается. 
