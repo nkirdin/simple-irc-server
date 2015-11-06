@@ -1,3 +1,25 @@
+/*
+ * 
+ * InviteCommandTest
+ * is part of Simple Irc Server
+ *
+ *
+ * Copyright (С) 2012, Nikolay Kirdin
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License Version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License Version 3 for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public 
+ * License Version 3 along with this program.  If not, see 
+ * <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.grass.simpleircserver.tests;
 
 import org.junit.*;
@@ -24,8 +46,16 @@ import org.grass.simpleircserver.talker.service.*;
 import org.grass.simpleircserver.talker.user.*;
 import org.grass.simpleircserver.tools.*;
 
-public class TestINVITEcommand extends TestIrcCommand {
-    public void run() {
+
+/**
+ * InviteCommandTest
+ * @version 0.5.3.1 2015-11-06 
+ * @author  Nikolay Kirdin
+ */
+public class InviteCommandTest extends TestIrcCommand {
+	
+	@Test
+    public void inviteCommandTest() {
         System.out.println("--INVITE-----------------------------------------");
         User requestor;
         String reply;
@@ -69,7 +99,7 @@ public class TestINVITEcommand extends TestIrcCommand {
         response = "451" + " " + "" + " " + ":" + "You have not registered";
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("Not registered", reply.equals(":" + prefix + " " + response));
+        assertEquals("Not registered", reply, ":" + prefix + " " + response);
         
         ircCommand = "NICK";
         icp.setParsingString(ircCommand + " " + userNickname);
@@ -112,7 +142,7 @@ public class TestINVITEcommand extends TestIrcCommand {
         //473    ERR_INVITEONLYCHAN "<channel> :Cannot join channel (+i)"
         responseCode = "473";
         response = responseCode + " " + userNickname2 + " " + channelName2[0] + " " + ":" + "Cannot join channel (+i)";
-        assertTrue("Check ERR_INVITEONLYCHAN", reply.equals(":" + prefix + " " + response));
+        assertEquals("Check ERR_INVITEONLYCHAN", reply, ":" + prefix + " " + response);
 
         icp.setRequestor(db.getUser(userNickname));
 
@@ -124,7 +154,7 @@ public class TestINVITEcommand extends TestIrcCommand {
         responseCode = "461";
         response = responseCode + " " + userNickname + " " + ircCommand + " " + ":" + "Not enough parameters";
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("ERR_NEEDMOREPARAMS", reply.equals(":" + prefix + " " + response));
+        assertEquals("ERR_NEEDMOREPARAMS", reply, ":" + prefix + " " + response);
         
         ircCommand = "INVITE";
         icp.setParsingString(ircCommand + " " + userNickname2 + " " + channelName2[0]);
@@ -134,13 +164,13 @@ public class TestINVITEcommand extends TestIrcCommand {
         responseCode = "341";
         response = responseCode + " " + userNickname + " " + channelName2[0] + " " + userNickname2;
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("check RPL_INVITING for first user", reply.equals(":" + prefix + " " + response));
+        assertEquals("check RPL_INVITING for first user", reply, ":" + prefix + " " + response);
         
         icp.setRequestor(db.getUser(userNickname2));
         responseCode = "341";
         response = responseCode + " " + userNickname + " " + channelName2[0] + " " + userNickname2;
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("check RPL_INVITING for second user", reply.equals(":" + prefix + " " + response));
+        assertEquals("check RPL_INVITING for second user", reply, ":" + prefix + " " + response);
         
         icp.setRequestor(db.getUser(userNickname));
         ircCommand = "INVITE";
@@ -151,7 +181,7 @@ public class TestINVITEcommand extends TestIrcCommand {
         responseCode = "443";
         response = responseCode + " " + userNickname + " " + userNickname2 + " " + channelName2[0] + " " + ":" + "is already on channel";
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("check ERR_USERONCHANNEL", reply.equals(":" + prefix + " " + response));
+        assertEquals("check ERR_USERONCHANNEL", reply, ":" + prefix + " " + response);
        
         ircCommand = "INVITE";
         String userNickname3 = "paul";
@@ -162,7 +192,7 @@ public class TestINVITEcommand extends TestIrcCommand {
         responseCode = "401";
         response = responseCode + " " + userNickname + " " + userNickname3 + " " + ":" + "No such nick/channel";
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("check ERR_NOSUCHNICK", reply.equals(":" + prefix + " " + response));
+        assertEquals("check ERR_NOSUCHNICK", reply, ":" + prefix + " " + response);
 
         icp.setRequestor(User.create());
         ((User) icp.getRequestor()).setIrcServer(Globals.thisIrcServer.get());
@@ -188,7 +218,7 @@ public class TestINVITEcommand extends TestIrcCommand {
         responseCode = "482";
         response = responseCode + " " + userNickname2 + " " + channelName2[0] + " " + ":" + "You're not channel operator";
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("check ERR_CHANOPRIVSNEEDED", reply.equals(":" + prefix + " " + response));
+        assertEquals("check ERR_CHANOPRIVSNEEDED", reply, ":" + prefix + " " + response);
 
         ircCommand = "JOIN";
         icp.setParsingString(ircCommand + " " + "0");
@@ -215,7 +245,7 @@ public class TestINVITEcommand extends TestIrcCommand {
         responseCode = "442";
         response = responseCode + " " + userNickname2 + " " + channelName2[0] + " " + ":" + "You're not on that channel";
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("check ERR_NOTONCHANNEL", reply.equals(":" + prefix + " " + response));
+        assertEquals("check ERR_NOTONCHANNEL", reply, ":" + prefix + " " + response);
 
         icp.setRequestor(db.getUser(userNickname));
         
@@ -242,7 +272,7 @@ public class TestINVITEcommand extends TestIrcCommand {
         response = "421" + " " + service[0].getNickname() + " " + ircCommand + " " + ":Unknown command";
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue(reply.equals(":" + prefix + " " + response));
+        assertEquals("INVITE: ", reply, ":" + prefix + " " + response);
                 
         System.out.println("**INVITE*************************************OK**");
     }   

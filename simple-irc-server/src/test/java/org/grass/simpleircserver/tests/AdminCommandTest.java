@@ -1,6 +1,29 @@
+/*
+ * 
+ * AdminCommandTest
+ * is part of Simple Irc Server
+ *
+ *
+ * Copyright (С) 2012, Nikolay Kirdin
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License Version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License Version 3 for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public 
+ * License Version 3 along with this program.  If not, see 
+ * <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.grass.simpleircserver.tests;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 
 import org.grass.simpleircserver.base.DB;
 import org.grass.simpleircserver.base.Globals;
@@ -8,10 +31,18 @@ import org.grass.simpleircserver.config.IrcAdminConfig;
 import org.grass.simpleircserver.connection.Connection;
 import org.grass.simpleircserver.parser.IrcCommandParser;
 import org.grass.simpleircserver.talker.user.User;
+import org.junit.Test;
+/**
+ * AdminCommandTest
+ * @version 0.5.3.1 2015-11-06 
+ * @author  Nikolay Kirdin
+ */
+public class AdminCommandTest extends TestIrcCommand {
+	
+	@Test
+	public void adminCommandTest() {
+        System.out.println("--ADMIN-------------------------------------------");
 
-public class TestADMINcommand extends TestIrcCommand {
-    public void run() {
-        System.out.println("--ADMIN------------------------------------------");
         IrcCommandParser icp = new IrcCommandParser();
         
         dropAll();
@@ -43,7 +74,7 @@ public class TestADMINcommand extends TestIrcCommand {
         response = "451" + " " + "" + " " + ":" + "You have not registered";
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("Not registered reply", reply.equals(":" + prefix + " " + response));
+        assertEquals("Not registered reply", reply, ":" + prefix + " " + response);
         
         icp.setRequestor(requestor[0]);
 
@@ -73,20 +104,20 @@ public class TestADMINcommand extends TestIrcCommand {
         icp.ircParse();
         response = "256" + " " + requestor[0].getNickname() + " " + servername + " " + ":" + "Administrative info";
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("RPL_ADMINME", reply.equals(":" + prefix + " " + response));
+        assertEquals("RPL_ADMINME", reply, ":" + prefix + " " + response);
 
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
         response = "257" + " " + requestor[0].getNickname() + " "+ ":" + adminLocation;
-        assertTrue("RPL_ADMINLOC1", reply.equals(":" + prefix + " " + response));
+        assertEquals("RPL_ADMINLOC1", reply, ":" + prefix + " " + response);
         
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
         response = "258" + " " + requestor[0].getNickname() + " " + ":" + adminLocation2;
-        assertTrue("RPL_ADMINLOC2", reply.equals(":" + prefix + " " + response));
+        assertEquals("RPL_ADMINLOC2", reply, ":" + prefix + " " + response);
         
         
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
         response = "259" + " " + requestor[0].getNickname() + " " + ":" + adminEmail + ", " + adminName + ", " + adminInfo;
-        assertTrue("RPL_ADMINEMAIL", reply.equals(":" + prefix + " " + response));
+        assertEquals("RPL_ADMINEMAIL", reply, ":" + prefix + " " + response);
         
         ircCommand = "ADMIN";
         serverMask = "*.irc.example.com";
@@ -96,9 +127,9 @@ public class TestADMINcommand extends TestIrcCommand {
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
         response = "402" + " " + requestor[0].getNickname() + " " + serverMask + " " + ":" + "No such server";
-        assertTrue("ERR_NOSUCHSERVER", reply.equals(":" + prefix + " " + response));
-        
+        assertEquals("ERR_NOSUCHSERVER", reply, ":" + prefix + " " + response);
         System.out.println("**ADMIN**************************************OK**");
+
     }   
 }    
 

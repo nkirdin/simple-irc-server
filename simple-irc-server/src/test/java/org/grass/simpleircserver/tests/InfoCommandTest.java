@@ -1,3 +1,25 @@
+/*
+ * 
+ * InfoCommandTest
+ * is part of Simple Irc Server
+ *
+ *
+ * Copyright (С) 2012, Nikolay Kirdin
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License Version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License Version 3 for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public 
+ * License Version 3 along with this program.  If not, see 
+ * <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.grass.simpleircserver.tests;
 
 import org.junit.*;
@@ -24,8 +46,16 @@ import org.grass.simpleircserver.talker.service.*;
 import org.grass.simpleircserver.talker.user.*;
 import org.grass.simpleircserver.tools.*;
 
-public class TestINFOcommand extends TestIrcCommand {
-    public void run() {
+
+/**
+ * InfoCommandTest
+ * @version 0.5.3.1 2015-11-06 
+ * @author  Nikolay Kirdin
+ */
+public class InfoCommandTest extends TestIrcCommand {
+	
+	@Test
+    public void infoCommandTest() {
         System.out.println("--INFO-------------------------------------------");
         IrcCommandParser icp = new IrcCommandParser();
         
@@ -57,7 +87,7 @@ public class TestINFOcommand extends TestIrcCommand {
         response = "451" + " " + "" + " " + ":" + "You have not registered";
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("Not registered reply", reply.equals(":" + prefix + " " + response));
+        assertEquals("Not registered reply", reply,":" + prefix + " " + response);
         //String infoFilename = Globals.infoFilename.get();
         
         icp.setRequestor(requestor[0]);
@@ -79,7 +109,7 @@ public class TestINFOcommand extends TestIrcCommand {
             reply = icp.getRequestor().getOutputQueue().poll().getReport();
         }  
         response = "374" + " " + requestor[0].getNickname() + " " + ":" + "End of INFO list";
-        assertTrue("RPL_ENDOFINFO", reply.equals(":" + prefix + " " + response));
+        assertEquals("RPL_ENDOFINFO", reply,":" + prefix + " " + response);
         
         ircCommand = "INFO";
         serverMask = "*.irc.example.com";
@@ -89,7 +119,7 @@ public class TestINFOcommand extends TestIrcCommand {
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
         response = "402" + " " + requestor[0].getNickname() + " " + serverMask + " " + ":" + "No such server";
-        assertTrue("ERR_NOSUCHSERVER", reply.equals(":" + prefix + " " + response));
+        assertEquals("ERR_NOSUCHSERVER", reply, ":" + prefix + " " + response);
         
         System.out.println("**INFO***************************************OK**");
     }   

@@ -1,3 +1,25 @@
+/*
+ * 
+ * TestIrcCommandParser
+ * is part of Simple Irc Server
+ *
+ *
+ * Copyright (С) 2012, Nikolay Kirdin
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License Version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License Version 3 for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public 
+ * License Version 3 along with this program.  If not, see 
+ * <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.grass.simpleircserver.tests;
 
 import org.junit.*;
@@ -24,6 +46,12 @@ import org.grass.simpleircserver.talker.service.*;
 import org.grass.simpleircserver.talker.user.*;
 import org.grass.simpleircserver.tools.*;
 
+
+/**
+ * TestIrcCommandParser
+ * @version 0.5.3.1 2015-11-06 
+ * @author  Nikolay Kirdin
+ */
 public class TestIrcCommandParser implements IrcParamRegex{
     @Test
     public void testRegex() { 
@@ -100,10 +128,10 @@ public class TestIrcCommandParser implements IrcParamRegex{
         new TestLISTcommand().run();
     }
     
-    @Test
-    public void testINVITEcommand() { 
-        new TestINVITEcommand().run();
-    }
+//    @Test
+//    public void testINVITEcommand() { 
+//        new InviteCommandTest().run();
+//    }
     
     @Test
     public void testKICKcommand() { 
@@ -150,25 +178,25 @@ public class TestIrcCommandParser implements IrcParamRegex{
         new TestTIMEcommand().run();
     }
     
-    @Test
-    public void testCONNECTcommand() { 
-        new TestCONNECTcommand().run();
-    }
+//    @Test
+//    public void testCONNECTcommand() { 
+//        new ConnectCommandTest().run();
+//    }
     
     @Test
     public void testTRACEcommand() { 
         new TestTRACEcommand().run();
     }
     
-    @Test
-    public void testADMINcommand() { 
-        new TestADMINcommand().run();
-    }
+//    @Test
+//    public void testADMINcommand() { 
+//        new AdminCommandTest().run();
+//    }
     
-    @Test
-    public void testINFOcommand() { 
-        new TestINFOcommand().run();
-    }
+//    @Test
+//    public void testINFOcommand() { 
+//        new InfoCommandTest().run();
+//    }
     
     @Test
     public void testSERVLISTcommand() { 
@@ -210,25 +238,25 @@ public class TestIrcCommandParser implements IrcParamRegex{
         new TestPONGcommand().run();
     }
     
-    @Test
-    public void testERRORcommand() { 
-        new TestERRORcommand().run();
-    }
+//    @Test
+//    public void testERRORcommand() { 
+//        new ErrorCommandTest().run();
+//    }
     
-    @Test
-    public void testAWAYcommand() { 
-        new TestAWAYcommand().run();
-    }
+//    @Test
+//    public void testAWAYcommand() { 
+//        new AwayCommandTest().run();
+//    }
     
     @Test
     public void testREHASHcommand() { 
         new TestREHASHcommand().run();
     }
     
-    @Test
-    public void testDIEcommand() { 
-        new TestDIEcommand().run();
-    }
+//    @Test
+//    public void testDIEcommand() { 
+//        new DieCommandTest().run();
+//    }
     
     @Test
     public void testRESTARTcommand() { 

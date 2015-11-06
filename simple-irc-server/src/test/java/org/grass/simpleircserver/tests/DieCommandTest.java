@@ -1,3 +1,25 @@
+/*
+ * 
+ * DieCommandTest
+ * is part of Simple Irc Server
+ *
+ *
+ * Copyright (С) 2012, Nikolay Kirdin
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License Version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License Version 3 for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public 
+ * License Version 3 along with this program.  If not, see 
+ * <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.grass.simpleircserver.tests;
 
 import org.junit.*;
@@ -24,8 +46,16 @@ import org.grass.simpleircserver.talker.service.*;
 import org.grass.simpleircserver.talker.user.*;
 import org.grass.simpleircserver.tools.*;
 
-public class TestDIEcommand extends TestIrcCommand {
-    public void run() {
+
+/**
+ * DieCommandTest
+ * @version 0.5.3.1 2015-11-06 
+ * @author  Nikolay Kirdin
+ */
+public class DieCommandTest extends TestIrcCommand {
+	
+	@Test
+    public void dieCommandTest() {
         System.out.println("--DIE--------------------------------------------");
         
         IrcCommandParser icp = new IrcCommandParser();
@@ -66,7 +96,7 @@ public class TestDIEcommand extends TestIrcCommand {
         response = "451" + " " + "" + " " + ":" + "You have not registered";
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("Not registered", reply.equals(":" + prefix + " " + response));
+        assertEquals("Not registered", reply, ":" + prefix + " " + response);
         
         for (i = 0; i < requestor.length; i++) {
             icp.setRequestor(User.create());
@@ -105,7 +135,7 @@ public class TestDIEcommand extends TestIrcCommand {
         response = "481" + " " + userNickname[0] + " " + ":" + "Permission Denied- You're not an IRC operator";
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("ERR_NOPRIVILEGES", reply.equals(":" + prefix + " " + response));
+        assertEquals("ERR_NOPRIVILEGES", reply, ":" + prefix + " " + response);
         
         ircCommand = "OPER";
         icp.setParsingString(ircCommand + " " + "user" + " " + "test");
@@ -119,7 +149,7 @@ public class TestDIEcommand extends TestIrcCommand {
         response = "NOTICE" + " " + userNickname[0] + " " + ":" + userNickname[0] + " " + ircCommand + " " + Globals.thisIrcServer.get().getHostname();
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("DIE", reply.equals(":" + prefix + " " + response));
+        assertEquals("DIE", reply, ":" + prefix + " " + response);
         
         System.out.println("**DIE****************************************OK**");
     }   

@@ -1,5 +1,26 @@
-package org.grass.simpleircserver.tests;
+/*
+ * 
+ * AwayCommandTest
+ * is part of Simple Irc Server
+ *
+ *
+ * Copyright (С) 2012, Nikolay Kirdin
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License Version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License Version 3 for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public 
+ * License Version 3 along with this program.  If not, see 
+ * <http://www.gnu.org/licenses/>.
+ *
+ */
 
+package org.grass.simpleircserver.tests;
 
 
 import org.junit.*;
@@ -26,8 +47,16 @@ import org.grass.simpleircserver.talker.service.*;
 import org.grass.simpleircserver.talker.user.*;
 import org.grass.simpleircserver.tools.*;
 
-public class TestAWAYcommand extends TestIrcCommand {
-    public void run() {
+
+/**
+ * AwayCommandTest
+ * @version 0.5.3.1 2015-11-06 
+ * @author  Nikolay Kirdin
+ */
+public class AwayCommandTest extends TestIrcCommand {
+	
+	@Test
+    public void awayCommandTest() {
         System.out.println("--AWAY-------------------------------------------");
         
         IrcCommandParser icp = new IrcCommandParser();
@@ -73,7 +102,7 @@ public class TestAWAYcommand extends TestIrcCommand {
         response = "451" + " " + "" + " " + ":" + "You have not registered";
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("Not registered", reply.equals(":" + prefix + " " + response));
+        assertEquals("Not registered", reply, ":" + prefix + " " + response);
         
         for (i = 0; i < requestor.length; i++) {
             icp.setRequestor(User.create());
@@ -111,7 +140,7 @@ public class TestAWAYcommand extends TestIrcCommand {
         response = "305" + " " + userNickname[1] + " " + ":" + "You are no longer marked as being away";
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("RPL_UNAWAY", reply.equals(":" + prefix + " " + response));
+        assertEquals("RPL_UNAWAY", reply,":" + prefix + " " + response);
         
         ircCommand = "AWAY";
         content = "This is a sample away text.";
@@ -121,7 +150,7 @@ public class TestAWAYcommand extends TestIrcCommand {
         response = "306" + " " + userNickname[1] + " " + ":" + "You have been marked as being away";
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("RPL_AWAY", reply.equals(":" + prefix + " " + response));
+        assertEquals("RPL_AWAY", reply, ":" + prefix + " " + response);
         
         ((User) requestor[0]).setIrcServer(Globals.thisIrcServer.get());
         icp.setRequestor(requestor[0]);
@@ -133,7 +162,7 @@ public class TestAWAYcommand extends TestIrcCommand {
         response = "301" + " " + userNickname[0] + " " + userNickname[1] + " " + ":" + content;
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("RPL_AWAY local requestor", reply.equals(":" + prefix + " " + response));
+        assertEquals("RPL_AWAY local requestor", reply, ":" + prefix + " " + response);
         
         ircCommand = "PRIVMSG";
         ((User) requestor[0]).setIrcServer(ircServer[0]);
@@ -144,7 +173,7 @@ public class TestAWAYcommand extends TestIrcCommand {
         icp.ircParse();
         icp.setRequestor(requestor[1]);
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("remote requestor no RPL_AWAY", reply.equals(":" + prefix + " " + response));
+        assertEquals("remote requestor no RPL_AWAY", reply, ":" + prefix + " " + response);
         
         ircCommand = "AWAY";
         icp.setParsingString(ircCommand);
@@ -153,7 +182,7 @@ public class TestAWAYcommand extends TestIrcCommand {
         response = "305" + " " + userNickname[1] + " " + ":" + "You are no longer marked as being away";
         icp.ircParse();
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("RPL_UNAWAY", reply.equals(":" + prefix + " " + response));
+        assertEquals("RPL_UNAWAY", reply, ":" + prefix + " " + response);
         
         icp.setRequestor(requestor[0]);
         ircCommand = "PRIVMSG";
@@ -164,7 +193,7 @@ public class TestAWAYcommand extends TestIrcCommand {
         icp.ircParse();
         icp.setRequestor(requestor[1]);
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
-        assertTrue("no RPL_AWAY", reply.equals(":" + prefix + " " + response));
+        assertEquals("no RPL_AWAY", reply, ":" + prefix + " " + response);
         
         System.out.println("**AWAY***************************************OK**");
     }   

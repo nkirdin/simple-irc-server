@@ -25,11 +25,11 @@ import org.grass.simpleircserver.tools.*;
 
 public class TestIrcServerBricks {
     
-    @Test
-    public void testIrcAvgMeter() {
-        TestIrcAvgMeter testIrcServerBricks = new TestIrcAvgMeter();
-        testIrcServerBricks.run();
-    }
+//    @Test
+//    public void testIrcAvgMeter() {
+//        IrcAvgMeterTest testIrcServerBricks = new IrcAvgMeterTest();
+//        testIrcServerBricks.run();
+//    }
    
     @Test
     public void testIrcConfigParser() {
