@@ -161,6 +161,8 @@ public class KillIrcCommand extends IrcCommandBase {
                 }
             }
         }
+        
+        //XXX It needs to make a small delay before deleting the user. The user should have a opportunity to get the message.
         DriedUser driedUser = new DriedUser(user.getNickname(), 
                 user.getUsername(), user.getHostname(), 
                 user.getRealname(),    user.getIrcServer().getHostname(), 

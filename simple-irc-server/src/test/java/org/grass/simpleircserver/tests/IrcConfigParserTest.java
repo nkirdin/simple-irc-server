@@ -20,33 +20,26 @@
  *
  */
 
-
 package org.grass.simpleircserver.tests;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-import java.io.*;
-import java.util.*;
-import java.util.logging.*;
-import java.net.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import java.text.*;
-import java.nio.charset.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import org.grass.simpleircserver.*;
-import org.grass.simpleircserver.base.*;
-import org.grass.simpleircserver.channel.*;
-import org.grass.simpleircserver.config.*;
-import org.grass.simpleircserver.connection.*;
-import org.grass.simpleircserver.parser.*;
-import org.grass.simpleircserver.parser.commands.*;
-import org.grass.simpleircserver.processor.*;
-import org.grass.simpleircserver.talker.*;
-import org.grass.simpleircserver.talker.server.*;
-import org.grass.simpleircserver.talker.service.*;
-import org.grass.simpleircserver.talker.user.*;
-import org.grass.simpleircserver.tools.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.TimeZone;
+import java.util.logging.Level;
+
+import org.grass.simpleircserver.base.DB;
+import org.grass.simpleircserver.base.Globals;
+import org.grass.simpleircserver.config.IrcConfigParser;
+import org.grass.simpleircserver.config.IrcTranscriptConfig;
+import org.grass.simpleircserver.config.ParameterInitialization;
+import org.junit.Test;
 
 /**
  * IrcConfigParserTest
@@ -54,6 +47,7 @@ import org.grass.simpleircserver.tools.*;
  * @author  Nikolay Kirdin
  */
 public class IrcConfigParserTest {
+	
 	/*
 	@Test
     public void ircConfigParserTest() {

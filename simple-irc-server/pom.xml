@@ -51,7 +51,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>target/run-tests</outputDirectory>
+							<outputDirectory>${basedir}/target/run-tests/</outputDirectory>
 							<resources>
 								<resource>
 									<directory>${basedir}/src/main/resources</directory>
@@ -67,7 +67,7 @@
 				<version>2.19</version>
 				<configuration>
 					<forkCount>0</forkCount>
-					<workingDirectory>target/run-tests</workingDirectory>
+					<workingDirectory>${basedir}/target/run-tests/</workingDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
