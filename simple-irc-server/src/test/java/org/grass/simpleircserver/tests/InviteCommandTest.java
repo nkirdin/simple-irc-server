@@ -22,29 +22,13 @@
 
 package org.grass.simpleircserver.tests;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-import java.io.*;
-import java.util.*;
-import java.util.logging.*;
-import java.net.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import java.text.*;
+import static org.junit.Assert.assertEquals;
 
-import org.grass.simpleircserver.*;
-import org.grass.simpleircserver.base.*;
-import org.grass.simpleircserver.channel.*;
-import org.grass.simpleircserver.config.*;
-import org.grass.simpleircserver.connection.*;
-import org.grass.simpleircserver.parser.*;
-import org.grass.simpleircserver.parser.commands.*;
-import org.grass.simpleircserver.processor.*;
-import org.grass.simpleircserver.talker.*;
-import org.grass.simpleircserver.talker.server.*;
-import org.grass.simpleircserver.talker.service.*;
-import org.grass.simpleircserver.talker.user.*;
-import org.grass.simpleircserver.tools.*;
+import org.grass.simpleircserver.base.Globals;
+import org.grass.simpleircserver.connection.Connection;
+import org.grass.simpleircserver.parser.IrcCommandParser;
+import org.grass.simpleircserver.talker.user.User;
+import org.junit.Test;
 
 
 /**
@@ -57,29 +41,24 @@ public class InviteCommandTest extends TestIrcCommand {
 	@Test
     public void inviteCommandTest() {
         System.out.println("--INVITE-----------------------------------------");
-        User requestor;
         String reply;
-        String servername;
         String prefix;
         String ircCommand;
-        String [] errouneous;
-        String [] correctous;
         String userNickname;
         String userUsername;
         String userRealname;
         String response;
         String userMode;
         String channelMode;
-        String userPassword;
         String responseCode;
-        String responseMsg;
 
         String[] channelName2 = {"#channel", "#channel2", "#channel3", "#channel4"};
-        int i;
 
-        IrcCommandParser icp = new IrcCommandParser();
         
-        dropUser();
+        dropAll();
+        serviceInit();
+        
+        IrcCommandParser icp = new IrcCommandParser();
 
         icp.setRequestor(User.create());
         ((User) icp.getRequestor()).setIrcServer(Globals.thisIrcServer.get());

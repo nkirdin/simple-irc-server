@@ -289,6 +289,11 @@ public class TestIrcCommand implements IrcParamRegex {
         dropChannel();
         dropHistory();
         dropConnection();
+        Globals.ircTranscriptConfig.set(null);
+//        Globals.ircTranscriptConfig.set(new IrcTranscriptConfig(
+//        		Globals.transcriptFileName.get(),
+//        		Globals.transcriptRotate.get(),
+//        		Globals.transcriptLength.get()));
     }
 }    
 

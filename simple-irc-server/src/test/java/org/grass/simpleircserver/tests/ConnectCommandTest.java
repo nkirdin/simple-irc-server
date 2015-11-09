@@ -22,29 +22,14 @@
 
 package org.grass.simpleircserver.tests;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-import java.io.*;
-import java.util.*;
-import java.util.logging.*;
-import java.net.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import java.text.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.grass.simpleircserver.*;
-import org.grass.simpleircserver.base.*;
-import org.grass.simpleircserver.channel.*;
-import org.grass.simpleircserver.config.*;
-import org.grass.simpleircserver.connection.*;
-import org.grass.simpleircserver.parser.*;
-import org.grass.simpleircserver.parser.commands.*;
-import org.grass.simpleircserver.processor.*;
-import org.grass.simpleircserver.talker.*;
-import org.grass.simpleircserver.talker.server.*;
-import org.grass.simpleircserver.talker.service.*;
-import org.grass.simpleircserver.talker.user.*;
-import org.grass.simpleircserver.tools.*;
+import org.grass.simpleircserver.base.Globals;
+import org.grass.simpleircserver.connection.Connection;
+import org.grass.simpleircserver.parser.IrcCommandParser;
+import org.grass.simpleircserver.talker.user.User;
+import org.junit.Test;
 
 
 /**
@@ -52,6 +37,7 @@ import org.grass.simpleircserver.tools.*;
  * @version 0.5.3.1 2015-11-06 
  * @author  Nikolay Kirdin
  */
+@SuppressWarnings("unused")
 public class ConnectCommandTest extends TestIrcCommand {
 	
 	@Test

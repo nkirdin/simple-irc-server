@@ -1,3 +1,26 @@
+/*
+ * 
+ * IrcConfigParserTest
+ * is part of Simple Irc Server
+ *
+ *
+ * Copyright (С) 2012, Nikolay Kirdin
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License Version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License Version 3 for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public 
+ * License Version 3 along with this program.  If not, see 
+ * <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
 package org.grass.simpleircserver.tests;
 
 import org.junit.*;
@@ -25,8 +48,15 @@ import org.grass.simpleircserver.talker.service.*;
 import org.grass.simpleircserver.talker.user.*;
 import org.grass.simpleircserver.tools.*;
 
-public class TestIrcConfigParser {
-    public void run() {
+/**
+ * IrcConfigParserTest
+ * @version 0.5.3.1 2015-11-06 
+ * @author  Nikolay Kirdin
+ */
+public class IrcConfigParserTest {
+	/*
+	@Test
+    public void ircConfigParserTest() {
         System.out.println("--usingIrcConfigFile--Use-Config-File------------");
         String testConfig = "testConfig.xml";
         String adminName = "IrcAdmin";
@@ -111,30 +141,30 @@ public class TestIrcConfigParser {
 
         assertFalse("Successfull config reading", result);
         
-        assertTrue("IrcAdminConfig defined", db.getIrcAdminConfig() != null);
-        assertTrue("AdminName", db.getIrcAdminConfig().getName().equals(adminName));
-        assertTrue("AdminLocation", db.getIrcAdminConfig().getLocation().equals(adminLocation));
-        assertTrue("AdminEmail", db.getIrcAdminConfig().getEmail().equals(adminEmail));
-        assertTrue("AdminInfo", db.getIrcAdminConfig().getInfo().equals(adminInfo));
+        assertNotNull("IrcAdminConfig defined", db.getIrcAdminConfig());
+        assertEquals("AdminName", adminName, db.getIrcAdminConfig().getName());
+        assertEquals("AdminLocation", adminLocation, db.getIrcAdminConfig().getLocation());
+        assertEquals("AdminEmail", adminEmail, db.getIrcAdminConfig().getEmail());
+        assertEquals("AdminInfo", adminInfo, db.getIrcAdminConfig().getInfo());
         
-        assertTrue("IrcServerConfig defined", db.getIrcServerConfig() != null);
-        assertTrue("DebugLevel", db.getIrcServerConfig().getDebugLevel() == debugLevel);     
-        assertTrue("timezone", db.getIrcServerConfig().getTimeZone().equals(timeZone));
-        assertTrue("motdFilename", db.getIrcServerConfig().getMotdFilename().equals(motdFilename));
+        assertNotNull("IrcServerConfig defined", db.getIrcServerConfig());
+        assertEquals("DebugLevel", debugLevel, db.getIrcServerConfig().getDebugLevel());     
+        assertEquals("timezone", timeZone, db.getIrcServerConfig().getTimeZone());
+        assertEquals("motdFilename", motdFilename, db.getIrcServerConfig().getMotdFilename());
         
-        assertTrue("IrcInterfaceConfig defined", db.getIrcInterfaceConfig() != null);
-        assertTrue("InetAddress", db.getIrcInterfaceConfig().getInetAddress().getHostAddress().equals(ipAddr)); 
-        assertTrue("port", db.getIrcInterfaceConfig().getPort() == serverPort);        
-        assertTrue("charset", db.getIrcInterfaceConfig().getCharset().equals(charset));
+        assertNotNull("IrcInterfaceConfig defined", db.getIrcInterfaceConfig());
+        assertEquals("InetAddress", ipAddr, db.getIrcInterfaceConfig().getInetAddress().getHostAddress()); 
+        assertEquals("port", serverPort, db.getIrcInterfaceConfig().getPort());        
+        assertEquals("charset", charset, db.getIrcInterfaceConfig().getCharset());
         
-        assertTrue("IrcTranscriptConfig defined", Globals.ircTranscriptConfig.get() != null);
-        assertTrue("transcript", Globals.ircTranscriptConfig.get().getTranscript().equals(transcript));
-        assertTrue("Rotate", Globals.ircTranscriptConfig.get().getRotate() == rotate);     
-        assertTrue("Length", Globals.ircTranscriptConfig.get().getLength() == 5 * 1048576);
+        assertNotNull("IrcTranscriptConfig defined", Globals.ircTranscriptConfig.get());
+        assertEquals("transcript", transcript, Globals.ircTranscriptConfig.get().getTranscript());
+        assertEquals("Rotate", rotate, Globals.ircTranscriptConfig.get().getRotate());     
+        assertEquals("Length", 5 * 1048576, Globals.ircTranscriptConfig.get().getLength());
         
-        assertTrue("IrcOperatorConfigMap defined", db.getIrcOperatorConfigMap() != null);
+        assertNotNull("IrcOperatorConfigMap defined", db.getIrcOperatorConfigMap());
         assertTrue("OperatorName", db.getIrcOperatorConfigMap().containsKey(operatorName));
-        assertTrue("OperatorPass", db.getIrcOperatorConfigMap().get(operatorName).getPassword().equals(operatorPass));
+        assertEquals("OperatorPass", operatorPass, db.getIrcOperatorConfigMap().get(operatorName).getPassword());
         
         assertTrue("Check password", db.checkOperator(operatorName, operatorPass));
 
@@ -154,7 +184,8 @@ public class TestIrcConfigParser {
         assertTrue("Config file not found.", result);
         
         System.out.println("**usingIrcConfigFile**No*config*file*********OK**");
-        
+         
     }
+    */
 }    
 
