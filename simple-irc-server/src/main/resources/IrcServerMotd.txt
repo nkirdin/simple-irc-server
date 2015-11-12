@@ -2,7 +2,7 @@
 	   Simple Irc Server
  
  
-  Copyright (c) 2012, Nikolay Kirdin
+  Copyright (c) 2012, 2015 Nikolay Kirdin
  
   This program is free software: you can 
   redistribute it and/or modify it under 
