@@ -96,7 +96,7 @@ public class IrcCommandTest implements IrcParamRegex {
         
         try {
         	
-            String logFilePath = IrcCommandTest.buildResourceFilePath(Constants.LOG_FILE_PATH);
+            String logFilePath = ServerTestUtils.buildResourceFilePath(Constants.LOG_FILE_PATH);
             Globals.logFileHandlerFileName.set(logFilePath);
 
             Globals.logFileHandler.set(new FileHandler(Globals.logFileHandlerFileName.get()));
@@ -299,12 +299,5 @@ public class IrcCommandTest implements IrcParamRegex {
         Globals.ircTranscriptConfig.set(null);
     }
     
-	public static String buildResourceFilePath(String resourceFilename) {
-		// It needs to correctly point location of motdFile. Because there are strange errors when testing it with surefire. 2015-11-10 NK
-        Path currentPath = Paths.get("").toAbsolutePath(); 
-        String motdFilePath = currentPath.resolve(Paths.get(resourceFilename)).toString();
-		return motdFilePath;
-	}   
-
 }    
 

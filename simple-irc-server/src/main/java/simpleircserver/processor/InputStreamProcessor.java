@@ -49,24 +49,7 @@ import java.io.*;
  * @version 0.5.3 2015-11-05 Program units were moved from default package into packages with names. Unit tests were added.
  * @author  Nikolay Kirdin
  */
-public class InputStreamProcessor implements Runnable, 
-IrcServerProcessor {
-
-    /** 
-     * Управление выполнением/остановом основного цикла.
-     * true - цикл выполняется, false - цикл приостановлен. 
-     */ 
-    public AtomicBoolean running = new AtomicBoolean(true);
-
-    /** 
-     * Управление выполнением/завершением основного цикла.
-     * true - цикл завершается, false - цикл может выполнятся.
-     */ 
-    public AtomicBoolean down = new AtomicBoolean(false);
-
-    /** Поток метода run этого объекта. */ 
-    public AtomicReference<Thread> thread = 
-            new AtomicReference<Thread>();
+public class InputStreamProcessor extends AbstractIrcServerProcessor {
 
     /** Минимальная длительность таймаутов. */
     public AtomicLong limitingTO = new AtomicLong(5);
@@ -339,4 +322,5 @@ IrcServerProcessor {
 
         }logger.log(Level.FINEST, "Ended");
     }
+    
 }

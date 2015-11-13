@@ -49,23 +49,7 @@ import java.util.concurrent.atomic.*;
  * @version 0.5.3 2015-11-05 Program units were moved from default package into packages with names. Unit tests were added.
  * @author  Nikolay Kirdin
  */
-public class IrcTalkerProcessor implements Runnable, IrcServerProcessor {
-
-    /** 
-     * Управление выполнением/остановом основного цикла.
-     * true - цикл выполняется, false - цикл приостановлен. 
-     */ 
-    public AtomicBoolean running = new AtomicBoolean(true);
-
-    /** 
-     * Управление выполнением/завершением основного цикла.
-     * true - цикл завершается, false - цикл может выполнятся.
-     */ 
-    public AtomicBoolean down = new AtomicBoolean(false);
-
-    /** Поток метода run этого объекта. */ 
-    public AtomicReference<Thread> thread = 
-            new AtomicReference<Thread>();
+public class IrcTalkerProcessor extends AbstractIrcServerProcessor {
 
     /** Стандартная длительность таймаутов. */
     public AtomicLong sleepTO = new AtomicLong(100);
@@ -378,4 +362,12 @@ public class IrcTalkerProcessor implements Runnable, IrcServerProcessor {
 
         logger.log(Level.FINEST, "Ended");
     }
+      
+    /** Завершение проверки состояния клиентов сервера.*/
+    @Override
+    public void processorStop() {
+        super.processorStop();
+        termination();
+    }
+
 }

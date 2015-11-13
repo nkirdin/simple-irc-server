@@ -51,6 +51,7 @@ import simpleircserver.processor.IrcTalkerProcessor;
 import simpleircserver.processor.OutputQueueProcessor;
 import simpleircserver.talker.user.User;
 import simpleircserver.tests.IrcCommandTest;
+import simpleircserver.tests.ServerTestUtils;
 import simpleircserver.tests.server.ServerInputStreamProcessorTest.Client;
 
 /**
@@ -77,10 +78,10 @@ public class ServerOutputQueueProcessorTest {
 	@Before
 	public void setUp() {
         
-        String configFilePath = IrcCommandTest.buildResourceFilePath(Constants.CONFIG_FILE_PATH);
+        String configFilePath = ServerTestUtils.buildResourceFilePath(Constants.CONFIG_FILE_PATH);
         Globals.configFilename.set(configFilePath);
        
-        String logFilePath = IrcCommandTest.buildResourceFilePath(Constants.LOG_FILE_PATH);
+        String logFilePath = ServerTestUtils.buildResourceFilePath(Constants.LOG_FILE_PATH);
         Globals.logFileHandlerFileName.set(logFilePath);        
 		Globals.logFileHandler.get().setLevel(Level.ALL);
 		Globals.logger.get().setLevel(Level.ALL);

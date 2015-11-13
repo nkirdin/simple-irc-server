@@ -32,6 +32,7 @@ import simpleircserver.connection.Connection;
 import simpleircserver.parser.IrcCommandParser;
 import simpleircserver.talker.user.User;
 import simpleircserver.tests.IrcCommandTest;
+import simpleircserver.tests.ServerTestUtils;
 
 /**
  * UserCommandTest
@@ -52,7 +53,7 @@ public class UserCommandTest extends IrcCommandTest {
         dropAll();
         serverInit();
         // It needs to correct path to motd because there are strange errors when testing with surefire.
-        String motdFilePath = buildResourceFilePath(Constants.MOTD_FILE_PATH);
+        String motdFilePath = ServerTestUtils.buildResourceFilePath(Constants.MOTD_FILE_PATH);
         Globals.motdFilename.set(motdFilePath);
         
         IrcCommandParser icp = new IrcCommandParser();

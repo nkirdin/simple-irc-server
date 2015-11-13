@@ -29,6 +29,7 @@ import simpleircserver.base.Globals;
 import simpleircserver.config.ParameterInitialization;
 import simpleircserver.parser.IrcCommandParser;
 import simpleircserver.tests.IrcCommandTest;
+import simpleircserver.tests.ServerTestUtils;
 
 /**
  * ErrorCommandTest
@@ -46,7 +47,7 @@ public class ErrorCommandTest extends IrcCommandTest {
         serverInit();
         serviceInit();
 
-        String logFilePath = IrcCommandTest.buildResourceFilePath(Constants.LOG_FILE_PATH);
+        String logFilePath = ServerTestUtils.buildResourceFilePath(Constants.LOG_FILE_PATH);
         Globals.logFileHandlerFileName.set(logFilePath);
         ParameterInitialization.loggerSetup();
         

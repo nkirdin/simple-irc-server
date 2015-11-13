@@ -47,23 +47,7 @@ import java.util.concurrent.atomic.*;
  * @version 0.5.3 2015-11-05 Program units were moved from default package into packages with names. Unit tests were added.
  * @author  Nikolay Kirdin
  */
-public class NetworkConnectionProcessor implements Runnable, 
-        IrcServerProcessor {
-    
-    /** 
-     * Управление выполнением/остановом основного цикла.
-     * true - цикл выполняется, false - цикл приостановлен. 
-     */ 
-    public AtomicBoolean running = new AtomicBoolean(true);
-    
-    /** 
-     * Управление выполнением/завершением основного цикла.
-     * true - цикл завершается, false - цикл может выполнятся.
-     */ 
-    public AtomicBoolean down = new AtomicBoolean(false);
-    
-    /** Поток метода run этого объекта. */ 
-    public AtomicReference<Thread> thread = new AtomicReference<Thread>();
+public class NetworkConnectionProcessor extends AbstractIrcServerProcessor {
     
     /** Минимальная длительность таймаутов. */
     public AtomicLong limitingTO = new AtomicLong(100);
@@ -435,4 +419,15 @@ public class NetworkConnectionProcessor implements Runnable,
         }
         logger.log(Level.FINEST, "Ended");
     }
+        
+    /** 
+     * Завершение процесса проверки состояния соединений клиентов 
+     * сервера. 
+     */
+    @Override
+    public void processorStop() {
+        super.processorStop();
+        termination();
+    }
+
 }

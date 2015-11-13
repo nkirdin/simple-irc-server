@@ -21,7 +21,20 @@ package simpleircserver.processor;
  *
  */
 
-import java.util.logging.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import simpleircserver.base.Globals;
 import simpleircserver.connection.ConnectionState;
@@ -29,11 +42,6 @@ import simpleircserver.connection.NetworkConnection;
 import simpleircserver.parser.Reply;
 import simpleircserver.talker.IrcTalkerState;
 import simpleircserver.talker.user.User;
-
-import java.util.concurrent.atomic.*;
-import java.io.*;
-import java.net.*;
-import java.nio.charset.Charset;
 
 
  /**
@@ -47,22 +55,7 @@ import java.nio.charset.Charset;
  * @version 0.5.3 2015-11-05 Program units were moved from default package into packages with names. Unit tests were added.
  * @author  Nikolay Kirdin
  */
-public class IncomingConnectionListener implements Runnable {
-    
-    /** 
-     * Управление выполнением/остановом основного цикла.
-     * true - цикл выполняется, false - цикл приостановлен. 
-     */ 
-    public AtomicBoolean running = new AtomicBoolean();
-
-    /** 
-     * Управление выполнением/завершением основного цикла.
-     * true - цикл завершается, false - цикл может выполнятся.
-     */ 
-    public AtomicBoolean down = new AtomicBoolean();
-    
-    /** Поток метода run этого объекта. */ 
-    public AtomicReference<Thread> thread = new AtomicReference<Thread>();
+public class IncomingConnectionListener extends AbstractIrcServerProcessor {
     
     /** Минимальная длительность таймаутов. */
     public AtomicLong limitingTO = new AtomicLong(1);
@@ -340,4 +333,22 @@ public class IncomingConnectionListener implements Runnable {
         }
         logger.log(Level.FINEST, "Ended");
     }
+    
+    /** 
+     * Инициализация процесса обработки входящих сетевых соединений. 
+     * @return true инициализация успешно завершена, 
+     * false инициализация завершена с ошибками. 
+     */
+    @Override
+    public boolean processorStart() {
+
+        int serverPortNumber = Globals.db.get().getIrcInterfaceConfig().getPort();
+        Charset listenerCharset = Globals.db.get().getIrcInterfaceConfig().getCharset();
+        InetAddress inetAddress = Globals.db.get().getIrcInterfaceConfig().getInetAddress(); 
+        setInetAddress(inetAddress);
+        setServerPortNumber(serverPortNumber);
+        this.listenerCharset.set(listenerCharset);
+        return this.error.get() && super.processorStart();
+    }
+    
 }

@@ -45,24 +45,8 @@ import simpleircserver.tools.IrcAvgMeter;
  * @version 0.5.3 2015-11-05 Program units were moved from default package into packages with names. Unit tests were added.
  * @author  Nikolay Kirdin
  */
-public class TranscriptFileProcessor implements Runnable,
-        IrcServerProcessor {
-    /** 
-     * Управление выполнением/остановом основного цикла.
-     * true - цикл выполняется, false - цикл приостановлен. 
-     */ 
-    public AtomicBoolean running = new AtomicBoolean(true);
-    
-    /** 
-     * Управление выполнением/завершением основного цикла.
-     * true - цикл завершается, false - цикл может выполнятся.
-     */ 
-    public AtomicBoolean down = new AtomicBoolean(false);
-    
-    /** Поток метода run этого объекта. */ 
-    public AtomicReference<Thread> thread = 
-            new AtomicReference<Thread>();
-    
+public class TranscriptFileProcessor extends AbstractIrcServerProcessor {
+
     /** Стандартная длительность таймаутов. */
     public AtomicLong sleepTO = new AtomicLong(100);
     
@@ -446,4 +430,11 @@ public class TranscriptFileProcessor implements Runnable,
         
         Globals.logger.get().log(Level.FINEST, "Ended");
     }
+    
+    @Override
+    public boolean processorStart() {
+        setIrcTranscriptConfig(Globals.ircTranscriptConfig.get());        
+        return super.processorStart();
+     }
+    
 }

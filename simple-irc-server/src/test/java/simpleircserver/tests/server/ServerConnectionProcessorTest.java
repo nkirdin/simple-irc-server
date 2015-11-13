@@ -50,6 +50,8 @@ import simpleircserver.processor.IncomingConnectionListener;
 import simpleircserver.processor.IrcTalkerProcessor;
 import simpleircserver.processor.NetworkConnectionProcessor;
 import simpleircserver.tests.IrcCommandTest;
+import simpleircserver.tests.ServerTestUtils;
+import simpleircserver.tests.server.ServerIrcTalkerProcessorTest.Client;
 
 /**
  * ServerConnectionProcessorTest
@@ -72,35 +74,39 @@ public class ServerConnectionProcessorTest {
     private Client[] client ;
 
 	
-	@Before
-	public void setUp() {
-        
-        String configFilePath = IrcCommandTest.buildResourceFilePath(Constants.CONFIG_FILE_PATH);
-        Globals.configFilename.set(configFilePath);
+    @Before
+    public void setUp() throws Exception {
+        if (Globals.serverSocket.get() != null) Globals.serverSocket.get().close();
+        ServerTestUtils.restoreGlobals();
+        String configFilePath = ServerTestUtils.buildResourceFilePath(Constants.CONFIG_FILE_PATH);
        
-        String logFilePath = IrcCommandTest.buildResourceFilePath(Constants.LOG_FILE_PATH);
-        Globals.logFileHandlerFileName.set(logFilePath);        
-		Globals.logFileHandler.get().setLevel(Level.ALL);
-		Globals.logger.get().setLevel(Level.ALL);
-		Globals.serverDown.set(false);
-	    sleepTO = new AtomicLong(100);
-	    client = new Client[4];
+        String logFilePath = ServerTestUtils.buildResourceFilePath(Constants.LOG_FILE_PATH);
+        Globals.configFilename.set(configFilePath);
 
-	}
+        Globals.logFileHandlerFileName.set(logFilePath);  
+        ParameterInitialization parameterInitialization;       
+        parameterInitialization = new ParameterInitialization();
+        parameterInitialization.configSetup();
+        parameterInitialization.run();
+        parameterInitialization.loggerSetup();
+
+        Globals.logFileHandler.get().setLevel(Level.ALL);
+        Globals.logger.get().setLevel(Level.ALL);
+        parameterInitialization.loggerLevelSetup();
+        Globals.serverDown.set(false);
+        sleepTO = new AtomicLong(100);
+        client = new Client[4];
+
+    }
 
 	@Test  
     public void serverConnectionProcessorTest() throws IOException {
         System.out.println("--ConnectionProcessor----------------------------");
         //networkConnectionProcessor
-        if (Globals.serverSocket.get() != null) Globals.serverSocket.get().close();
-        
-        ParameterInitialization parameterInitialization;
+
         IncomingConnectionListener incomingConnectionListener;
         NetworkConnectionProcessor networkConnectionProcessor;
         IrcTalkerProcessor ircTalkerProcessor;
-        
-        parameterInitialization = new ParameterInitialization();
-        parameterInitialization.run();
         
         incomingConnectionListener = new IncomingConnectionListener();
         incomingConnectionListener.thread.set(new Thread(incomingConnectionListener));

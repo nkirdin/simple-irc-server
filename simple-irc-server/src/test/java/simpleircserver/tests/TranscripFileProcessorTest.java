@@ -59,14 +59,14 @@ public class TranscripFileProcessorTest {
         int rotate = 3;
         int length = 1024;
         
-        String logFilePath = IrcCommandTest.buildResourceFilePath(Constants.LOG_FILE_PATH);
+        String logFilePath = ServerTestUtils.buildResourceFilePath(Constants.LOG_FILE_PATH);
         Globals.logFileHandlerFileName.set(logFilePath);
         ParameterInitialization.configSetup();
 
         ParameterInitialization.loggerSetup();
         
         
-        String transcriptFilePath = IrcCommandTest.buildResourceFilePath(Constants.TRANSCRIPT_FILE_PATH);
+        String transcriptFilePath = ServerTestUtils.buildResourceFilePath(Constants.TRANSCRIPT_FILE_PATH);
         ircTranscriptConfig = new IrcTranscriptConfig(transcriptFilePath, 
         		rotate, length);
         		

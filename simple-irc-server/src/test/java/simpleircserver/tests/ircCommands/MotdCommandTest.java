@@ -35,6 +35,7 @@ import simpleircserver.connection.Connection;
 import simpleircserver.parser.IrcCommandParser;
 import simpleircserver.talker.user.User;
 import simpleircserver.tests.IrcCommandTest;
+import simpleircserver.tests.ServerTestUtils;
 
 /**
  * MotdCommandTest
@@ -84,7 +85,7 @@ public class MotdCommandTest extends IrcCommandTest {
         reply = icp.getRequestor().getOutputQueue().poll().getReport();
         assertTrue("ERR_NOMOTD", icp.getRequestor().getOutputQueue().isEmpty());
 
-        String motdFilePath = buildResourceFilePath(Constants.MOTD_FILE_PATH);
+        String motdFilePath = ServerTestUtils.buildResourceFilePath(Constants.MOTD_FILE_PATH);
         Globals.motdFilename.set(motdFilePath);
         
         ircCommand = "MOTD";

@@ -46,16 +46,16 @@
 				<version>2.7</version>
 				<executions>
 					<execution>
-						<id>copy-resources</id>
-						<phase>validate</phase>
+						<id>copy-test-resources</id>
+						<phase>process-test-resources</phase>
 						<goals>
-							<goal>copy-resources</goal>
+							<goal>testResources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/target/run-tests/</outputDirectory>
+							<outputDirectory>${basedir}/target/run-tests</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${basedir}/src/main/resources</directory>
+									<directory>${basedir}/src/test/resources</directory>
 								</resource>
 							</resources>
 						</configuration>

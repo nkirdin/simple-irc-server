@@ -53,7 +53,7 @@ public class IrcConfigParserTest {
 	@Test
     public void ircConfigParserTest() {
         System.out.println("--usingIrcConfigFile--Use-Config-File------------");
-        String testConfig = IrcCommandTest.buildResourceFilePath("testConfig.xml");
+        String testConfig = ServerTestUtils.buildResourceFilePath("testConfig.xml");
         String adminName = "IrcAdmin";
         String adminLocation = "IrcServerLocation";
         String adminLocation2 = "IrcServerLocation2";
@@ -62,11 +62,11 @@ public class IrcConfigParserTest {
         String tzString = "GMT+0900";
         TimeZone timeZone = TimeZone.getTimeZone(tzString);
         Level debugLevel = Level.FINEST;
-        String motdFilename = IrcCommandTest.buildResourceFilePath(Constants.MOTD_FILE_PATH);
+        String motdFilename = ServerTestUtils.buildResourceFilePath(Constants.MOTD_FILE_PATH);
         String chString = "ISO-8859-1";
         Charset charset = Charset.forName(chString);
         int serverPort = 2345;
-        String transcript = IrcCommandTest.buildResourceFilePath(Constants.TRANSCRIPT_FILE_PATH);
+        String transcript = ServerTestUtils.buildResourceFilePath(Constants.TRANSCRIPT_FILE_PATH);
         int rotate = 5;
         String length = "5M";
         String ipAddr = "192.168.10.1";
@@ -164,7 +164,7 @@ public class IrcConfigParserTest {
         System.out.println("**usingIrcConfigFile**Use*Config*File********OK**");  
         
         System.out.println("--usingIrcConfigFile--No-config-file-------------");
-        testConfig = IrcCommandTest.buildResourceFilePath("testConfig2.xml");
+        testConfig = ServerTestUtils.buildResourceFilePath("testConfig2.xml");
         
         Globals.db.set(new DB());
         db = Globals.db.get();

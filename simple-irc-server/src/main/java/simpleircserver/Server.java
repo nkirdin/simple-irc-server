@@ -21,13 +21,19 @@ package simpleircserver;
  *
  */
 
-import java.util.*;
-import java.util.logging.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import simpleircserver.base.Constants;
 import simpleircserver.base.Globals;
 import simpleircserver.config.IrcConfigParser;
 import simpleircserver.config.ParameterInitialization;
+import simpleircserver.processor.AbstractIrcServerProcessor;
 import simpleircserver.processor.IncomingConnectionListener;
 import simpleircserver.processor.InputQueueProcessor;
 import simpleircserver.processor.InputStreamProcessor;
@@ -35,17 +41,14 @@ import simpleircserver.processor.IrcTalkerProcessor;
 import simpleircserver.processor.NetworkConnectionProcessor;
 import simpleircserver.processor.OutputQueueProcessor;
 import simpleircserver.processor.TranscriptFileProcessor;
-
-import java.io.*;
-import java.net.*;
-import java.nio.charset.*;
 /**
  * Server - класс, который служит для управления запуском, остановом, и 
  * перезапуском основных компонентов сервера IRC. 
  *
  * @version 0.5.1 2012-03-27
  * @version 0.5.3 2015-11-05 Program units were moved from default package into packages with names. Unit tests were added.
- * @version 0.5.3.1	2015-11-11 Corrected conditions of changing of server start time.		
+ * @version 0.5.3.1	2015-11-11 Corrected conditions of changing of server start time.	
+ * @version 0.5.4 2015-11-13 Moved some staff to processors. Begin to use streams and lambdas. 	
  * @author  Nikolay Kirdin
  */
 
@@ -181,7 +184,7 @@ public class Server implements Runnable {
                 } catch (Exception e) {
                     System.err.println("Error in configuration file path:"
                             + e);
-                    server.error = true;
+                    server.setError(true);
                     server.exitStatus = SERV_WRONG_KEY;
                 }
             } else if (key.equals("-h")) {
@@ -195,7 +198,7 @@ public class Server implements Runnable {
                     Globals.logFileHandlerFileName.set(loggingFilepath);
                 } catch (Exception e) {
                     System.err.println("Error in logging file path:" + e);
-                    server.error = true;
+                    server.setError(true);
                     server.exitStatus = SERV_WRONG_KEY;
                 }
             } else if (key.equals("-V")) {
@@ -204,12 +207,12 @@ public class Server implements Runnable {
                 server.exitStatus = SERV_OK;
             } else {
                 System.err.println("Error. Unknown key:" + key);
-                server.error = true;
+                server.setError(true);
                 server.exitStatus = SERV_WRONG_KEY;
             }
         }
         
-        if (!server.error && !done) { 
+        if (!server.isError() && !done) { 
             server.run();
         }
         
@@ -265,11 +268,10 @@ public class Server implements Runnable {
      */
      
     public void run() {
+        List<AbstractIrcServerProcessor> serverProcessorList = new ArrayList<>();
         
         IrcConfigParser ircConfigParser = null;
         
-        Globals.serverStartTime.set(System.currentTimeMillis());
-
         Locale.setDefault(Locale.ENGLISH);
 
         TimeZone.setDefault(Globals.timeZone.get());
@@ -291,37 +293,35 @@ public class Server implements Runnable {
                     Globals.logger.get());
             error = ircConfigParser.useIrcConfigFile();
 
-            TimeZone.setDefault(
-                    Globals.db.get().getIrcServerConfig().getTimeZone());
+            TimeZone.setDefault(Globals.db.get().getIrcServerConfig().getTimeZone());
             
+            parameterInitialization = new ParameterInitialization();
+
             if (!error) {
                 ParameterInitialization.loggerLevelSetup();
-                error = parameterInitializationStart();
-            }
-            if (!error) {
-                error = transcriptFileProcessorStart();
-            }            
-            if (!error) {
-                error = ircTalkerProcessorStart();
-            }
-            if (!error) {
-                error = networkConnectionProcessorStart();
-            }
-            if (!error) {
-                error = outputQueueProcessorStart();
-            }
-            if (!error) {
-                error = inputQueueProcessorStart();
-            }
-            if (!error) {
-                error = inputStreamProcessorStart();
-            }
-            if (!error) {
-                error = incomingConnectionListenerStart();
+                parameterInitialization.run();
             }
             
-            while (!Globals.serverDown.get() && 
-                    !Globals.serverRestart.get() && !error) {
+            transcriptFileProcessor = new TranscriptFileProcessor();
+            outputQueueProcessor = new OutputQueueProcessor();
+            incomingConnectionListener = new IncomingConnectionListener();
+
+            /** Attention
+             * Order is matter!!!
+             */
+            serverProcessorList.addAll(Arrays.<AbstractIrcServerProcessor>asList(
+                    transcriptFileProcessor,
+                    new NetworkConnectionProcessor(),
+                    outputQueueProcessor,
+                    new IrcTalkerProcessor(), 
+                    new InputQueueProcessor(),
+                    new InputStreamProcessor(),
+                    incomingConnectionListener
+                    ));
+                       
+            serverProcessorList.stream().forEach(p -> {if (!isError()) p.processorStart();});                       
+            
+            while (!Globals.serverDown.get() && !Globals.serverRestart.get() && !error) {
                 boolean confError = false;
                 if (Globals.serverReconfigure.get()) {
                     Globals.serverReconfigure.set(false);
@@ -331,14 +331,11 @@ public class Server implements Runnable {
                             Globals.logger.get());
                     confError = ircConfigParser.useIrcConfigFile();
                     if (!confError) {
-                        TimeZone.setDefault(
-                                Globals.db.get().getIrcServerConfig(
-                                ).getTimeZone());
-                        transcriptFileProcessor.setIrcTranscriptConfig(
-                                Globals.ircTranscriptConfig.get());
+                        TimeZone.setDefault(Globals.db.get().getIrcServerConfig().getTimeZone());
+                        transcriptFileProcessor.setIrcTranscriptConfig(Globals.ircTranscriptConfig.get());
                         ParameterInitialization.loggerLevelSetup();
-                        incomingConnectionListenerStop();
-                        error = incomingConnectionListenerStart();
+                        incomingConnectionListener.processorStop();
+                        error = incomingConnectionListener.processorStart();
                     }
                 }
                 try {
@@ -346,337 +343,26 @@ public class Server implements Runnable {
                 } catch (InterruptedException e) {}
             }
             
-            /* Уменьшие периода опроса выходных очередей */
-            if (outputQueueProcessor != null) {
-                outputQueueProcessor.plannedDuration.set(1);
-                outputQueueProcessor.sleepTO.set(1);
-                outputQueueProcessor.limitingTO.set(1);
-            }            
+            outputQueueProcessor.shortenTimeouts();        
             
-            incomingConnectionListenerStop();
-            
-            inputStreamProcessorStop();
-
-            inputQueueProcessorStop();
-
-            ircTalkerProcessorStop();
-
-            outputQueueProcessorStop();
-
-            networkConnectionProcessorStop();
-            
-            transcriptFileProcessorStop();
-            
+            Collections.reverse(serverProcessorList);
+            serverProcessorList.stream().forEach(p -> p.processorStop());
+            serverProcessorList.clear();
         }
         
         ParameterInitialization.loggerDown();
         
-        if (error) {
+        if (isError()) {
             exitStatus = SERV_START_ERR;
         }
     }
 
-    /** 
-     * Общая инициализация. 
-     * @return true инициализация успешно завершена, 
-     * false инициализация завершена с ошибками. 
-     */
-    private boolean parameterInitializationStart() {
-        parameterInitialization = new ParameterInitialization();
-        parameterInitialization.run();
-        return parameterInitialization.error.get();
-    }
-
-    /** 
-     * Инициализация процесса вывода сообщений в файл-протокол.
-     * @return true инициализация успешно завершена, 
-     * false инициализация завершена с ошибками. 
-     */
-    private boolean transcriptFileProcessorStart() {
-        boolean error = false;
-        transcriptFileProcessor = new TranscriptFileProcessor();
-        transcriptFileProcessor.setIrcTranscriptConfig(
-                Globals.ircTranscriptConfig.get());
-        transcriptFileProcessor.thread.set(new 
-                Thread(transcriptFileProcessor));        
-        transcriptFileProcessor.running.set(true);
-        transcriptFileProcessor.thread.get().start();
-        Globals.logger.get().log(Level.INFO, "TranscriptFileProcessor:" + 
-                transcriptFileProcessor.thread.get());
-        
-        try {
-            Thread.sleep(Globals.sleepTO.get());
-        } catch (InterruptedException e) {}
-        
-        error = transcriptFileProcessor.thread.get().getState() == 
-                Thread.State.NEW
-                || transcriptFileProcessor.thread.get().getState() ==
-                Thread.State.TERMINATED;
-                
+    public boolean isError() {
         return error;
     }
 
-    /** Завершение процесса вывода сообщений в файл-протокол.*/
-    private void transcriptFileProcessorStop() {
-        if (transcriptFileProcessor != null
-            && transcriptFileProcessor.thread.get() != null) {
-            transcriptFileProcessor.down.set(true);
-            stopProcess(transcriptFileProcessor.thread.get());
-        }
-    }
-    
-    /** 
-     * Инициализация процесса проверки состояния клиентов сервера. 
-     * @return true инициализация успешно завершена, 
-     * false инициализация завершена с ошибками. 
-     */
-    private boolean ircTalkerProcessorStart() {
-        boolean error = false;
-        ircTalkerProcessor = new IrcTalkerProcessor();
-        ircTalkerProcessor.thread.set(new Thread(ircTalkerProcessor));        
-        ircTalkerProcessor.running.set(true);
-        ircTalkerProcessor.thread.get().start();
-        Globals.logger.get().log(Level.INFO, "IrcTalkerProcessor:" + 
-                ircTalkerProcessor.thread.get());
-        
-        try {
-            Thread.sleep(Globals.sleepTO.get());
-        } catch (InterruptedException e) {}
-        
-        error = ircTalkerProcessor.thread.get().getState() == 
-                Thread.State.NEW
-                || ircTalkerProcessor.thread.get().getState() ==
-                Thread.State.TERMINATED;
-                
-        return error;
-    }
-
-    /** Завершение проверки состояния клиентов сервера.*/
-    private void ircTalkerProcessorStop() {
-        if (ircTalkerProcessor != null
-            && ircTalkerProcessor.thread.get() != null) {
-            ircTalkerProcessor.down.set(true);
-            stopProcess(ircTalkerProcessor.thread.get());
-            ircTalkerProcessor.termination();
-        }
-        
-    }
-
-    /**
-     * Инициализация проверки состояния соединений клиентов сервера.
-     * @return true инициализация успешно завершена, 
-     * false инициализация завершена с ошибками. 
-     */
-    private boolean networkConnectionProcessorStart() {
-        boolean error = false;
-        networkConnectionProcessor = new NetworkConnectionProcessor();
-        networkConnectionProcessor.thread.set(new 
-                Thread(networkConnectionProcessor));        
-        networkConnectionProcessor.running.set(true);
-        networkConnectionProcessor.thread.get().start();
-        Globals.logger.get().log(Level.INFO, "NetworkConnectionProcessor:" + 
-                networkConnectionProcessor.thread.get());
-        
-        try {
-            Thread.sleep(Globals.sleepTO.get());
-        } catch (InterruptedException e) {}
-        
-        error = networkConnectionProcessor.thread.get().getState() ==
-                Thread.State.NEW
-                || networkConnectionProcessor.thread.get().getState() ==
-                Thread.State.TERMINATED;
-                
-        return error;
-    }
-
-    /** 
-     * Завершение процесса проверки состояния соединений клиентов 
-     * сервера. 
-     */
-    private void networkConnectionProcessorStop() {
-        if (networkConnectionProcessor != null
-            && networkConnectionProcessor.thread.get() != null) {
-            networkConnectionProcessor.down.set(true);
-            stopProcess(networkConnectionProcessor.thread.get());
-            networkConnectionProcessor.termination();
-        }
-        
-    }
-
-    /** 
-     * Инициализация процесса вывода сообщений клиентам. 
-     * @return true инициализация успешно завершена, 
-     * false инициализация завершена с ошибками. 
-     */
-    private boolean outputQueueProcessorStart() {
-        boolean error = false;
-        outputQueueProcessor = new OutputQueueProcessor();
-        outputQueueProcessor.thread.set(new Thread(outputQueueProcessor));        
-        outputQueueProcessor.running.set(true);
-        outputQueueProcessor.thread.get().start();
-        Globals.logger.get().log(Level.INFO, "OutputQueueProcessor:" + 
-                outputQueueProcessor.thread.get());
-        
-        try {
-            Thread.sleep(Globals.sleepTO.get());
-        } catch (InterruptedException e) {}
-        
-        error = outputQueueProcessor.thread.get().getState() ==
-                Thread.State.NEW
-                || outputQueueProcessor.thread.get().getState() ==
-                Thread.State.TERMINATED;
-                
-        return error;
-    }
-    
-    /** Завершение процесса вывода сообщений клиентам. */
-    private void outputQueueProcessorStop() {
-        if (outputQueueProcessor != null
-            && outputQueueProcessor.thread.get() != null) {
-            outputQueueProcessor.down.set(true);
-            stopProcess(outputQueueProcessor.thread.get());
-        }
-    }
-
-    /** 
-     * Инициализация процесса обработки ссобщений клиентов. 
-     * @return true инициализация успешно завершена, 
-     * false инициализация завершена с ошибками. 
-     */
-    private boolean inputQueueProcessorStart() {
-        boolean error = false;
-        inputQueueProcessor = new InputQueueProcessor();
-        inputQueueProcessor.thread.set(new Thread(inputQueueProcessor));        
-        inputQueueProcessor.running.set(true);
-        inputQueueProcessor.thread.get().start();
-        Globals.logger.get().log(Level.INFO, "InputQueueProcessor:" + 
-                inputQueueProcessor.thread.get());
-        
-        try {
-            Thread.sleep(Globals.sleepTO.get());
-        } catch (InterruptedException e) {}
-        
-        error = inputQueueProcessor.thread.get().getState() == 
-                Thread.State.NEW
-                || inputQueueProcessor.thread.get().getState() ==
-                Thread.State.TERMINATED;
-                
-        return error;
-    }
-    
-    /** Завершение процесса обработки сообщений клиентов. */
-    private void inputQueueProcessorStop() {
-        if (inputQueueProcessor != null
-            && inputQueueProcessor.thread.get() != null) {
-            inputQueueProcessor.down.set(true);
-            stopProcess(inputQueueProcessor.thread.get());
-        }
-    }
-
-    /** 
-     * Инициализация процесса чтения поступающих сообщений клиентов 
-     * сервера. 
-     * @return true инициализация успешно завершена, 
-     * false инициализация завершена с ошибками. 
-     */
-    private boolean inputStreamProcessorStart() {
-        boolean error = false;
-        inputStreamProcessor = new InputStreamProcessor();
-        inputStreamProcessor.running.set(true);
-        inputStreamProcessor.thread.set(new Thread(inputStreamProcessor));        
-        inputStreamProcessor.thread.get().start();
-        Globals.logger.get().log(Level.INFO, "InputStreamProcessor:" + 
-                inputStreamProcessor.thread.get());
-        
-        try {
-            Thread.sleep(Globals.sleepTO.get());
-        } catch (InterruptedException e) {}
-        
-        error = inputStreamProcessor.thread.get().getState() == 
-                Thread.State.NEW
-                || inputStreamProcessor.thread.get().getState() ==
-                Thread.State.TERMINATED;
-                
-        return error;
-    }
-    
-    /** 
-     * Завершение процесса чтения поступающих сообщений клиентов 
-     * сервера. 
-     */
-    private void inputStreamProcessorStop() {
-        if (inputStreamProcessor != null
-            && inputStreamProcessor.thread.get() != null) {
-            inputStreamProcessor.down.set(true);
-            stopProcess(inputStreamProcessor.thread.get());
-        }
-    }
-
-    /** 
-     * Инициализация процесса обработки входящих сетевых соединений. 
-     * @return true инициализация успешно завершена, 
-     * false инициализация завершена с ошибками. 
-     */
-    private boolean incomingConnectionListenerStart() {
-        boolean error = false;
-        int serverPortNumber = 
-                Globals.db.get().getIrcInterfaceConfig().getPort();
-        Charset listenerCharset = 
-                Globals.db.get().getIrcInterfaceConfig().getCharset();
-        InetAddress inetAddress = 
-                Globals.db.get().getIrcInterfaceConfig().getInetAddress(); 
-        incomingConnectionListener = new IncomingConnectionListener();
-        incomingConnectionListener.setInetAddress(inetAddress);
-        incomingConnectionListener.setServerPortNumber(serverPortNumber);
-        incomingConnectionListener.listenerCharset.set(listenerCharset);
-        incomingConnectionListener.thread.set(new 
-                Thread(incomingConnectionListener));        
-        incomingConnectionListener.running.set(true);
-        incomingConnectionListener.thread.get().start();
-        Globals.logger.get().log(Level.INFO, "IncomingConnectionListener:" + 
-                incomingConnectionListener.thread.get());
-        
-        try {
-            Thread.sleep(Globals.sleepTO.get());
-        } catch (InterruptedException e) {}
-        
-        error = incomingConnectionListener.thread.get().getState() ==
-                Thread.State.NEW
-                || incomingConnectionListener.thread.get().getState() ==
-                Thread.State.TERMINATED
-                || incomingConnectionListener.error.get();
-                
-        return error;
-    }
-    
-    /** Завершение процесса обработки входящих сетевых соединений. */
-    private void incomingConnectionListenerStop() {
-        if (incomingConnectionListener != null
-            && incomingConnectionListener.thread.get() != null) {
-            incomingConnectionListener.down.set(true);
-            stopProcess(incomingConnectionListener.thread.get());
-        }
-    }
-
-    /** 
-     * Останов потока. 
-     * @param thread поток, который необходимо остановить.
-     */
-    private void stopProcess(Thread thread) {
-        
-        try {
-            Thread.sleep(Globals.sleepTO.get() * 2);
-        } catch (InterruptedException e) {}
-        
-        if (thread.getState() != Thread.State.NEW
-            && thread.getState() != Thread.State.RUNNABLE
-            && thread.getState() != Thread.State.TERMINATED) {
-            thread.interrupt();
-        }
-        
-        try {
-            Thread.sleep(Globals.sleepTO.get() * 2);
-        } catch (InterruptedException e) {}
+    public void setError(boolean error) {
+        this.error = error;
     }
 
 }

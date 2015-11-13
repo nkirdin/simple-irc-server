@@ -51,6 +51,7 @@ import simpleircserver.processor.InputStreamProcessor;
 import simpleircserver.processor.IrcTalkerProcessor;
 import simpleircserver.talker.user.User;
 import simpleircserver.tests.IrcCommandTest;
+import simpleircserver.tests.ServerTestUtils;
 import simpleircserver.tests.server.ServerConnectionProcessorTest.Client;
 
 /**
@@ -75,15 +76,24 @@ public class ServerInputStreamProcessorTest {
 
 	
 	@Before
-	public void setUp() {
-        
-        String configFilePath = IrcCommandTest.buildResourceFilePath(Constants.CONFIG_FILE_PATH);
-        Globals.configFilename.set(configFilePath);
+	public void setUp() throws Exception {
+        if (Globals.serverSocket.get() != null) Globals.serverSocket.get().close();
+        ServerTestUtils.restoreGlobals();
+        String configFilePath = ServerTestUtils.buildResourceFilePath(Constants.CONFIG_FILE_PATH);
        
-        String logFilePath = IrcCommandTest.buildResourceFilePath(Constants.LOG_FILE_PATH);
-        Globals.logFileHandlerFileName.set(logFilePath);        
+        String logFilePath = ServerTestUtils.buildResourceFilePath(Constants.LOG_FILE_PATH);
+        Globals.configFilename.set(configFilePath);
+
+        Globals.logFileHandlerFileName.set(logFilePath);  
+        ParameterInitialization parameterInitialization;       
+        parameterInitialization = new ParameterInitialization();
+        parameterInitialization.configSetup();
+        parameterInitialization.run();
+        parameterInitialization.loggerSetup();
+
 		Globals.logFileHandler.get().setLevel(Level.ALL);
 		Globals.logger.get().setLevel(Level.ALL);
+		parameterInitialization.loggerLevelSetup();
 		Globals.serverDown.set(false);
 	    sleepTO = new AtomicLong(100);
 	    client = new Client[4];
@@ -95,14 +105,9 @@ public class ServerInputStreamProcessorTest {
     public void serverInputStreamProcessorTest() throws IOException {
         System.out.println("--InputStreamProcessor---------------------------");
         //networkConnectionProcessor
-        if (Globals.serverSocket.get() != null) Globals.serverSocket.get().close();
         
-        ParameterInitialization parameterInitialization;
         IncomingConnectionListener incomingConnectionListener;
         InputStreamProcessor inputStreamProcessor;        
-        
-        parameterInitialization = new ParameterInitialization();
-        parameterInitialization.run();
         
         try {
             Thread.sleep(sleepTO.get() * 2);

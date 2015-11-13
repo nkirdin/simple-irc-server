@@ -25,6 +25,7 @@ package simpleircserver.tests.server;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,66 +39,122 @@ import simpleircserver.base.DB;
 import simpleircserver.base.Globals;
 import simpleircserver.config.ParameterInitialization;
 import simpleircserver.tests.IrcCommandTest;
+import simpleircserver.tests.ServerTestUtils;
+import simpleircserver.tests.server.ServerIrcTalkerProcessorTest.Client;
 
 /**
  * ServerStartRestartStopTest
- * @version 0.5.3.1 2015-11-06 
- * @author  Nikolay Kirdin
+ * 
+ * @version 0.5.3.1 2015-11-06
+ * @author Nikolay Kirdin
  */
-public class ServerStartRestartStopTest { 
-	
-	@Before
-	public void setUp() {
-        
-        String configFilePath = IrcCommandTest.buildResourceFilePath(Constants.CONFIG_FILE_PATH);
-        Globals.configFilename.set(configFilePath);
+public class ServerStartRestartStopTest {
+
+    Server server;
+    Thread serverThread;
+
+    @Before
+    public void setUp() throws Exception {
+        if (Globals.serverSocket.get() != null) Globals.serverSocket.get().close();
+        ServerTestUtils.restoreGlobals();
+        String configFilePath = ServerTestUtils.buildResourceFilePath(Constants.CONFIG_FILE_PATH);
        
-        String logFilePath = IrcCommandTest.buildResourceFilePath(Constants.LOG_FILE_PATH);
-        Globals.logFileHandlerFileName.set(logFilePath);        
-		Globals.logFileHandler.get().setLevel(Level.ALL);
-		Globals.logger.get().setLevel(Level.ALL);
-		Globals.serverDown.set(false);
-	}
+        String logFilePath = ServerTestUtils.buildResourceFilePath(Constants.LOG_FILE_PATH);
+        Globals.configFilename.set(configFilePath);
 
-	@Test
-    public void serverStartRestartStopTest() throws Exception {
-        System.out.println("--Server--Start/Restart/Stop---------------------");
-        //Server start/restart/stop
+        Globals.logFileHandlerFileName.set(logFilePath);  
+        ParameterInitialization parameterInitialization;       
+        parameterInitialization = new ParameterInitialization();
+        parameterInitialization.configSetup();
+        parameterInitialization.run();
+        parameterInitialization.loggerSetup();
 
-        Server server = new Server();
-        Thread serverThread = new Thread(server);
-        serverThread.start();
-        
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {}
+        Globals.logFileHandler.get().setLevel(Level.ALL);
+        Globals.logger.get().setLevel(Level.ALL);
+        parameterInitialization.loggerLevelSetup();
+        Globals.serverDown.set(false);
+
+    }
+
+    @Test
+    public void serverStartStopTest() throws Exception {
+        System.out.println("--Server--Start test-----------------------------");
         Globals.logger.get().log(Level.FINEST, "--Server--Start----------------------------------");
-        assertNotEquals("Server started",Thread.State.NEW, serverThread.getState());
-        assertNotEquals("Server not terminated",Thread.State.TERMINATED, serverThread.getState());
-        Globals.logger.get().log(Level.FINEST, "**Server**Start******************************OK**");
+        
+        Globals.serverDown.set(false);
+        server = new Server();
+        serverThread = new Thread(server);
 
-        //Restart server
+        serverStart();
+ 
+        Globals.logger.get().log(Level.FINEST, "**Server**Start******************************OK**");
+        Globals.logger.get().log(Level.FINEST, "--Server--Down-----------------------------------");
+        
+        serverStop();
+        
+        Globals.logger.get().log(Level.FINEST, "**Server**Down********************************OK*");
+        System.out.println("**Server**Start test*************************OK**");
+
+    }
+
+    @Test
+    public void serverRestartTest() throws Exception {
+    
+        System.out.println("--Server--Start/Restart/Stop---------------------");
+
+        Globals.serverDown.set(false);
+        server = new Server();
+        serverThread = new Thread(server);
+        
+        serverStart();
+                
         Globals.logger.get().log(Level.FINEST, "--Server--Restart--------------------------------");
 
-        long serverStartTime1 = Globals.serverStartTime.get();
+        long serverStartTime = Globals.serverStartTime.get();
+        
+        // Restart server
         Globals.serverRestart.set(true);
-        long restartTO = 5000;
-        try {
-            Thread.sleep(restartTO);
-        } catch (InterruptedException e) {}
+        
+        long restartTO = 6000;
+        Thread.sleep(restartTO);
+        
         assertNotEquals("Server restarted", Thread.State.NEW, serverThread.getState());
         assertNotEquals("Server not terminated after restart", Thread.State.TERMINATED, serverThread.getState());
-        assertTrue("Server restarted", Globals.serverStartTime.get() > serverStartTime1);
+        assertTrue("Server restarted", Globals.serverStartTime.get() > serverStartTime);
         Globals.logger.get().log(Level.FINEST, "**Server**Restart****************************OK**");
         Globals.logger.get().log(Level.FINEST, "--Server--Down-----------------------------------");
+        serverStop();
+        System.out.println("**Server**Start/Restart/Stop*****************OK**");
+
+    }
+
+    private void serverStart() throws Exception {
+        
+        long serverStartTime = System.currentTimeMillis();
+        
+        long predStartTO = 10;
+        Thread.sleep(predStartTO);
+
+        serverThread.start();
+        
+        long startTO = 1000;
+        Thread.sleep(startTO);
+
+        assertNotEquals("Server started", Thread.State.NEW, serverThread.getState());
+        assertNotEquals("Server not terminated", Thread.State.TERMINATED, serverThread.getState());
+        assertNotEquals("Start time is changed", serverStartTime, Globals.serverStartTime.get());
+    }
+    
+    private void serverStop() throws Exception {
         Globals.serverDown.set(true);
         Globals.logger.get().log(Level.INFO, "Down");
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {}
-        assertEquals("Server terminated", Thread.State.TERMINATED, serverThread.getState());
-        System.out.println("**Server**Start/Restart/Stop*****************OK**");
-        
-    }
-}
 
+        long stopTO = 5000;
+        Thread.sleep(stopTO);
+
+        assertEquals("Server terminated", Thread.State.TERMINATED, serverThread.getState());
+    }
+
+
+
+}

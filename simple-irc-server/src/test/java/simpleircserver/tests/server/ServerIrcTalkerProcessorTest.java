@@ -56,6 +56,7 @@ import simpleircserver.processor.NetworkConnectionProcessor;
 import simpleircserver.processor.OutputQueueProcessor;
 import simpleircserver.talker.user.User;
 import simpleircserver.tests.IrcCommandTest;
+import simpleircserver.tests.ServerTestUtils;
 import simpleircserver.tests.server.ServerListenerTest.Client;
 
 /**
@@ -79,20 +80,30 @@ public class ServerIrcTalkerProcessorTest {
     private Client[] client ;
 
 	
-	@Before
-	public void setUp() {
-        
-        String configFilePath = IrcCommandTest.buildResourceFilePath(Constants.CONFIG_FILE_PATH);
-        Globals.configFilename.set(configFilePath);
+    @Before
+    public void setUp() throws Exception {
+        if (Globals.serverSocket.get() != null) Globals.serverSocket.get().close();
+        ServerTestUtils.restoreGlobals();
+        String configFilePath = ServerTestUtils.buildResourceFilePath(Constants.CONFIG_FILE_PATH);
        
-        String logFilePath = IrcCommandTest.buildResourceFilePath(Constants.LOG_FILE_PATH);
-        Globals.logFileHandlerFileName.set(logFilePath);        
-		Globals.logFileHandler.get().setLevel(Level.ALL);
-		Globals.logger.get().setLevel(Level.ALL);
-	    sleepTO = new AtomicLong(100);
-	    client = new Client[4];
+        String logFilePath = ServerTestUtils.buildResourceFilePath(Constants.LOG_FILE_PATH);
+        Globals.configFilename.set(configFilePath);
 
-	}
+        Globals.logFileHandlerFileName.set(logFilePath);  
+        ParameterInitialization parameterInitialization;       
+        parameterInitialization = new ParameterInitialization();
+        parameterInitialization.configSetup();
+        parameterInitialization.run();
+        parameterInitialization.loggerSetup();
+
+        Globals.logFileHandler.get().setLevel(Level.ALL);
+        Globals.logger.get().setLevel(Level.ALL);
+        parameterInitialization.loggerLevelSetup();
+        Globals.serverDown.set(false);
+        sleepTO = new AtomicLong(100);
+        client = new Client[4];
+
+    }
 	
 
 	@Test
@@ -102,18 +113,11 @@ public class ServerIrcTalkerProcessorTest {
         ByteArrayOutputStream clientOutputStream;
         String clientInput;
         
-        if (Globals.serverSocket.get() != null) Globals.serverSocket.get().close();
-        
-        ParameterInitialization parameterInitialization;
         IncomingConnectionListener incomingConnectionListener;
         NetworkConnectionProcessor networkConnectionProcessor;
         IrcTalkerProcessor ircTalkerProcessor;
         OutputQueueProcessor outputQueueProcessor;
               
-        parameterInitialization = new ParameterInitialization();
-        parameterInitialization.run();
-        Globals.fileLogLevel.set(Level.ALL);
-        parameterInitialization.loggerSetup();
               
         try {
             Thread.sleep(sleepTO.get() * 2);
