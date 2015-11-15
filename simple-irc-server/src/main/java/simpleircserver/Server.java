@@ -5,7 +5,7 @@ package simpleircserver;
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015 Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -32,7 +32,6 @@ import java.util.TimeZone;
 import simpleircserver.base.Constants;
 import simpleircserver.base.Globals;
 import simpleircserver.config.IrcConfigParser;
-import simpleircserver.config.ParameterInitialization;
 import simpleircserver.processor.AbstractIrcServerProcessor;
 import simpleircserver.processor.IncomingConnectionListener;
 import simpleircserver.processor.InputQueueProcessor;
@@ -61,62 +60,47 @@ public class Server implements Runnable {
     public static final int SERV_WRONG_KEY = 1;
     
     /** 
-     * Код завершения для ситуации "во время запуска компонентов 
-     * сервера произошла ошибка, или ошибка в файле конфигурации". 
+     *  Код завершения для ситуации "во время запуска или рестарта компонентов сервера произошла ошибка". 
      */
     public static final int SERV_START_ERR = 2;    
-    
-    /** Объект, реализующий общую инициализацию. */
-    private ParameterInitialization parameterInitialization;
+
+    /** 
+     * Код завершения для ситуации "сервер не был запущен по причинам не связанными с ошибками". 
+     */
+    public static final int SERV_NOT_START = 4;    
     
     /** 
-     * Объект, реализующий процесс обслуживания вывода в файл-протокол 
-     * сообщений клиентов. 
+     * Код завершения для ситуации "сервер не был запущен по причинам связанными с инициализацией логгера". 
      */
-    private TranscriptFileProcessor transcriptFileProcessor;
+    public static final int SERV_WRONG_LOG = 8;    
     
-    /** 
-     * Объект, реализующий процесс проверки состояния соединений 
-     * клиентов сервера. 
+    /**
+     * 
+     * Код завершения для ситуации "найдена ошибка в файле конфигурации".
      */
-    private NetworkConnectionProcessor networkConnectionProcessor;
-    
-    /** 
-     * Объект, реализующий процесс вывода сообщений клиентам сервера. 
-     */
-    private OutputQueueProcessor outputQueueProcessor;
-    
-    /** 
-     * Объект, реализующий процесс обработки сообщений клиентов 
-     * сервера. 
-     */
-    private InputQueueProcessor inputQueueProcessor;
-    
-    /** 
-     * Объект, реализующий процесс чтения поступающих сообщений клиентов 
-     * сервера. 
-     */
-    private InputStreamProcessor inputStreamProcessor;
-    
-    /** 
-     * Объект, реализующий процесс обработки входящих сетевых 
-     * соединений.
-     */
-    private IncomingConnectionListener incomingConnectionListener;
-    
-    /** 
-     * Объект, реализующий процесс проверки состояния клиентов сервера. 
-     */
-    private IrcTalkerProcessor ircTalkerProcessor;
-    
+    public static final int SERV_CONF_ERR = 16;
+
     /** Признак ошибки. */
     private boolean error = false;
     
-    /** Код завершения. */
-    private int exitStatus = 0;
+    /** Состояние сервера. Комбинация из значений: 
+     * SERV_OK; SERV_CONF_ERR, SERV_WRONG_KEY; SERV_START_ERR; SERV_NOT_START, SERV_WRONG_LOG. 
+     */    
+    private int state = SERV_OK;
     
+    static {
+        Locale.setDefault(Locale.ENGLISH);
+        TimeZone.setDefault(Globals.timeZone.get());
+        Globals.serverStartTime.set(System.currentTimeMillis());
+    }
+        
     /** Конструктор. */
-    public Server() {}
+    public Server() {
+        if (!ParameterInitialization.loggerSetup()) {            
+            state = SERV_WRONG_LOG;
+            error = true;
+        }
+    }
         
     /**
      * Метод используется для запуска сервера из командной строки. 
@@ -137,101 +121,46 @@ public class Server implements Runnable {
      * Используется переменная {@link Globals#logFileHandlerFileName}, 
      * хранящая путь к файлу для журналирования.
      * <P>
-     * В переменной  {@link #exitStatus} хранится код завершения. При 
-     * обнаружении ошибки в командной строке переменной {@link #exitStatus} 
-     * присваивается значение {@link #SERV_WRONG_KEY}, при обнаружении 
+     * В переменной  {@link #state} хранится код состояния сервера, 
+     * который представляет собой побитовою комбинацию значений SERV_OK; 
+     * SERV_WRONG_KEY; SERV_START_ERR; SERV_NOT_START. При 
+     * обнаружении ошибки в командной строке в переменную {@link #state} 
+     * добавляется значение {@link #SERV_WRONG_KEY}. При обнаружении 
      * ошибки в конфигурационном файле или возникновении ошибки при 
-     * запуске компонентов сервера {@link #exitStatus} присваивается 
-     * значение {@link #SERV_START_ERR}, при успешном запуске и 
-     * завершении работы этой переменной присваивается значение 
+     * запуске компонентов сервера в переменную {@link #state} добавляется 
+     * значение {@link #SERV_START_ERR}. Если сервер не должен быть 
+     * запущен по причинам, не связанными с ошибками, то в эту переменную 
+     * добавляется значение {@link #SERV_NOT_START}. При успешном запуске и 
+     * успешном завершении работы эта переменная должна содержать значение 
      * {@link #SERV_OK}. 
      * <P>
      * Выполнение метода завершается с помощью {@link System#exit}, 
      * который передает операционной системе код завершения 
-     * {@link #exitStatus}.
+     * {@link #state}.
      * 
-     */
-    
+     */   
     public static void main(String[] args) {
-        String helpText = 
-        		"Simple Irc Server v." + Constants.SERVER_VERSION + " " +
-                "Copyright (C) 2012  Nikolay Kirdin\n" +
-                "This program comes with ABSOLUTELY NO WARRANTY. \n" +
-                "This program is free software: you can redistribute it " +
-                "and/or modify it under the terms of the GNU Lesser " +
-                "General Public License Version 3. " +
-                "http://www.gnu.org/licenses/.\n\n" + 
-                "Usage: Server [-c <config file>] [-h] [-l <logging file>] [-V]\n" +
-                "By default: configuration file is \"IrcServerConfig.xml\",\n" +
-                " logging file is \"IrcServerLog.xml\" in a current directory.\n"
-                + "-V print version of program./n";
-            
-        Server server = new Server();
-        String key = null;
-        boolean done = false;
-
-        int index = 0;
         
-        while (index < args.length) {
-            
-            key = args[index++];
-            
-            if (key.equals("-c")) {
-                try {
-                    String configFilepath =
-                        new File(args[index++]).getCanonicalPath();
-                    Globals.configFilename.set(configFilepath);
-                } catch (Exception e) {
-                    System.err.println("Error in configuration file path:"
-                            + e);
-                    server.setError(true);
-                    server.exitStatus = SERV_WRONG_KEY;
-                }
-            } else if (key.equals("-h")) {
-                System.out.println(helpText);
-                done = true;
-                server.exitStatus = SERV_OK;
-            } else if (key.equals("-l")) {
-                try {
-                    String loggingFilepath = 
-                            new File(args[index++]).getCanonicalPath();
-                    Globals.logFileHandlerFileName.set(loggingFilepath);
-                } catch (Exception e) {
-                    System.err.println("Error in logging file path:" + e);
-                    server.setError(true);
-                    server.exitStatus = SERV_WRONG_KEY;
-                }
-            } else if (key.equals("-V")) {
-                System.out.println(Constants.SERVER_VERSION);
-                done = true;
-                server.exitStatus = SERV_OK;
-            } else {
-                System.err.println("Error. Unknown key:" + key);
-                server.setError(true);
-                server.exitStatus = SERV_WRONG_KEY;
-            }
-        }
+        int state = parseCommandLine(args);
         
-        if (!server.isError() && !done) { 
+        if (state == SERV_OK) { 
+            
+            Server server = new Server();
+            
             server.run();
+
+            state = server.getState();
         }
         
-        System.exit(server.exitStatus);
-    }    
+        System.exit(state);
+    }
+
     
     /**
      * Этот метод управляет запуском, перезапуском, остановом 
      * компонентов сервера и повторным чтением файла конфигурации. Для 
      * успешного запуска сервера, необходимо, чтобы процессу был 
      * доступен файл конфигурации и файл журналирования.  
-     *
-     * <P>Переменной {@link #exitStatus} могут присваиваться следующие
-     * коды завершения:
-     * <UL>
-     * <LI> {@link #SERV_OK} - метод успешно завершен;</LI>
-     * <LI> {@link #SERV_START_ERR} - во время выполнения метода были 
-     * обнаружены ошибки.</LI>
-     * </UL>
      *
      * <P> Поведение метода (старт, останов, перезапуск, повторное 
      * чтение файла конфигурации) определяется следующими переменными: 
@@ -248,7 +177,7 @@ public class Server implements Runnable {
      * 
      * <P> После присвоения {@link #error} значения true запущенные 
      * компоненты будут остановлены и метод прекратит работу, переменной 
-     * {@link #exitStatus} будет присвоено значение
+     * {@link #state} будет присвоено значение
      * {@link #SERV_START_ERR}. Значение переменной {@link #error}
      * определяется успехом или неуспехом запуска компонентов, при 
      * неуспешном запуске ей присваивается значение true.
@@ -267,18 +196,23 @@ public class Server implements Runnable {
      * значения true будут выполнены процедуры чтения файла конфигурации.
      */
      
+    /* Список процессоров для запуска. В порядке очередности. */ 
+    List<AbstractIrcServerProcessor> startList = new ArrayList<>();
+    
+    /* Список процессоров для реконфигурирования. В порядке очередности. */ 
+    List<AbstractIrcServerProcessor> reconfigureList = new ArrayList<>();
+    
+    /* Список процессоров для выполнения действий перед остановом. В порядке очередности. */ 
+    List<AbstractIrcServerProcessor> predstopList = new ArrayList<>();
+    
+    /* Список процессоров для останова. В порядке очередности. */ 
+    List<AbstractIrcServerProcessor> stopList = new ArrayList<>();
+    
     public void run() {
-        List<AbstractIrcServerProcessor> serverProcessorList = new ArrayList<>();
-        
-        IrcConfigParser ircConfigParser = null;
-        
-        Locale.setDefault(Locale.ENGLISH);
+                
+        initProcessors();
 
-        TimeZone.setDefault(Globals.timeZone.get());
-        
-        ParameterInitialization.loggerSetup();
-
-        while (!Globals.serverDown.get() && !error) {
+        while (!Globals.serverDown.get() && !isError()) {
             
         	if (Globals.serverRestart.get()) {
         		Globals.serverStartTime.set(System.currentTimeMillis());
@@ -287,74 +221,165 @@ public class Server implements Runnable {
             
             ParameterInitialization.configSetup();
 
-            ircConfigParser = new IrcConfigParser(
-                    Globals.configFilename.get(),
-                    Globals.db.get(), 
-                    Globals.logger.get());
-            error = ircConfigParser.useIrcConfigFile();
-
-            TimeZone.setDefault(Globals.db.get().getIrcServerConfig().getTimeZone());
+            if (parseConfigFile()) {
+                setError(true);
+                setState(getState() | SERV_CONF_ERR);
+            }
+          
+            setServerTimezone();
             
-            parameterInitialization = new ParameterInitialization();
-
-            if (!error) {
+            if (!isError()) {
                 ParameterInitialization.loggerLevelSetup();
-                parameterInitialization.run();
+                setError(!ParameterInitialization.networkComponentsSetup());
             }
             
-            transcriptFileProcessor = new TranscriptFileProcessor();
-            outputQueueProcessor = new OutputQueueProcessor();
-            incomingConnectionListener = new IncomingConnectionListener();
-
-            /** Attention
-             * Order is matter!!!
-             */
-            serverProcessorList.addAll(Arrays.<AbstractIrcServerProcessor>asList(
-                    transcriptFileProcessor,
-                    new NetworkConnectionProcessor(),
-                    outputQueueProcessor,
-                    new IrcTalkerProcessor(), 
-                    new InputQueueProcessor(),
-                    new InputStreamProcessor(),
-                    incomingConnectionListener
-                    ));
-                       
-            serverProcessorList.stream().forEach(p -> {if (!isError()) p.processorStart();});                       
+            startProcessors();                       
             
             while (!Globals.serverDown.get() && !Globals.serverRestart.get() && !error) {
-                boolean confError = false;
                 if (Globals.serverReconfigure.get()) {
                     Globals.serverReconfigure.set(false);
-                    ircConfigParser = new IrcConfigParser(
-                            Globals.configFilename.get(), 
-                            Globals.db.get(), 
-                            Globals.logger.get());
-                    confError = ircConfigParser.useIrcConfigFile();
-                    if (!confError) {
-                        TimeZone.setDefault(Globals.db.get().getIrcServerConfig().getTimeZone());
-                        transcriptFileProcessor.setIrcTranscriptConfig(Globals.ircTranscriptConfig.get());
-                        ParameterInitialization.loggerLevelSetup();
-                        incomingConnectionListener.processorStop();
-                        error = incomingConnectionListener.processorStart();
-                    }
+                    reconfigureProcessors();
                 }
                 try {
                     Thread.sleep(Globals.sleepTO.get() * 2);
                 } catch (InterruptedException e) {}
             }
             
-            outputQueueProcessor.shortenTimeouts();        
+            predstopProcessors();        
             
-            Collections.reverse(serverProcessorList);
-            serverProcessorList.stream().forEach(p -> p.processorStop());
-            serverProcessorList.clear();
+            stopProcessors();
         }
         
         ParameterInitialization.loggerDown();
         
         if (isError()) {
-            exitStatus = SERV_START_ERR;
+            setState(getState() | SERV_START_ERR);
         }
+    }
+
+    private boolean parseConfigFile() {
+        IrcConfigParser ircConfigParser = 
+                new IrcConfigParser(Globals.configFilename.get(), Globals.db.get(), Globals.logger.get());
+        return ircConfigParser.useIrcConfigFile();        
+    }
+
+    private void initProcessors() {
+
+        TranscriptFileProcessor transcriptFileProcessor = new TranscriptFileProcessor();
+        OutputQueueProcessor outputQueueProcessor = new OutputQueueProcessor();
+        IncomingConnectionListener incomingConnectionListener = new IncomingConnectionListener();
+
+        /** Attention
+         * Order is matter!!!
+         */
+        startList.addAll(Arrays.<AbstractIrcServerProcessor>asList(
+                transcriptFileProcessor,
+                new NetworkConnectionProcessor(),
+                outputQueueProcessor,
+                new IrcTalkerProcessor(), 
+                new InputQueueProcessor(),
+                new InputStreamProcessor(),
+                incomingConnectionListener
+                ));
+
+        reconfigureList.add(transcriptFileProcessor);
+        reconfigureList.add(incomingConnectionListener);
+        
+        predstopList.add(outputQueueProcessor);
+        
+        stopList.addAll(startList);        
+        Collections.reverse(stopList);
+    }
+
+    private void startProcessors() {               
+        startList.forEach(p -> {if (!this.isError()) this.setError(!p.processorStart());});
+    }
+
+    private void reconfigureProcessors() {
+        if (!parseConfigFile()) {
+            setServerTimezone();
+            ParameterInitialization.loggerLevelSetup();
+            reconfigureList.forEach(p -> this.setError(!p.processorReconfigure()));
+        } else {
+            setError(true);
+            setState(getState() | SERV_CONF_ERR);
+        }
+    }
+
+    private void predstopProcessors() {
+        predstopList.forEach(p -> p.processorPredstop());
+        try {
+            Thread.sleep(Globals.sleepTO.get() * 2);
+        } catch (InterruptedException e) {}
+    }    
+
+    private void stopProcessors() {
+        stopList.forEach(p -> p.processorStop());
+    }
+
+    private static int parseCommandLine(String[] args) {
+        String helpText = "Simple Irc Server v." + Constants.SERVER_VERSION + " "
+                + "Copyright (C) 2012, 2015  Nikolay Kirdin\n" + "This program comes with ABSOLUTELY NO WARRANTY. \n"
+                + "This program is free software: you can redistribute it "
+                + "and/or modify it under the terms of the GNU Lesser " + "General Public License Version 3. "
+                + "http://www.gnu.org/licenses/.\n\n"
+                + "Usage: Server [-c <config file>] [-h] [-l <logging file>] [-V]\n"
+                + "By default: configuration file is \"IrcServerConfig.xml\",\n"
+                + " logging file is \"IrcServerLog.xml\" in a current directory.\n" + "-V print version of program./n";
+
+        
+        int state = SERV_OK;
+        
+        String outputMessage = "";
+
+        int index = 0;
+
+        while (index < args.length) {
+
+            switch(args[index++]) {
+            
+            case "-c":
+                try {
+                    String configFilepath = new File(args[index++]).getCanonicalPath();
+                    Globals.configFilename.set(configFilepath);
+                } catch (Exception e) {
+                    outputMessage = outputMessage + "\n\r" + "Error in configuration file path: " + e;
+                    state |= SERV_WRONG_KEY;
+                }
+                break;
+            case "-h":
+                outputMessage = outputMessage + "\n\r" + helpText;
+                state |= SERV_NOT_START;
+                break;
+            case "-l":
+                try {
+                    String loggingFilepath = new File(args[index++]).getCanonicalPath();
+                    Globals.logFileHandlerFileName.set(loggingFilepath);
+                } catch (Exception e) {
+                    outputMessage = outputMessage + "\n\r" + "Error in logging file path:" + e;
+                    state |= SERV_WRONG_KEY;
+                }
+                break;
+            case "-V":
+                outputMessage = outputMessage + "\n\r Version: " + Constants.SERVER_VERSION;
+                state |= SERV_NOT_START;
+            default:
+                outputMessage = outputMessage + "\n\r" + "Error. Unknown key:" + args[index - 1];
+                state |= SERV_WRONG_KEY;
+            }                    
+                
+        }
+
+        if (!outputMessage.isEmpty()) {
+            System.err.println(outputMessage);
+        }
+        
+        return state;
+
+    }
+    
+    private void setServerTimezone() {
+        TimeZone.setDefault(Globals.db.get().getIrcServerConfig().getTimeZone());
     }
 
     public boolean isError() {
@@ -363,6 +388,14 @@ public class Server implements Runnable {
 
     public void setError(boolean error) {
         this.error = error;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 
 }

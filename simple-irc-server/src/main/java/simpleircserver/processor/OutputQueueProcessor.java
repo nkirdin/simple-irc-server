@@ -5,7 +5,7 @@ package simpleircserver.processor;
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -290,5 +290,16 @@ public class OutputQueueProcessor extends AbstractIrcServerProcessor {
         sleepTO.set(1);
         limitingTO.set(1);
     }
+    
+    /**
+     * Действия выполняемые перед остановкой процесса. просесса
+     * @return true - действия успешно выполнены.
+     */
+    @Override
+    public boolean processorPredstop() {
+        shortenTimeouts();
+        return true;
+    }
+
     
 }

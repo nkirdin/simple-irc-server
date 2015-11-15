@@ -54,11 +54,10 @@ public abstract class AbstractIrcServerProcessor implements IrcServerProcessor, 
 
     /** 
      * Инициализация процесса обработки ссобщений клиентов. 
-     * @return true инициализация успешно завершена, 
-     * false инициализация завершена с ошибками. 
+     * @return true - инициализация успешно завершена, 
+     * false - инициализация завершена с ошибками. 
      */
     public boolean processorStart() {
-        boolean error = false;
         thread.set(new Thread(this));        
         running.set(true);
         thread.get().start();
@@ -67,19 +66,43 @@ public abstract class AbstractIrcServerProcessor implements IrcServerProcessor, 
         try {
             Thread.sleep(Globals.sleepTO.get());
         } catch (InterruptedException e) {}
-        
-        error = thread.get().getState() == Thread.State.NEW
-                || thread.get().getState() == Thread.State.TERMINATED;
-                
-        return error;
+
+        return !(thread.get().getState() == Thread.State.NEW  || thread.get().getState() == Thread.State.TERMINATED);
+    }
+
+    /**
+     * Реконфигурирование просесса
+     * @return true - действия успешно выполнены.
+     */
+    public boolean processorReconfigure() {return true;}
+    
+    
+    /**
+     * Действия выполняемые перед остановкой процесса. просесса
+     * @return true - действия успешно выполнены.
+     */
+    public boolean processorPredstop() {return true;}
+    
+
+    /** Завершение основного цикла.
+     * @return true - действия успешно выполнены.
+     */
+    public boolean processorStop() {
+        boolean result = true;
+        if (thread.get() != null) {
+            down.set(true);
+            result = stopProcess(thread.get());
+        }
+        return result;
     }
 
     
     /** 
      * Останов потока. 
      * @param thread поток, который необходимо остановить.
+     * @return true - действия успешно выполнены.
      */
-    public void stopProcess(Thread thread) {
+    public boolean stopProcess(Thread thread) {
         
         try {
             Thread.sleep(Globals.sleepTO.get() * 2);
@@ -94,14 +117,8 @@ public abstract class AbstractIrcServerProcessor implements IrcServerProcessor, 
         try {
             Thread.sleep(Globals.sleepTO.get() * 2);
         } catch (InterruptedException e) {}
+        
+        return thread.getState() == Thread.State.TERMINATED;
     }
     
-    /** Завершение процесса вывода сообщений в файл-протокол.*/
-    public void processorStop() {
-        if (thread.get() != null) {
-            down.set(true);
-            stopProcess(thread.get());
-        }
-    }
-
 }

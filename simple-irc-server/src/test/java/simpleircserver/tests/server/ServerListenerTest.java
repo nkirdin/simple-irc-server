@@ -4,7 +4,7 @@
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -22,6 +22,7 @@
 
 package simpleircserver.tests.server;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
@@ -35,10 +36,10 @@ import java.util.logging.Level;
 import org.junit.Before;
 import org.junit.Test;
 
+import simpleircserver.ParameterInitialization;
 import simpleircserver.base.Constants;
 import simpleircserver.base.DB;
 import simpleircserver.base.Globals;
-import simpleircserver.config.ParameterInitialization;
 import simpleircserver.connection.Connection;
 import simpleircserver.connection.NetworkConnection;
 import simpleircserver.processor.IncomingConnectionListener;
@@ -77,15 +78,14 @@ public class ServerListenerTest {
         Globals.configFilename.set(configFilePath);
 
         Globals.logFileHandlerFileName.set(logFilePath);  
-        ParameterInitialization parameterInitialization;       
-        parameterInitialization = new ParameterInitialization();
-        parameterInitialization.configSetup();
-        parameterInitialization.run();
-        parameterInitialization.loggerSetup();
+
+        ParameterInitialization.configSetup();
+        assertTrue("Normal Initialisation", ParameterInitialization.networkComponentsSetup());
+        ParameterInitialization.loggerSetup();
 
         Globals.logFileHandler.get().setLevel(Level.ALL);
         Globals.logger.get().setLevel(Level.ALL);
-        parameterInitialization.loggerLevelSetup();
+        ParameterInitialization.loggerLevelSetup();
         Globals.serverDown.set(false);
         sleepTO = new AtomicLong(100);
         client = new Client[4];

@@ -5,7 +5,7 @@ package simpleircserver.processor;
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -431,10 +431,26 @@ public class TranscriptFileProcessor extends AbstractIrcServerProcessor {
         Globals.logger.get().log(Level.FINEST, "Ended");
     }
     
+    /** 
+     * Инициализация процесса обработки ссобщений клиентов. 
+     * @return true - инициализация успешно завершена, 
+     * false - инициализация завершена с ошибками. 
+     */    
     @Override
     public boolean processorStart() {
         setIrcTranscriptConfig(Globals.ircTranscriptConfig.get());        
         return super.processorStart();
      }
+    
+    /**
+     * Реконфигурирование просесса
+     * @return true - действия успешно выполнены.
+     */
+    @Override
+    public boolean processorReconfigure() {
+        setIrcTranscriptConfig(Globals.ircTranscriptConfig.get());
+        return true;
+    }
+
     
 }

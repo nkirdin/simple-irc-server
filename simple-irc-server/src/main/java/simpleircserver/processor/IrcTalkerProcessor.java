@@ -5,7 +5,7 @@ package simpleircserver.processor;
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -363,11 +363,14 @@ public class IrcTalkerProcessor extends AbstractIrcServerProcessor {
         logger.log(Level.FINEST, "Ended");
     }
       
-    /** Завершение проверки состояния клиентов сервера.*/
+    /** Завершение основного цикла.
+     * @return true - действия успешно выполнены.
+     */
     @Override
-    public void processorStop() {
-        super.processorStop();
-        termination();
+    public boolean processorStop() {
+        boolean result = super.processorStop();
+        termination();       
+        return result;
     }
 
 }

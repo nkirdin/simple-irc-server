@@ -5,7 +5,7 @@ package simpleircserver.config;
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -323,6 +323,20 @@ public class IrcConfigParser {
      * @param logger объект для обеспечения журналирования.
      */
     public IrcConfigParser(String configFilename, DB db, Logger logger) {
+        this.logger = logger;
+        this.configFilename = configFilename;
+        this.db = db;
+    }
+    
+    public IrcConfigParser(){}
+    
+    /**
+     * Задание параметров парсера.
+     * @param configFilename путь к файлу конфигурации.
+     * @param db репозитарий.
+     * @param logger объект для обеспечения журналирования.
+     */
+    public void setParameters(String configFilename, DB db, Logger logger) {
         this.logger = logger;
         this.configFilename = configFilename;
         this.db = db;
@@ -891,7 +905,6 @@ public class IrcConfigParser {
 
         String ifaceAttribute = "iface";
         String ifaceAttString = null;
-        String ifaceAtt = null;
         InetAddress ifaceAddress = null;
 
         String portAttribute = "port";
@@ -1436,48 +1449,6 @@ public class IrcConfigParser {
         error = error || locError;
     }
 
-    /** Определение завершения элемента. */
-    private void endElement() throws XMLStreamException, IOException {
-
-        boolean locError = false;
-        boolean done = false;
-        int line = 0;
-        int column = 0;
-
-        event = xsr.getEventType();
-
-        while (!done) {
-            line = xsr.getLocation().getLineNumber();
-            column = xsr.getLocation().getColumnNumber();
-
-            switch (event) {
-
-            case XMLStreamConstants.COMMENT:
-                event = xsr.nextTag();
-                break;
-
-            case XMLStreamConstants.END_ELEMENT:
-                event = xsr.nextTag();
-                done = true;
-                break;
-
-            default:
-                locError = true;
-                done = true;
-                errorDescription = " Line: " + line + " Column: " + 
-                        column + " Unexpected XML event: " + event;
-                break;
-            }
-        }
-
-        if (locError) {
-            logger.log(Level.WARNING,
-                    "Error closing " + configElement + " element." + 
-                    errorDescription);
-        }
-
-        error = error || locError;
-    }
 
     /** Определение завершения XML-документа. */
     private void endIrcConfigFile() throws XMLStreamException, 

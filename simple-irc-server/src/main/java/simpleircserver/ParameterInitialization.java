@@ -1,11 +1,11 @@
-package simpleircserver.config;
+package simpleircserver;
 /*
  * 
  * ParameterInitialization 
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -26,6 +26,9 @@ import java.util.logging.*;
 import simpleircserver.base.DB;
 import simpleircserver.base.Globals;
 import simpleircserver.channel.MonitorIrcChannel;
+import simpleircserver.config.IrcInterfaceConfig;
+import simpleircserver.config.IrcServerConfig;
+import simpleircserver.config.IrcTranscriptConfig;
 import simpleircserver.talker.server.IrcServer;
 import simpleircserver.talker.user.User;
 
@@ -44,18 +47,11 @@ import java.net.*;
  */
 public class ParameterInitialization {    
     
-    /**
-     * В  этой переменной хранится признак успеха/неуспеха 
-     * инициализации. Значение true указывает на то, что во время 
-     * инициализации были обнаружены ошибки.
-     */
-    public AtomicBoolean error  = new AtomicBoolean(false);
-    
     /** Конструктор по умолчанию. */
     public ParameterInitialization() {}
     
     /**
-     * Метод run() - это метод, в который производится инициализация 
+     * Метод networkComponentsSetup() - это метод, в который производится инициализация 
      * переменных.
      * 
      * <P> Инициализируются следующие переменные:
@@ -69,27 +65,23 @@ public class ParameterInitialization {
      *      <LI> {@link Globals#ircTranscriptConfig} описатель 
      *      файла-протокола клиентских сообщений.</LI>
      *  </UL>
+     *  @return true - инициализация выполнена успешно, false - инициализация не выполнена.
      */
-    public void run() {
-        
+    public static boolean networkComponentsSetup() {
         InetAddress thisInetAddress = null;
         InetAddress localhostInetAddress = null;
         
         try {
-            localhostInetAddress = InetAddress.getByAddress("localhost", 
-                new byte[] {127, 0, 0, 1});
+            localhostInetAddress = InetAddress.getByAddress("localhost", new byte[] {127, 0, 0, 1});
         } catch (UnknownHostException e) {
-            Globals.logger.get().log(Level.SEVERE,
-                "Cannot obtain localhost InetAddress: " + e);
-            error.set(true);
-            return;
+            Globals.logger.get().log(Level.SEVERE, "Cannot obtain localhost InetAddress: " + e);
+            return false;
         }
         
         try {
             thisInetAddress = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
-            Globals.logger.get().log(Level.INFO,
-                    "Cannot obtain localhost InetAddress: " + e);
+            Globals.logger.get().log(Level.INFO, "Cannot obtain localhost InetAddress: " + e);
             thisInetAddress = localhostInetAddress;    
         }
                 
@@ -104,15 +96,13 @@ public class ParameterInitialization {
                 Globals.anonymousIrcServerInfo.get()));
         
         Globals.anonymousUser.set(User.create());
-        Globals.anonymousUser.get().setIrcServer(
-                Globals.anonymousIrcServer.get());
+        Globals.anonymousUser.get().setIrcServer(Globals.anonymousIrcServer.get());
         Globals.anonymousUser.get().setNickname("anonymous");
         Globals.anonymousUser.get().setUsername("anonymous");
         Globals.anonymousUser.get().setRealname("anonymous");
         Globals.anonymousUser.get().setHostname("localhost");
         
-        Globals.monitorIrcChannel.set(new MonitorIrcChannel(
-                "&MonitorIrcChannel","Connections monitor"));
+        Globals.monitorIrcChannel.set(new MonitorIrcChannel("&MonitorIrcChannel","Connections monitor"));
         
         
         Globals.db.get().register(Globals.thisIrcServer.get());
@@ -120,6 +110,7 @@ public class ParameterInitialization {
         Globals.db.get().register(Globals.anonymousUser.get());
         Globals.db.get().register(Globals.monitorIrcChannel.get());
          
+        return true;
     }
     
     /**
@@ -129,37 +120,33 @@ public class ParameterInitialization {
      *      <LI> {@link Globals#logger};</LI>
      *      <LI> {@link Globals#logFileHandler};</LI>
      *  </UL> 
+     * @return true - действия выполнены успешно, false - действия не выполнены. 
      */
-    public static void loggerSetup() {
+    public static boolean loggerSetup() {
 
         Globals.logger.set(Logger.getLogger("IrcServer"));
         
         try {
-            Globals.logFileHandler.set(new FileHandler(
-                    Globals.logFileHandlerFileName.get()));
+            Globals.logFileHandler.set(new FileHandler(Globals.logFileHandlerFileName.get()));
         } catch (IOException e) {
-            throw new Error(
-                "Globals.loggerSetup. Internal error: " +
-                "Cannot obtain Globals.logger " +
-                "filehandler:" + e);
+            System.err.println("Globals.loggerSetup. Internal error: Cannot obtain Globals.logger filehandler: " + e);
+            return false;
         }
         
         Globals.logger.get().addHandler(Globals.logFileHandler.get());
         Globals.logFileHandler.get().setLevel(Globals.fileLogLevel.get());
         Globals.logger.get().setLevel(Globals.fileLogLevel.get());
         Globals.logger.get().setUseParentHandlers(false);
-        Globals.logger.get().log(Level.INFO, "Current logLevel:" + 
-                Globals.logger.get().getLevel());
+        Globals.logger.get().log(Level.INFO, "Current logLevel:" + Globals.logger.get().getLevel());
+        return true;
     }
     
     /** Установка уровня журналирования. */
     public static void loggerLevelSetup() {
-        Level level = 
-                Globals.db.get().getIrcServerConfig().getDebugLevel();
+        Level level = Globals.db.get().getIrcServerConfig().getDebugLevel();
         Globals.logFileHandler.get().setLevel(level);
         Globals.logger.get().setLevel(level);
-        Globals.logger.get().log(Level.INFO, "Current logLevel:" + 
-                Globals.logger.get().getLevel());
+        Globals.logger.get().log(Level.INFO, "Current logLevel:" + Globals.logger.get().getLevel());
     }
     
     /** Закрытие журналирующей подсистемы. */

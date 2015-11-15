@@ -4,7 +4,7 @@
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -34,10 +34,10 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
+import simpleircserver.ParameterInitialization;
 import simpleircserver.base.Constants;
 import simpleircserver.base.Globals;
 import simpleircserver.config.IrcTranscriptConfig;
-import simpleircserver.config.ParameterInitialization;
 import simpleircserver.processor.TranscriptFileProcessor;
 
 /**

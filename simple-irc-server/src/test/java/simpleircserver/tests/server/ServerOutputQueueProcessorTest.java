@@ -4,7 +4,7 @@
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -22,6 +22,7 @@
 
 package simpleircserver.tests.server;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
@@ -38,10 +39,10 @@ import java.util.logging.Level;
 import org.junit.Before;
 import org.junit.Test;
 
+import simpleircserver.ParameterInitialization;
 import simpleircserver.base.Constants;
 import simpleircserver.base.DB;
 import simpleircserver.base.Globals;
-import simpleircserver.config.ParameterInitialization;
 import simpleircserver.connection.Connection;
 import simpleircserver.connection.ConnectionState;
 import simpleircserver.connection.NetworkConnection;
@@ -97,12 +98,10 @@ public class ServerOutputQueueProcessorTest {
         //networkConnectionProcessor
         if (Globals.serverSocket.get() != null) Globals.serverSocket.get().close();
         
-        ParameterInitialization parameterInitialization;
         IncomingConnectionListener incomingConnectionListener;
         OutputQueueProcessor outputQueueProcessor;        
         
-        parameterInitialization = new ParameterInitialization();
-        parameterInitialization.run();
+        assertTrue("Normal Initialisation", ParameterInitialization.networkComponentsSetup());
         
         try {
             Thread.sleep(sleepTO.get() * 2);

@@ -4,7 +4,7 @@
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -33,11 +33,11 @@ import java.util.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
+import simpleircserver.ParameterInitialization;
 import simpleircserver.Server;
 import simpleircserver.base.Constants;
 import simpleircserver.base.DB;
 import simpleircserver.base.Globals;
-import simpleircserver.config.ParameterInitialization;
 import simpleircserver.tests.IrcCommandTest;
 import simpleircserver.tests.ServerTestUtils;
 import simpleircserver.tests.server.ServerIrcTalkerProcessorTest.Client;
@@ -63,15 +63,14 @@ public class ServerStartRestartStopTest {
         Globals.configFilename.set(configFilePath);
 
         Globals.logFileHandlerFileName.set(logFilePath);  
-        ParameterInitialization parameterInitialization;       
-        parameterInitialization = new ParameterInitialization();
-        parameterInitialization.configSetup();
-        parameterInitialization.run();
-        parameterInitialization.loggerSetup();
+
+        ParameterInitialization.configSetup();
+        assertTrue("Normal Initialisation", ParameterInitialization.networkComponentsSetup());
+        ParameterInitialization.loggerSetup();
 
         Globals.logFileHandler.get().setLevel(Level.ALL);
         Globals.logger.get().setLevel(Level.ALL);
-        parameterInitialization.loggerLevelSetup();
+        ParameterInitialization.loggerLevelSetup();
         Globals.serverDown.set(false);
 
     }

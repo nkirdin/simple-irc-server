@@ -4,7 +4,7 @@
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -22,7 +22,9 @@
 
 package simpleircserver.tests.server;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -33,31 +35,25 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import simpleircserver.ParameterInitialization;
 import simpleircserver.base.Constants;
 import simpleircserver.base.DB;
 import simpleircserver.base.Globals;
-import simpleircserver.config.ParameterInitialization;
 import simpleircserver.connection.Connection;
 import simpleircserver.connection.ConnectionState;
 import simpleircserver.connection.NetworkConnection;
-import simpleircserver.parser.IrcCommandReport;
 import simpleircserver.processor.IncomingConnectionListener;
 import simpleircserver.processor.IrcTalkerProcessor;
 import simpleircserver.processor.NetworkConnectionProcessor;
-import simpleircserver.processor.OutputQueueProcessor;
 import simpleircserver.talker.user.User;
-import simpleircserver.tests.IrcCommandTest;
 import simpleircserver.tests.ServerTestUtils;
-import simpleircserver.tests.server.ServerListenerTest.Client;
 
 /**
  * ServerIrcTalkerProcessorTest
@@ -90,15 +86,14 @@ public class ServerIrcTalkerProcessorTest {
         Globals.configFilename.set(configFilePath);
 
         Globals.logFileHandlerFileName.set(logFilePath);  
-        ParameterInitialization parameterInitialization;       
-        parameterInitialization = new ParameterInitialization();
-        parameterInitialization.configSetup();
-        parameterInitialization.run();
-        parameterInitialization.loggerSetup();
+
+        ParameterInitialization.configSetup();
+        assertTrue("Normal Initialisation", ParameterInitialization.networkComponentsSetup());
+        ParameterInitialization.loggerSetup();
 
         Globals.logFileHandler.get().setLevel(Level.ALL);
         Globals.logger.get().setLevel(Level.ALL);
-        parameterInitialization.loggerLevelSetup();
+        ParameterInitialization.loggerLevelSetup();
         Globals.serverDown.set(false);
         sleepTO = new AtomicLong(100);
         client = new Client[4];
@@ -116,7 +111,6 @@ public class ServerIrcTalkerProcessorTest {
         IncomingConnectionListener incomingConnectionListener;
         NetworkConnectionProcessor networkConnectionProcessor;
         IrcTalkerProcessor ircTalkerProcessor;
-        OutputQueueProcessor outputQueueProcessor;
               
               
         try {
@@ -202,7 +196,6 @@ public class ServerIrcTalkerProcessorTest {
         assertFalse("User is removed", userSet.contains(client[0].c.ircTalker.get()));
        
         Globals.logger.get().log(Level.FINEST, "--IrcTalkerProcessor--Socket-closing---------OK--");
-
         
         
         Globals.logger.get().log(Level.FINEST, "--IrcTalkerProcessor--Ping-Timeout---------------");
@@ -271,7 +264,7 @@ public class ServerIrcTalkerProcessorTest {
         userSet = db.getUserSet();
         assertTrue("New user is created and stored in DB", userSet.contains(client[0].c.ircTalker.get()));
 
-        newPingPeriod = 1000;
+        newPingPeriod = 500;
         Globals.pingSendingPeriod.set(newPingPeriod);
         int i = 0;
         int j = 0;

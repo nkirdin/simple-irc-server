@@ -5,7 +5,7 @@ package simpleircserver.processor;
  * is part of Simple Irc Server
  *
  *
- * Copyright (С) 2012, Nikolay Kirdin
+ * Copyright (С) 2012, 2015, Nikolay Kirdin
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License Version 3.
@@ -348,7 +348,17 @@ public class IncomingConnectionListener extends AbstractIrcServerProcessor {
         setInetAddress(inetAddress);
         setServerPortNumber(serverPortNumber);
         this.listenerCharset.set(listenerCharset);
-        return this.error.get() && super.processorStart();
+        return !this.error.get() && super.processorStart();
     }
+    
+    /**
+     * Реконфигурирование просесса
+     * @return true - действия успешно выполнены.
+     */
+    public boolean processorReconfigure() {
+        processorStop();
+        return processorStart();
+    }
+
     
 }
