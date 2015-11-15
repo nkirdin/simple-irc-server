@@ -292,7 +292,7 @@ public class ServerConnectionProcessorTest {
         QuitIrcCommand quitIrcCommand = QuitIrcCommand.create(db, client[0].c.ircTalker.get(), "Closing connection with Quit");
         quitIrcCommand.run();
         try {
-            Thread.sleep(sleepTO.get() * 10);
+            Thread.sleep(sleepTO.get() * 15);
         } catch (InterruptedException e) {}
         connectionList = db.getConnectionList();
         assertFalse("Connection 4 is removed", connectionList.contains(client[0].c));   
