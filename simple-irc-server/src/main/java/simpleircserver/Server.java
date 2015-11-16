@@ -87,15 +87,11 @@ public class Server implements Runnable {
      * SERV_OK; SERV_CONF_ERR, SERV_WRONG_KEY; SERV_START_ERR; SERV_NOT_START, SERV_WRONG_LOG. 
      */    
     private int state = SERV_OK;
-    
-    static {
-        Locale.setDefault(Locale.ENGLISH);
-        TimeZone.setDefault(Globals.timeZone.get());
-        Globals.serverStartTime.set(System.currentTimeMillis());
-    }
-        
+            
     /** Конструктор. */
     public Server() {
+        Locale.setDefault(Locale.ENGLISH);
+        TimeZone.setDefault(Globals.timeZone.get());
         if (!ParameterInitialization.loggerSetup()) {            
             state = SERV_WRONG_LOG;
             error = true;
@@ -209,7 +205,9 @@ public class Server implements Runnable {
     List<AbstractIrcServerProcessor> stopList = new ArrayList<>();
     
     public void run() {
-                
+
+        Globals.serverStartTime.set(System.currentTimeMillis());
+
         initProcessors();
 
         while (!Globals.serverDown.get() && !isError()) {

@@ -30,6 +30,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,6 +53,7 @@ public class ServerStartRestartStopTest {
 
     Server server;
     Thread serverThread;
+    long timeBeforeStart;
 
     @Before
     public void setUp() throws Exception {
@@ -72,17 +74,25 @@ public class ServerStartRestartStopTest {
         Globals.logger.get().setLevel(Level.ALL);
         ParameterInitialization.loggerLevelSetup();
         Globals.serverDown.set(false);
+        timeBeforeStart = System.currentTimeMillis();
+        long predStartTO = 100;
+        Thread.sleep(predStartTO);
+        server = new Server();
+        serverThread = new Thread(server);
+    }
+    
+    @After
+    public void postTest() throws Exception  {
+        Globals.serverDown.set(true);
+        long stopTO = 1000;
+        Thread.sleep(stopTO);
 
     }
 
     @Test
     public void serverStartStopTest() throws Exception {
         System.out.println("--Server--Start test-----------------------------");
-        Globals.logger.get().log(Level.FINEST, "--Server--Start----------------------------------");
-        
-        Globals.serverDown.set(false);
-        server = new Server();
-        serverThread = new Thread(server);
+        Globals.logger.get().log(Level.FINEST, "--Server--Start----------------------------------");       
 
         serverStart();
  
@@ -101,15 +111,11 @@ public class ServerStartRestartStopTest {
     
         System.out.println("--Server--Start/Restart/Stop---------------------");
 
-        Globals.serverDown.set(false);
-        server = new Server();
-        serverThread = new Thread(server);
-        
         serverStart();
                 
         Globals.logger.get().log(Level.FINEST, "--Server--Restart--------------------------------");
 
-        long serverStartTime = Globals.serverStartTime.get();
+        long oldServerStartTime = Globals.serverStartTime.get();
         
         // Restart server
         Globals.serverRestart.set(true);
@@ -117,9 +123,9 @@ public class ServerStartRestartStopTest {
         long restartTO = 6000;
         Thread.sleep(restartTO);
         
-        assertNotEquals("Server restarted", Thread.State.NEW, serverThread.getState());
+        assertNotEquals("Server started", Thread.State.NEW, serverThread.getState());
         assertNotEquals("Server not terminated after restart", Thread.State.TERMINATED, serverThread.getState());
-        assertTrue("Server restarted", Globals.serverStartTime.get() > serverStartTime);
+        assertTrue("Start time is changed", Globals.serverStartTime.get() > oldServerStartTime);
         Globals.logger.get().log(Level.FINEST, "**Server**Restart****************************OK**");
         Globals.logger.get().log(Level.FINEST, "--Server--Down-----------------------------------");
         serverStop();
@@ -128,20 +134,15 @@ public class ServerStartRestartStopTest {
     }
 
     private void serverStart() throws Exception {
-        
-        long serverStartTime = System.currentTimeMillis();
-        
-        long predStartTO = 10;
-        Thread.sleep(predStartTO);
-
+         
         serverThread.start();
         
-        long startTO = 1000;
+        long startTO = 100;
         Thread.sleep(startTO);
 
         assertNotEquals("Server started", Thread.State.NEW, serverThread.getState());
         assertNotEquals("Server not terminated", Thread.State.TERMINATED, serverThread.getState());
-        assertNotEquals("Start time is changed", serverStartTime, Globals.serverStartTime.get());
+        assertTrue("Start time is changed", Globals.serverStartTime.get() > timeBeforeStart);
     }
     
     private void serverStop() throws Exception {
@@ -153,7 +154,5 @@ public class ServerStartRestartStopTest {
 
         assertEquals("Server terminated", Thread.State.TERMINATED, serverThread.getState());
     }
-
-
 
 }

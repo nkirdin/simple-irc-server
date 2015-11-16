@@ -125,10 +125,10 @@ public class ServerConnectionProcessorTest {
         DB db = Globals.db.get();
         Globals.logger.get().log(Level.INFO, "Start");
         Globals.logger.get().log(Level.FINEST, "--ConnectionProcessor----------------------------");
-        
-        
+               
         incomingConnectionListener.running.set(true);
         incomingConnectionListener.thread.get().start();
+        
         try {
             Thread.sleep(sleepTO.get() * 2);
         } catch (InterruptedException e) {}
@@ -146,6 +146,7 @@ public class ServerConnectionProcessorTest {
         } catch (InterruptedException e) {}        
         
         assertTrue("Successfull connection", client[0].s != null);
+        
         List<Connection> connectionList = db.getConnectionList();
         for (Connection conn: connectionList) {
             if (((NetworkConnection) conn).getSocket().getRemoteSocketAddress().equals(socket.getLocalSocketAddress())) {
