@@ -34,7 +34,9 @@ import simpleircserver.parser.IrcCommandReport;
 import simpleircserver.parser.IrcExecutionException;
 import simpleircserver.parser.IrcSyntaxException;
 import simpleircserver.parser.ModeOperation;
+import simpleircserver.parser.NotEnoughParamsIrcSyntaxException;
 import simpleircserver.parser.Reply;
+import simpleircserver.parser.UnknownUserModeFlagIrcSyntaxException;
 import simpleircserver.talker.IrcTalker;
 import simpleircserver.talker.server.IrcServer;
 import simpleircserver.talker.user.User;
@@ -186,18 +188,14 @@ public class IrcCommandBase implements IrcParamRegex {
      * Проверяет строку на соответствие заданному регулярному выражению.
      * @param s проверяемая строка.
      * @param regex строка с регулярным выражением.
-     * @throws IrcSyntaxException в том случае, если параметр являеется 
-     * null, либо строка не соответствует регулярному выражению.
-     * Если параметр являеется null, то аргументом исключения является 
-     * строка "ERR_NEEDMOREPARAMS", если строка не соответствует 
-     * регулярному выражению, то аргументом исключения является строка 
-     * "ERR_UNKNOWNCOMMAND".
+     * @throws NotEnoughParamsIrcSyntaxException в том случае, если параметр являеется 
+     * null, либо IrcSyntaxException, если строка не соответствует регулярному выражению.
      * @return s проверяемая строка.
      */
     public static String check(String s, String regex) 
             throws IrcSyntaxException {
         if (s == null) {
-            throw new IrcSyntaxException("ERR_NEEDMOREPARAMS");
+            throw new NotEnoughParamsIrcSyntaxException("ERR_NEEDMOREPARAMS");
         }
         if (!s.matches(regex)) {
             throw new IrcSyntaxException("ERR_UNKNOWNCOMMAND");
@@ -209,18 +207,14 @@ public class IrcCommandBase implements IrcParamRegex {
      * Проверяет строку на соответствие заданному регулярному выражению.
      * @param s проверяемая строка.
      * @param regex скомпилированное регулярное выражение.
-     * @throws IrcSyntaxException в том случае, если параметр являеется 
-     * null, либо строка не соответствует регулярному выражению.
-     * Если параметр являеется null, то аргументом исключения является 
-     * строка "ERR_NEEDMOREPARAMS", если строка не соответствует 
-     * регулярному выражению, то аргументом исключения является строка 
-     * "ERR_UNKNOWNCOMMAND".
-     * @return проверяемая строка.
+     * @throws NotEnoughParamsIrcSyntaxException в том случае, если параметр являеется 
+     * null, либо IrcSyntaxException, если строка не соответствует регулярному выражению.
+     * @return s проверяемая строка.
      */
     public static String check(String s, Pattern regex)
             throws IrcSyntaxException {
         if (s == null) {
-            throw new IrcSyntaxException("ERR_NEEDMOREPARAMS");
+            throw new NotEnoughParamsIrcSyntaxException("ERR_NEEDMOREPARAMS");
         }
         if (!regex.matcher(s).matches()) {
             throw new IrcSyntaxException("ERR_UNKNOWNCOMMAND");
@@ -257,7 +251,7 @@ public class IrcCommandBase implements IrcParamRegex {
         UserMode currentUserMode = null;
 
         if (!(flag == '+' || flag == '-')) {
-            throw new IrcSyntaxException("ERR_UMODEUNKNOWNFLAG");
+            throw new UnknownUserModeFlagIrcSyntaxException("Wrong Flag");
         }
 
         for (UserMode usm : UserMode.values()) {
@@ -270,18 +264,15 @@ public class IrcCommandBase implements IrcParamRegex {
         if (currentUserMode == null || !(
                 flag == '+' && approveADD.contains(currentUserMode) || 
                 flag == '-' && approveREMOVE.contains(currentUserMode))) {
-            throw new IrcSyntaxException("ERR_UMODEUNKNOWNFLAG");
+            throw new UnknownUserModeFlagIrcSyntaxException("No approved mode");
         }
 
         if (flag == '+' && approveADD.contains(currentUserMode)) {
-            result = new UserModeCarrier(
-                    currentUserMode, ModeOperation.ADD);
-        } else if (flag == '-' && approveREMOVE.contains(
-                currentUserMode)) {
-            result = new UserModeCarrier(
-                    currentUserMode, ModeOperation.REMOVE);
+            result = new UserModeCarrier(currentUserMode, ModeOperation.ADD);
+        } else if (flag == '-' && approveREMOVE.contains(currentUserMode)) {
+            result = new UserModeCarrier(currentUserMode, ModeOperation.REMOVE);
         } else {
-            throw new Error("ERR_UMODEUNKNOWNFLAG") ;
+            throw new UnknownUserModeFlagIrcSyntaxException("ERR_UMODEUNKNOWNFLAG") ;
         }
 
         return result;

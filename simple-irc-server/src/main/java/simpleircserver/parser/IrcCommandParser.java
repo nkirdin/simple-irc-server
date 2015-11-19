@@ -377,29 +377,15 @@ public class IrcCommandParser {
                 }
             }
 
-        } catch (IndexOutOfBoundsException e) {
-            requestor.send(
-                    IrcCommandBase.errNeedMoreParams(requestor, 
-                    command));
+        } catch (IndexOutOfBoundsException | NotEnoughParamsIrcSyntaxException e) {
+            requestor.send(IrcCommandBase.errNeedMoreParams(requestor, command));
+        }catch (UnknownUserModeFlagIrcSyntaxException e) {
+            requestor.send(IrcCommandBase.errUModeUnknownFlag(requestor));
+        } catch (WrongPrefixIrcSyntaxException e) {
         } catch (IrcSyntaxException e) {
-            if (e.getMessage().equals("ERR_UMODEUNKNOWNFLAG")) {
-                requestor.send(
-                        IrcCommandBase.errUModeUnknownFlag(requestor));
-            } else if (e.getMessage().equals("ERR_NEEDMOREPARAMS")) {
-                requestor.send(
-                        IrcCommandBase.errNeedMoreParams(requestor, 
-                        command));
-            } else if (e.getMessage().equals("SILENCE")) {
-            } else {
-                requestor.send(
-                        IrcCommandBase.errUnknownCommand(requestor, 
-                        command));
-            }
+            requestor.send(IrcCommandBase.errUnknownCommand(requestor, command));
         } catch (IrcExecutionException e) {
-            requestor.send(
-                    new IrcCommandReport(e.getMessage(),
-                            requestor,
-                            Globals.thisIrcServer.get()));
+            requestor.send(new IrcCommandReport(e.getMessage(), requestor, Globals.thisIrcServer.get()));
         }
         
         synchronized (commandStats) {
@@ -473,10 +459,9 @@ public class IrcCommandParser {
                 user.setLastMessageTime(System.currentTimeMillis());
            } else {
 
-                QuitIrcCommand.create(Globals.db.get(), requestor,
-                    "Wrong prefix:" + prefix).run();
+                QuitIrcCommand.create(Globals.db.get(), requestor,  "Wrong prefix:" + prefix).run();
                 requestor.getConnection().close();
-                throw new IrcSyntaxException("SILENCE");
+                throw new WrongPrefixIrcSyntaxException("User");
             }
         } else if (requestor instanceof IrcServer) {
             if (prefixNickname != null
@@ -503,16 +488,14 @@ public class IrcCommandParser {
                       KillIrcCommand.create();
                       killIrcCommand.run();
                     */
-                    QuitIrcCommand.create(Globals.db.get(), requestor,
-                            "Wrong prefix:" + prefix).run();
+                    QuitIrcCommand.create(Globals.db.get(), requestor, "Wrong prefix:" + prefix).run();
                     requestor.getConnection().close();
-                    throw new IrcSyntaxException("SILENCE");
+                    throw new WrongPrefixIrcSyntaxException("IrcServer");
                 }
             } else {
-                QuitIrcCommand.create(Globals.db.get(), requestor,
-                    "Wrong prefix:" + prefix).run();
+                QuitIrcCommand.create(Globals.db.get(), requestor, "Wrong prefix:" + prefix).run();
                 requestor.getConnection().close();
-                throw new IrcSyntaxException("SILENCE");
+                throw new WrongPrefixIrcSyntaxException("Not an IrcServer");
             }
         } else if (requestor instanceof Service) {
             if (prefixNickname != null
@@ -531,22 +514,19 @@ public class IrcCommandParser {
                     KillIrcCommand.create();
                     killIrcCommand.run();
                   */
-                    QuitIrcCommand.create(Globals.db.get(), requestor,
-                            "Wrong prefix:" + prefix).run();
+                    QuitIrcCommand.create(Globals.db.get(), requestor, "Wrong prefix:" + prefix).run();
                     requestor.getConnection().close();
-                    throw new IrcSyntaxException("SILENCE");
+                    throw new WrongPrefixIrcSyntaxException("Service");
                 }
             } else {
-                QuitIrcCommand.create(Globals.db.get(), requestor,
-                    "Wrong prefix:" + prefix).run();
+                QuitIrcCommand.create(Globals.db.get(), requestor, "Wrong prefix:" + prefix).run();
                 requestor.getConnection().close();
-                throw new IrcSyntaxException("SILENCE");
+                throw new WrongPrefixIrcSyntaxException("Not an Service");
             }
         } else {
-            QuitIrcCommand.create(Globals.db.get(), requestor,
-                    "Wrong prefix:" + prefix).run();
+            QuitIrcCommand.create(Globals.db.get(), requestor, "Wrong prefix:" + prefix).run();
             requestor.getConnection().close();
-            throw new IrcSyntaxException("SILENCE");
+            throw new WrongPrefixIrcSyntaxException("Unknown type of prefix source");
         }
 
     }
